@@ -33,10 +33,10 @@ export class AddonReceiver {
 
     switch (message) {
       case SCRIPT_EVENT_MESSAGES.ACTIVATE_REQUEST:
-        this.addonManager._activateAddon();
+        await this.addonManager._activateAddon();
         break;
       case SCRIPT_EVENT_MESSAGES.DEACTIVATE_REQUEST:
-        this.addonManager._deactivateAddon();
+        await this.addonManager._deactivateAddon();
         break;
       default:
         let data: any;

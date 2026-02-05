@@ -124,12 +124,12 @@ export class Kairo {
     return Kairo._runScriptEvent(data);
   }
 
-  public _activateAddon(): void {
-    void Kairo._runActivateHooks();
+  public async _activateAddon(): Promise<void> {
+    await Kairo._runActivateHooks();
   }
 
-  public _deactivateAddon(): void {
-    void Kairo._runDeactivateHooks();
+  public async _deactivateAddon(): Promise<void> {
+    await Kairo._runDeactivateHooks();
   }
 
   private static _pushSorted<T>(arr: Stored<T>[], fn: T, opt?: HandlerOptions) {
