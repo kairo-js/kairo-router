@@ -36,8 +36,8 @@ export declare class AddonManager {
     static create(kairo: Kairo): AddonManager;
     getSelfAddonProperty(): AddonProperty;
     subscribeReceiverHooks(): void;
-    _activateAddon(): void;
-    _deactivateAddon(): void;
+    _activateAddon(): Promise<void>;
+    _deactivateAddon(): Promise<void>;
     _scriptEvent(data: KairoCommand): Promise<void | KairoResponse>;
     get isActive(): boolean;
     setActiveState(state: boolean): void;

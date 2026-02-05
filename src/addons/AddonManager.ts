@@ -58,12 +58,12 @@ export class AddonManager {
     );
   }
 
-  public _activateAddon(): void {
-    this.kairo._activateAddon();
+  public async _activateAddon(): Promise<void> {
+    await this.kairo._activateAddon();
   }
 
-  public _deactivateAddon(): void {
-    this.kairo._deactivateAddon();
+  public async _deactivateAddon(): Promise<void> {
+    await this.kairo._deactivateAddon();
   }
 
   public async _scriptEvent(data: KairoCommand): Promise<void | KairoResponse> {

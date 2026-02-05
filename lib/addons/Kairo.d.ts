@@ -44,8 +44,8 @@ export declare class Kairo {
     static addScriptEvent(fn: ScriptEventListener, opt?: HandlerOptions): void;
     static addTick(fn: TickHandler, opt?: HandlerOptions): void;
     _scriptEvent(data: KairoCommand): Promise<void | KairoResponse>;
-    _activateAddon(): void;
-    _deactivateAddon(): void;
+    _activateAddon(): Promise<void>;
+    _deactivateAddon(): Promise<void>;
     private static _pushSorted;
     private static _runActivateHooks;
     private static _runDeactivateHooks;
