@@ -62,7 +62,6 @@ export class Kairo {
   public static init(properties: KairoAddonProperties): void {
     const inst = this.getInstance(properties);
     if (inst.initialized) return;
-    console.log("Kairo init:" + properties.id);
 
     KairoUtils.init(properties);
     ConsoleManager.init(properties);
