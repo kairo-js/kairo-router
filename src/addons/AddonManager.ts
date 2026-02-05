@@ -2,7 +2,7 @@ import type { AddonProperty } from "./AddonPropertyManager";
 import { system } from "@minecraft/server";
 import { AddonReceiver } from "./router/AddonReceiver";
 import type { KairoCommand, KairoResponse } from "../utils/KairoUtils";
-import { Kairo } from "../index";
+import { Kairo } from "./Kairo";
 import { KairoAddonProperties } from "../constants/properties";
 
 export type RegistrationState =

@@ -1,6 +1,6 @@
-import { type AddonProperty } from "./addons/AddonPropertyManager";
-import { type KairoCommand, type KairoResponse } from "./utils/KairoUtils";
-import { KairoAddonProperties } from "./constants/properties";
+import { type AddonProperty } from "./AddonPropertyManager";
+import { type KairoCommand, type KairoResponse } from "../utils/KairoUtils";
+import { KairoAddonProperties } from "../constants/properties";
 type ActivateHandler = () => void | Promise<void>;
 type DeactivateHandler = () => void | Promise<void>;
 type ScriptEventListener = (data: KairoCommand) => void | Promise<void>;
@@ -43,7 +43,7 @@ export declare class Kairo {
     static addDeactivate(fn: DeactivateHandler, opt?: HandlerOptions): void;
     static addScriptEvent(fn: ScriptEventListener, opt?: HandlerOptions): void;
     static addTick(fn: TickHandler, opt?: HandlerOptions): void;
-    _scriptEvent(data: KairoCommand): void;
+    _scriptEvent(data: KairoCommand): Promise<void | KairoResponse>;
     _activateAddon(): void;
     _deactivateAddon(): void;
     private static _pushSorted;

@@ -2,7 +2,7 @@ import { system } from "@minecraft/server";
 import { AddonInitializeReceive } from "./AddonInitializeReceive";
 import { AddonInitializeResponse } from "./AddonInitializeResponse";
 import type { AddonProperty } from "../../AddonPropertyManager";
-import { Kairo } from "../../../index";
+import { Kairo } from "../../Kairo";
 
 export class AddonInitializer {
   private registrationNum: number = 0;

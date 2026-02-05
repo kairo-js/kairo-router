@@ -1,5 +1,5 @@
 import { KairoAddonProperties, SemVer } from "../constants/properties";
-import { Kairo } from "../index";
+import { Kairo } from "./Kairo";
 export interface AddonProperty {
     id: string;
     name: string;

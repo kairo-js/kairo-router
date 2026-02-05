@@ -1,6 +1,6 @@
 import type { AddonProperty } from "./AddonPropertyManager";
 import type { KairoCommand, KairoResponse } from "../utils/KairoUtils";
-import { Kairo } from "../index";
+import { Kairo } from "./Kairo";
 import { KairoAddonProperties } from "../constants/properties";
 export type RegistrationState = "registered" | "unregistered" | "missing_requiredAddons";
 export interface AddonData {

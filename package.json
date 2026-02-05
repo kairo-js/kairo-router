@@ -1,19 +1,27 @@
 {
   "name": "@kairo-ts/router",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Router module for Kairo.ts",
+  "type": "module",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
-    "dist"
+    "lib"
   ],
   "scripts": {
-    "build": "tsc"
+    "clean": "rimraf lib",
+    "build:types": "tsc",
+    "build:js": "node build.mjs",
+    "build": "npm run clean && npm run build:types && npm run build:js",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@minecraft/server": "^2.4.0",
     "@minecraft/server-ui": "^2.0.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "esbuild": "^0.20.0",
+    "rimraf": "^5.0.0"
   }
 }

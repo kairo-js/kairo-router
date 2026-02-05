@@ -1,5 +1,5 @@
 import type { AddonProperty } from "../../AddonPropertyManager";
-import { Kairo } from "../../../index";
+import { Kairo } from "../../Kairo";
 export declare class AddonInitializer {
     private readonly kairo;
     private registrationNum;
