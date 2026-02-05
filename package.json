@@ -1,6 +1,6 @@
 {
   "name": "@kairo-ts/router",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Router module for Kairo.ts",
   "type": "module",
   "license": "MIT",
