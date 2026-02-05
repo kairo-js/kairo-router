@@ -22,6 +22,10 @@
     "version:patch": "npm version patch",
     "prepublishOnly": "npm run version:patch && npm run build"
   },
+  "peerDependencies": {
+    "@minecraft/server": "^2.4.0",
+    "@minecraft/server-ui": "^2.0.0"
+  },
   "devDependencies": {
     "@minecraft/server": "^2.4.0",
     "@minecraft/server-ui": "^2.0.0",
