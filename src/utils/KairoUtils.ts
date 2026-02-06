@@ -43,7 +43,6 @@ export class KairoUtils {
     if (this.properties) {
       throw new Error("[KairoUtils] Already initialized.");
     }
-    console.log("KairoUtils init:" + properties.id);
     this.properties = properties;
   }
 
