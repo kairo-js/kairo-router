@@ -17,9 +17,9 @@ export type AddonHeader = {
     readonly min_engine_version: EngineVersion;
 };
 export type AddonMetadata = {
-    readonly authors: string[];
-    readonly url: string;
-    readonly license: string;
+    readonly authors?: string[];
+    readonly url?: string;
+    readonly license?: string;
 };
 export type RequiredAddons = {
     readonly [addonId: string]: string;
@@ -27,9 +27,9 @@ export type RequiredAddons = {
 export type SupportedTag = "official" | "approved" | "stable" | "experimental";
 export type KairoAddonProperties = {
     readonly id: string;
-    readonly metadata: AddonMetadata;
+    readonly metadata?: AddonMetadata;
     readonly header: AddonHeader;
-    readonly dependencies: ManifestDependency[];
-    readonly requiredAddons: RequiredAddons;
-    readonly tags: SupportedTag[];
+    readonly dependencies?: ManifestDependency[];
+    readonly requiredAddons?: RequiredAddons;
+    readonly tags?: SupportedTag[];
 };
