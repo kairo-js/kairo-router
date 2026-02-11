@@ -1,7 +1,7 @@
 {
-  "name": "@kairo-ts/router",
-  "version": "0.1.13",
-  "description": "Router module for Kairo.ts",
+  "name": "@kairo-js/router",
+  "version": "0.1.0",
+  "description": "Router module for Kairo.js",
   "type": "module",
   "license": "MIT",
   "main": "lib/index.js",
@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:Kairo-ts/Kairo-Router.git"
+    "url": "git@github.com:kairo-js/kairo-router.git"
   },
   "scripts": {
     "clean": "rimraf lib",
@@ -23,11 +23,11 @@
     "prepublishOnly": "npm run version:patch && npm run build"
   },
   "peerDependencies": {
-    "@minecraft/server": "^2.4.0",
+    "@minecraft/server": "^2.5.0",
     "@minecraft/server-ui": "^2.0.0"
   },
   "devDependencies": {
-    "@minecraft/server": "^2.4.0",
+    "@minecraft/server": "^2.5.0",
     "@minecraft/server-ui": "^2.0.0",
     "typescript": "^5.9.3",
     "esbuild": "^0.20.0",
