@@ -4,9 +4,15 @@
   "description": "Router module for Kairo.js",
   "type": "module",
   "license": "MIT",
-  "main": "lib/index.js",
-  "module": "lib/index.js",
+  "packageManager": "pnpm@10.31.0",
+  "sideEffects": false,
   "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    }
+  },
   "files": [
     "lib"
   ],
@@ -15,10 +21,8 @@
     "url": "git@github.com:kairo-js/kairo-router.git"
   },
   "scripts": {
-    "clean": "rimraf lib",
-    "build:types": "tsc",
-    "build:js": "node build.mjs",
-    "build": "pnpm run clean && pnpm run build:types && pnpm run build:js",
+    "clean": "tsup --clean",
+    "build": "tsup",
     "version:patch": "pnpm version patch",
     "prepublishOnly": "pnpm run version:patch && pnpm run build"
   },
@@ -29,9 +33,7 @@
   "devDependencies": {
     "@minecraft/server": "^2.5.0",
     "@minecraft/server-ui": "^2.0.0",
-    "esbuild": "^0.20.2",
-    "rimraf": "^5.0.10",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3"
-  },
-  "packageManager": "pnpm@10.31.0"
+  }
 }
