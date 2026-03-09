@@ -1,39 +1,40 @@
 {
-  "name": "@kairo-js/router",
-  "version": "0.1.1",
-  "description": "Router module for Kairo.js",
-  "type": "module",
-  "license": "MIT",
-  "packageManager": "pnpm@10.31.0",
-  "sideEffects": false,
-  "types": "lib/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./lib/index.js",
-      "types": "./lib/index.d.ts"
+    "name": "@kairo-js/router",
+    "version": "0.1.1",
+    "description": "Router module for Kairo.js",
+    "type": "module",
+    "license": "MIT",
+    "packageManager": "pnpm@10.31.0",
+    "sideEffects": false,
+    "types": "lib/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./lib/index.js",
+            "types": "./lib/index.d.ts"
+        }
+    },
+    "files": [
+        "lib"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:kairo-js/kairo-router.git"
+    },
+    "scripts": {
+        "clean": "tsup --clean",
+        "build": "tsup",
+        "version:patch": "pnpm version patch",
+        "prepublishOnly": "pnpm run version:patch && pnpm run build"
+    },
+    "peerDependencies": {
+        "@minecraft/server": "^2.5.0",
+        "@minecraft/server-ui": "^2.0.0"
+    },
+    "devDependencies": {
+        "@minecraft/server": "^2.5.0",
+        "@minecraft/server-ui": "^2.0.0",
+        "prettier": "^3.8.1",
+        "tsup": "^8.5.1",
+        "typescript": "^5.9.3"
     }
-  },
-  "files": [
-    "lib"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:kairo-js/kairo-router.git"
-  },
-  "scripts": {
-    "clean": "tsup --clean",
-    "build": "tsup",
-    "version:patch": "pnpm version patch",
-    "prepublishOnly": "pnpm run version:patch && pnpm run build"
-  },
-  "peerDependencies": {
-    "@minecraft/server": "^2.5.0",
-    "@minecraft/server-ui": "^2.0.0"
-  },
-  "devDependencies": {
-    "@minecraft/server": "^2.5.0",
-    "@minecraft/server-ui": "^2.0.0",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3"
-  }
 }
