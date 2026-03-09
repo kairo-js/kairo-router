@@ -1,14 +1,17 @@
-export { Kairo } from "./addons/Kairo";
+import { KairoRouter } from "./router/KairoRouter";
 
-export { ConsoleManager } from "./utils/ConsoleManager";
-export { ErrorManager } from "./utils/ErrorManager";
-export { KairoUtils } from "./utils/KairoUtils";
-export { ScoreboardManager } from "./utils/ScoreboardManager";
+// kjs-router-init-Fc (001): create kairo router instance
+export const router = new KairoRouter();
+export type { KairoRouter } from "./router/KairoRouter";
 
 export type {
-  KairoCommand,
-  KairoResponse,
-  AllowedDynamicValue,
-} from "./utils/KairoUtils";
+    AddonProperties,
+    AddonMetadata,
+    AddonHeader,
+    SemVer,
+    EngineVersion,
+    ManifestDependency,
+    RequiredAddons,
+} from "./types/properties";
 
-export type { KairoAddonProperties } from "./constants/properties";
+export { MinecraftModule, SupportedTag } from "./types/properties";

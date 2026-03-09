@@ -1,4 +1,4 @@
-interface AddonProperties {
+export interface AddonProperties {
     readonly id: string;
     readonly metadata?: AddonMetadata;
     readonly header: AddonHeader;
@@ -6,34 +6,40 @@ interface AddonProperties {
     readonly requiredAddons?: RequiredAddons;
     readonly tags?: SupportedTag[];
 }
-interface AddonMetadata {
+
+export interface AddonMetadata {
     readonly authors?: string[];
     readonly url?: string;
     readonly license?: string;
 }
-interface AddonHeader {
+
+export interface AddonHeader {
     readonly name: string;
     readonly description: string;
     readonly version: SemVer;
     readonly min_engine_version: EngineVersion;
 }
-interface SemVer {
+
+export interface SemVer {
     readonly major: number;
     readonly minor: number;
     readonly patch: number;
     readonly prerelease?: string;
     readonly build?: string;
 }
-interface EngineVersion {
+
+export interface EngineVersion {
     readonly major: number;
     readonly minor: number;
     readonly patch: number;
 }
-interface ManifestDependency {
+
+export interface ManifestDependency {
     readonly module_name: MinecraftModule;
     readonly version: string;
 }
-declare enum MinecraftModule {
+
+export enum MinecraftModule {
     Server = "@minecraft/server",
     ServerUi = "@minecraft/server-ui",
     ServerGameTest = "@minecraft/server-gametest",
@@ -43,24 +49,16 @@ declare enum MinecraftModule {
     ServerAdmin = "@minecraft/server-admin",
     DebugUtilities = "@minecraft/debug-utilities",
     Diagnostics = "@minecraft/diagnostics",
-    ServerGraphics = "@minecraft/server-graphics"
+    ServerGraphics = "@minecraft/server-graphics",
 }
-interface RequiredAddons {
+
+export interface RequiredAddons {
     readonly [addonId: string]: string;
 }
-declare enum SupportedTag {
+
+export enum SupportedTag {
     Official = "official",
     Approved = "approved",
     Stable = "stable",
-    Experimental = "experimental"
+    Experimental = "experimental",
 }
-
-declare class KairoRouter {
-    private readonly addonManager;
-    constructor();
-    init(properties: AddonProperties): void;
-}
-
-declare const router: KairoRouter;
-
-export { type AddonHeader, type AddonMetadata, type AddonProperties, type EngineVersion, KairoRouter, type ManifestDependency, MinecraftModule, type RequiredAddons, type SemVer, SupportedTag, router };
