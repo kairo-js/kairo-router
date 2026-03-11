@@ -1,8 +1,8 @@
 import { system, world } from "@minecraft/server";
 import type { AddonProperty } from "../../AddonPropertyManager";
 import type { AddonInitializer } from "./AddonInitializer";
-import { SCOREBOARD_NAMES } from "../../../constants/scoreboard";
-import { SCRIPT_EVENT_IDS, SCRIPT_EVENT_MESSAGES } from "../../../constants/scriptevent";
+import { SCOREBOARD_NAMES } from "../../../____constants/scoreboard";
+import { SCRIPT_EVENT_IDS, SCRIPT_EVENT_MESSAGES } from "../../../____constants/scriptevent";
 
 /**
  * アドオンの properties を参照して、ルーターに応答するためのクラス
@@ -33,11 +33,11 @@ export class AddonInitializeResponse {
             ]),
         );
     }
-    
+
     public sendInitializationCompleteResponse(): void {
         system.sendScriptEvent(
             SCRIPT_EVENT_IDS.BEHAVIOR_INITIALIZATION_COMPLETE_RESPONSE,
-            SCRIPT_EVENT_MESSAGES.NONE
+            SCRIPT_EVENT_MESSAGES.NONE,
         );
     }
 }
