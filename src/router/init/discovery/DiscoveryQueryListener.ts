@@ -1,10 +1,9 @@
 import { ScriptEventCommandMessageAfterEvent, ScriptEventSource, system } from "@minecraft/server";
-import { RegistrationManager } from "./RegistrationManager";
-import { RegistrationEventId } from "../../constants/kairo";
+import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
+import { DiscoveryEventId } from "./constants/DiscoveryEvent";
 
-// kjs-router-CH 004
-export class RegistrationQueryListener {
-    public constructor(private readonly manager: RegistrationManager) {}
+export class DiscoveryQueryListener {
+    public constructor(private readonly manager: AddonDiscoveryManager) {}
 
     public setup() {
         system.afterEvents.scriptEventReceive.subscribe(this.onRegistrationQuery);
@@ -15,7 +14,7 @@ export class RegistrationQueryListener {
 
         if (sourceType !== ScriptEventSource.Server) return;
 
-        if (id === RegistrationEventId.Query) {
+        if (id === DiscoveryEventId.Query) {
             this.manager.handleRegistrationQuery(message);
         }
     };

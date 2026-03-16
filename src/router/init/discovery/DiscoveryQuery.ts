@@ -1,4 +1,4 @@
-export interface RegistrationQuery {
+export interface DiscoveryQuery {
     readonly scoreboard: {
         readonly objective: {
             id: string;
