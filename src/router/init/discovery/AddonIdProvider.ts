@@ -1,11 +1,11 @@
 import { world } from "@minecraft/server";
-import { AddonProperties } from "../../../types/properties";
+import { AddonProperties } from "../../../types/AddonProperties";
 import {
     DiscoveryProvideIdError,
     DiscoveryProvideIdErrorReason,
 } from "../../errors/DiscoveryProvideIdError";
 import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
-import { DiscoveryQuery } from "./DiscoveryQuery";
+import { DiscoveryQuery } from "./types/DiscoveryQuery";
 
 // kjs-router-ch 007
 export class AddonIdProvider {

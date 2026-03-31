@@ -1,4 +1,4 @@
-import { AddonProperties } from "../../types/properties";
+import { AddonProperties } from "../../types/AddonProperties";
 import { KairoRouter } from "../KairoRouter";
 import { AddonDiscoveryManager } from "./discovery/AddonDiscoveryManager";
 

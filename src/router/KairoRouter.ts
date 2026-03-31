@@ -1,4 +1,4 @@
-import { AddonProperties } from "../types/properties";
+import { AddonProperties } from "../types/AddonProperties";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./errors/KairoRouterInitError";
 import { KairoInitializer } from "./init/KairoInitializer";
 

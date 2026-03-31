@@ -1,4 +1,4 @@
-import { AddonProperties } from "../../../types/properties";
+import { AddonProperties } from "../../../types/AddonProperties";
 import { KairoInitializer } from "../KairoInitializer";
 import { AddonIdProvider } from "./AddonIdProvider";
 import { DiscoveryQueryListener } from "./DiscoveryQueryListener";

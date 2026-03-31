@@ -12,6 +12,6 @@ export type {
     ManifestDependency,
     RequiredAddons,
     SemVer,
-} from "./types/properties";
+} from "./types/AddonProperties";
 
-export { MinecraftModule, SupportedTag } from "./types/properties";
+export { MinecraftModule, SupportedTag } from "./types/AddonProperties";
