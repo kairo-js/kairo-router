@@ -12,9 +12,11 @@ export class DiscoveryQueryParseError extends Error {
 export enum DiscoveryQueryParseErrorReason {
     InvalidJSON = "InvalidJSON",
     InvalidStructure = "InvalidStructure",
+    Timeout = "Timeout",
 }
 
 const DEFAULT_MESSAGES: Record<DiscoveryQueryParseErrorReason, string> = {
     [DiscoveryQueryParseErrorReason.InvalidJSON]: "Failed to parse DiscoveryQuery JSON.",
     [DiscoveryQueryParseErrorReason.InvalidStructure]: "Invalid DiscoveryQuery structure.",
+    [DiscoveryQueryParseErrorReason.Timeout]: "DiscoveryQuery has timed out.",
 };

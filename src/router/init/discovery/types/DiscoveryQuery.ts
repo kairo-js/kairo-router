@@ -5,4 +5,5 @@ export interface DiscoveryQuery {
             displayName: "kairo:id_checker";
         };
     };
+    readonly timestamp: number;
 }
