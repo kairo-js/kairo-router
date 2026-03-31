@@ -2,7 +2,7 @@ import { AddonProperties } from "../../types/properties";
 import { KairoRouter } from "../KairoRouter";
 import { AddonDiscoveryManager } from "./discovery/AddonDiscoveryManager";
 
-// kjs-router-CH 002
+// kjs-router-ch 002
 export class KairoInitializer {
     private readonly discoveryManager = new AddonDiscoveryManager(this);
     public constructor(kairoRouter: KairoRouter) {}

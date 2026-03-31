@@ -5,6 +5,7 @@ import { DiscoveryQueryListener } from "./DiscoveryQueryListener";
 import { DiscoveryQueryParser } from "./DiscoveryQueryParser";
 import { DiscoveryResponder } from "./DiscoveryResponder";
 
+// kjs-router-ch 003
 export class AddonDiscoveryManager {
     private readonly listener = new DiscoveryQueryListener(this);
     private readonly queryParser = new DiscoveryQueryParser(this);
@@ -19,6 +20,7 @@ export class AddonDiscoveryManager {
 
     public handleRegistrationQuery(message: string) {
         const query = this.queryParser.parse(message);
-        this.responder.respond(query);
+        const addonId = this.idProvider.provideId();
+        this.responder.respond(query, addonId);
     }
 }
