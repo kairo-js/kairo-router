@@ -37,5 +37,8 @@
         "prettier": "^3.8.1",
         "tsup": "^8.5.1",
         "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "fast-json-stringify": "^6.3.0"
     }
 }
