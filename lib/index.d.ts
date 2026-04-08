@@ -56,7 +56,8 @@ declare enum SupportedTag {
 }
 
 declare class KairoRouter {
-    private readonly register;
+    private isInitialized;
+    private readonly initializer;
     private constructor();
     init(properties: AddonProperties): void;
 }
