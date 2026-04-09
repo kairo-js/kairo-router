@@ -1,7 +1,7 @@
 import { world } from "@minecraft/server";
 import { AddonProperties } from "../../../types/AddonProperties";
 import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
-import { ProvideAddonIdError, ProvideAddonIdErrorReason } from "./idProvider/ProvideAddonIdError";
+import { ProvideAddonIdError, ProvideAddonIdErrorReason } from "./idProvider/errors";
 import { DiscoveryQuery } from "./query/types";
 
 // kjs-router-ch 0104

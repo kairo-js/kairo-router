@@ -1,9 +1,6 @@
 import { system } from "@minecraft/server";
 import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
-import {
-    DiscoveryQueryParseError,
-    DiscoveryQueryParseErrorReason,
-} from "./query/errors/DiscoveryQueryParserError";
+import { DiscoveryQueryParseError, DiscoveryQueryParseErrorReason } from "./query/errors";
 import type { DiscoveryQuery } from "./query/types";
 import { validateDiscoveryQuery } from "./query/validate";
 
