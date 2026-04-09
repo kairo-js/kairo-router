@@ -23,6 +23,8 @@ export class AddonDiscoveryManager {
             this.kairoInitializer.getAddonProperties(),
             query,
         );
+
+        this.kairoInitializer.setAddonId(addonId);
         this.responder.respond(addonId);
     }
 }

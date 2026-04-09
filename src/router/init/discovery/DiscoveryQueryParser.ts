@@ -1,4 +1,5 @@
 import { system } from "@minecraft/server";
+import { TimestampValidator } from "../../../utils/TimestampValidator";
 import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
 import { DiscoveryQueryParseError, DiscoveryQueryParseErrorReason } from "./query/errors";
 import type { DiscoveryQuery } from "./query/types";
@@ -6,7 +7,7 @@ import { validateDiscoveryQuery } from "./query/validate";
 
 // kjs-router-ch 0102
 export class DiscoveryQueryParser {
-    private static readonly TIMEOUT_TICKS = 10;
+    private readonly TIMEOUT_TICKS = 10;
 
     public constructor(manager: AddonDiscoveryManager) {}
 
@@ -19,7 +20,13 @@ export class DiscoveryQueryParser {
 
         const query = parsed;
 
-        this.validateTimestamp(query);
+        if (TimestampValidator.isExpired(system.currentTick, query.timestamp, this.TIMEOUT_TICKS)) {
+            throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.Timeout);
+        }
+
+        if (TimestampValidator.isFuture(system.currentTick, query.timestamp)) {
+            throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.FutureTimestamp);
+        }
 
         return query;
     }
@@ -29,14 +36,6 @@ export class DiscoveryQueryParser {
             return JSON.parse(message);
         } catch {
             throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.InvalidJSON);
-        }
-    }
-
-    private validateTimestamp(query: DiscoveryQuery): void {
-        const diff = system.currentTick - query.timestamp;
-
-        if (diff < 0 || diff > DiscoveryQueryParser.TIMEOUT_TICKS) {
-            throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.Timeout);
         }
     }
 }

@@ -1,4 +1,7 @@
-export const discoveryQuerySchema = {
+import { JSONSchemaType } from "ajv";
+import { DiscoveryQuery } from "./types";
+
+export const discoveryQuerySchema: JSONSchemaType<DiscoveryQuery> = {
     type: "object",
     required: ["timestamp", "scoreboard"],
     properties: {

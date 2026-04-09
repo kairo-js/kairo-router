@@ -1,4 +1,4 @@
-import { compile } from "../../../../utils/ajv";
+import { compile } from "../../../../utils/ajv-compile";
 import { discoveryQuerySchema } from "./schema";
 import { DiscoveryQuery } from "./types";
 
