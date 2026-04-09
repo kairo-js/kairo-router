@@ -1,5 +1,5 @@
 import { AddonProperties } from "../types/AddonProperties";
-import { KairoRouterInitError, KairoRouterInitErrorReason } from "./errors/KairoRouterInitError";
+import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
 
 // kjs-router-ch 0001

@@ -7,4 +7,5 @@ export default defineConfig({
     outDir: "lib",
     clean: true,
     external: ["@minecraft/server", "@minecraft/server-ui"],
+    noExternal: ["ajv", "fast-json-stringify"],
 });
