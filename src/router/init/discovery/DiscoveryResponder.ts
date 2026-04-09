@@ -1,10 +1,10 @@
 import { system } from "@minecraft/server";
 import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
 import { DiscoveryEventId } from "./constants/DiscoveryEvent";
-import { stringifyDiscoveryResponse } from "./format/discoveryResponse.stringify";
-import { DiscoveryResponse } from "./types/DiscoveryResponse";
+import { stringifyDiscoveryResponse } from "./response/stringify";
+import { DiscoveryResponse } from "./response/types";
 
-// kjs-router-ch 006
+// kjs-router-ch 0103
 export class DiscoveryResponder {
     public constructor(manager: AddonDiscoveryManager) {}
 

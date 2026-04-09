@@ -2,7 +2,7 @@ import { ScriptEventCommandMessageAfterEvent, ScriptEventSource, system } from "
 import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
 import { DiscoveryEventId } from "./constants/DiscoveryEvent";
 
-// kjs-router-ch 004
+// kjs-router-ch 0101
 export class DiscoveryQueryListener {
     public constructor(private readonly manager: AddonDiscoveryManager) {}
 

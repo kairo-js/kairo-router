@@ -1,6 +1,6 @@
 import fastJson from "fast-json-stringify";
-import { DiscoveryResponse } from "../types/DiscoveryResponse";
-import { discoveryResponseSchema } from "./discoveryResponse.schema";
+import { discoveryResponseSchema } from "./schema";
+import { DiscoveryResponse } from "./types";
 
 export const stringifyDiscoveryResponse: (response: DiscoveryResponse) => string =
     fastJson(discoveryResponseSchema);

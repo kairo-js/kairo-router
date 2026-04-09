@@ -5,7 +5,7 @@ import { DiscoveryQueryListener } from "./DiscoveryQueryListener";
 import { DiscoveryQueryParser } from "./DiscoveryQueryParser";
 import { DiscoveryResponder } from "./DiscoveryResponder";
 
-// kjs-router-ch 003
+// kjs-router-ch 0100
 export class AddonDiscoveryManager {
     private properties!: AddonProperties;
     private readonly listener = new DiscoveryQueryListener(this);

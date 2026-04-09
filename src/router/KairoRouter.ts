@@ -2,7 +2,7 @@ import { AddonProperties } from "../types/AddonProperties";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./errors/KairoRouterInitError";
 import { KairoInitializer } from "./init/KairoInitializer";
 
-// kjs-router-ch 001
+// kjs-router-ch 0001
 export class KairoRouter {
     private isInitialized: boolean = false;
     private readonly initializer: KairoInitializer | null = new KairoInitializer(this);

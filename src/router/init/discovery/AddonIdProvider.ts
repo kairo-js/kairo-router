@@ -1,13 +1,10 @@
 import { world } from "@minecraft/server";
 import { AddonProperties } from "../../../types/AddonProperties";
-import {
-    DiscoveryProvideIdError,
-    DiscoveryProvideIdErrorReason,
-} from "../../errors/DiscoveryProvideIdError";
 import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
-import { DiscoveryQuery } from "./types/DiscoveryQuery";
+import { ProvideAddonIdError, ProvideAddonIdErrorReason } from "./idProvider/ProvideAddonIdError";
+import { DiscoveryQuery } from "./query/types";
 
-// kjs-router-ch 007
+// kjs-router-ch 0104
 export class AddonIdProvider {
     private CHARSET =
         "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "?_-().";
@@ -20,7 +17,7 @@ export class AddonIdProvider {
         const objective = world.scoreboard.getObjective(query.scoreboard.objective.id);
 
         if (!objective) {
-            throw new DiscoveryProvideIdError(DiscoveryProvideIdErrorReason.ObjectiveNotFound);
+            throw new ProvideAddonIdError(ProvideAddonIdErrorReason.ObjectiveNotFound);
         }
 
         const prefix = this.hash(properties.id);
@@ -33,7 +30,7 @@ export class AddonIdProvider {
             attempts++;
 
             if (attempts > 100) {
-                throw new DiscoveryProvideIdError(DiscoveryProvideIdErrorReason.IdGenerationFailed);
+                throw new ProvideAddonIdError(ProvideAddonIdErrorReason.IdGenerationFailed);
             }
         } while (objective.hasParticipant(addonId));
 
