@@ -1,11 +1,11 @@
 import { world } from "@minecraft/server";
 import { AddonProperties } from "../../../types/AddonProperties";
 import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
-import { ProvideAddonIdError, ProvideAddonIdErrorReason } from "./idProvider/errors";
+import { ProvideKairoIdError, ProvideKairoIdErrorReason } from "./idProvider/errors";
 import { DiscoveryQuery } from "./query/types";
 
 // kjs-router-ch 0104
-export class AddonIdProvider {
+export class KairoIdProvider {
     private CHARSET =
         "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "?_-().";
     private PREFIX_LENGTH = 8;
@@ -17,7 +17,7 @@ export class AddonIdProvider {
         const objective = world.scoreboard.getObjective(query.scoreboard.objective.id);
 
         if (!objective) {
-            throw new ProvideAddonIdError(ProvideAddonIdErrorReason.ObjectiveNotFound);
+            throw new ProvideKairoIdError(ProvideKairoIdErrorReason.ObjectiveNotFound);
         }
 
         const prefix = this.hash(properties.id);
@@ -30,7 +30,7 @@ export class AddonIdProvider {
             attempts++;
 
             if (attempts > 100) {
-                throw new ProvideAddonIdError(ProvideAddonIdErrorReason.IdGenerationFailed);
+                throw new ProvideKairoIdError(ProvideKairoIdErrorReason.IdGenerationFailed);
             }
         } while (objective.hasParticipant(addonId));
 

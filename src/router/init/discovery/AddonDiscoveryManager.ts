@@ -1,15 +1,15 @@
 import { KairoInitializer } from "../KairoInitializer";
-import { AddonIdProvider } from "./AddonIdProvider";
 import { DiscoveryListener } from "./DiscoveryListener";
 import { DiscoveryQueryParser } from "./DiscoveryQueryParser";
 import { DiscoveryResponder } from "./DiscoveryResponder";
+import { KairoIdProvider } from "./KairoIdProvider";
 
 // kjs-router-ch 0100
 export class AddonDiscoveryManager {
     private readonly listener = new DiscoveryListener(this);
     private readonly queryParser = new DiscoveryQueryParser(this);
     private readonly responder = new DiscoveryResponder(this);
-    private readonly idProvider = new AddonIdProvider(this);
+    private readonly idProvider = new KairoIdProvider(this);
 
     public constructor(private readonly kairoInitializer: KairoInitializer) {}
 

@@ -18,6 +18,15 @@ export class AddonRegistrationManager {
 
     public handleRegistrationRequest(message: string): void {
         const request = this.parser.parse(message);
+        const addonId = this.kairoInitializer.getAddonId();
+
+        if (!request.approvals.includes(addonId)) {
+            return;
+        }
+
+        const properties = this.kairoInitializer.getAddonProperties();
+        const addonData = this.dataBuilder.build(addonId, properties);
+        this.responder.respond(addonData);
     }
 
     public handleRegistrationResult(message: string): void {}

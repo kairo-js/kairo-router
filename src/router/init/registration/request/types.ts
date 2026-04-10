@@ -1,4 +1,5 @@
 export interface RegistrationRequest {
-    readonly approvalAddonIds: string[];
+    readonly approvals: string[];
+    readonly rejects: string[];
     readonly timestamp: number;
 }
