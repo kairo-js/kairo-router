@@ -1,6 +1,7 @@
 import { system } from "@minecraft/server";
 import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
 import { DiscoveryEventId } from "./constants/DiscoveryEvent";
+import { DiscoveryResponseError, DiscoveryResponseErrorReason } from "./response/errors";
 import { stringifyDiscoveryResponse } from "./response/stringify";
 import { DiscoveryResponse } from "./response/types";
 
@@ -14,6 +15,19 @@ export class DiscoveryResponder {
             timestamp: system.currentTick,
         };
 
-        system.sendScriptEvent(DiscoveryEventId.Response, stringifyDiscoveryResponse(response));
+        if (!validateDiscoveryResponse(response)) {
+            throw new DiscoveryResponseError(DiscoveryResponseErrorReason.InvalidStructure);
+        }
+
+        let responseStr: string;
+        try {
+            responseStr = stringifyDiscoveryResponse(response);
+        } catch (e) {
+            throw new DiscoveryResponseError(DiscoveryResponseErrorReason.StringifyFailed, {
+                cause: e,
+            });
+        }
+
+        system.sendScriptEvent(DiscoveryEventId.Response, responseStr);
     }
 }

@@ -1,11 +1,10 @@
-import { RawMessage } from "@minecraft/server";
 import { SemVer, SupportedTag } from "../../../../types/AddonProperties";
 
 export interface AddonData {
     kairoId: string;
     addonId: string;
-    name: RawMessage;
-    description: RawMessage;
+    name: string;
+    description: string;
     version: SemVer;
     metadata: {
         authors: string[];

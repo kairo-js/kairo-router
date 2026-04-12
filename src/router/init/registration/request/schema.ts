@@ -4,7 +4,14 @@ import { RegistrationRequest } from "./types";
 export const registrationRequestSchema: JSONSchemaType<RegistrationRequest> = {
     type: "object",
     properties: {
-        approvalAddonIds: {
+        approvals: {
+            type: "array",
+            items: {
+                type: "string",
+            },
+            minItems: 0,
+        },
+        rejects: {
             type: "array",
             items: {
                 type: "string",
@@ -15,6 +22,6 @@ export const registrationRequestSchema: JSONSchemaType<RegistrationRequest> = {
             type: "number",
         },
     },
-    required: ["approvalAddonIds", "timestamp"],
+    required: ["approvals", "rejects", "timestamp"],
     additionalProperties: false,
 };

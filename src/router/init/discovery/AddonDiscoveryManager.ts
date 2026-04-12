@@ -19,12 +19,12 @@ export class AddonDiscoveryManager {
 
     public handleRegistrationQuery(message: string) {
         const query = this.queryParser.parse(message);
-        const addonId = this.idProvider.provideId(
+        const kairoId = this.idProvider.provideId(
             this.kairoInitializer.getAddonProperties(),
             query,
         );
 
-        this.kairoInitializer.setAddonId(addonId);
-        this.responder.respond(addonId);
+        this.kairoInitializer.setKairoId(kairoId);
+        this.responder.respond(kairoId);
     }
 }

@@ -1,3 +1,4 @@
+import { KairoRouterInitError, KairoRouterInitErrorReason } from "../errors";
 import { KairoInitializer } from "../KairoInitializer";
 import { RegistrationDataBuilder } from "./RegistrationDataBuilder";
 import { RegistrationListener } from "./RegistrationListener";
@@ -18,14 +19,17 @@ export class AddonRegistrationManager {
 
     public handleRegistrationRequest(message: string): void {
         const request = this.parser.parse(message);
-        const addonId = this.kairoInitializer.getAddonId();
+        const kairoId = this.kairoInitializer.getKairoId();
 
-        if (!request.approvals.includes(addonId)) {
-            return;
+        if (request.rejects.includes(kairoId)) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.RegistrationRejected);
+        }
+        if (!request.approvals.includes(kairoId)) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.RegistrationRequestNotFound);
         }
 
         const properties = this.kairoInitializer.getAddonProperties();
-        const addonData = this.dataBuilder.build(addonId, properties);
+        const addonData = this.dataBuilder.build(kairoId, properties);
         this.responder.respond(addonData);
     }
 
