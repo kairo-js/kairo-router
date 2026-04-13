@@ -1,21 +1,23 @@
 import { system } from "@minecraft/server";
 import { TimestampValidator } from "../../../utils/TimestampValidator";
-import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
+import { toError } from "../../../utils/toError";
 import { DiscoveryQueryParseError, DiscoveryQueryParseErrorReason } from "./query/errors";
-import type { DiscoveryQuery } from "./query/types";
+import { DiscoveryQuery } from "./query/schema";
 import { validateDiscoveryQuery } from "./query/validate";
 
 // kjs-router-ch 0102
 export class DiscoveryQueryParser {
     private readonly TIMEOUT_TICKS = 10;
 
-    public constructor(manager: AddonDiscoveryManager) {}
+    public constructor() {}
 
     public parse(message: string): DiscoveryQuery {
         const parsed = this.parseJson(message);
 
         if (!validateDiscoveryQuery(parsed)) {
-            throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.InvalidStructure);
+            throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.InvalidStructure, {
+                cause: toError(validateDiscoveryQuery.errors),
+            });
         }
 
         const query = parsed;

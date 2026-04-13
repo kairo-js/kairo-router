@@ -1,8 +1,8 @@
 export class ProvideKairoIdError extends Error {
     public readonly reason: ProvideKairoIdErrorReason;
 
-    constructor(reason: ProvideKairoIdErrorReason) {
-        super(DEFAULT_MESSAGES[reason]);
+    constructor(reason: ProvideKairoIdErrorReason, options: { cause?: Error } = {}) {
+        super(DEFAULT_MESSAGES[reason], { cause: options.cause });
 
         this.name = "ProvideKairoIdError";
         this.reason = reason;

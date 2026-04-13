@@ -3,14 +3,10 @@ export class DiscoveryResponseError extends Error {
     public readonly cause?: Error;
 
     constructor(reason: DiscoveryResponseErrorReason, options: { cause?: Error }) {
-        super(
-            DEFAULT_MESSAGES[reason] +
-                (options.cause ? `\nOriginal error: ${options.cause.message}` : ""),
-        );
+        super(DEFAULT_MESSAGES[reason], { cause: options.cause });
 
         this.name = "DiscoveryResponseError";
         this.reason = reason;
-        this.cause = options.cause;
     }
 }
 

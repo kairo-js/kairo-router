@@ -1,8 +1,8 @@
 export class RegistrationResponseError extends Error {
     public readonly reason: RegistrationResponseErrorReason;
 
-    constructor(reason: RegistrationResponseErrorReason) {
-        super(DEFAULT_MESSAGES[reason]);
+    constructor(reason: RegistrationResponseErrorReason, options: { cause?: Error } = {}) {
+        super(DEFAULT_MESSAGES[reason], { cause: options.cause });
 
         this.name = "RegistrationResponseError";
         this.reason = reason;

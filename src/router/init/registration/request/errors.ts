@@ -1,8 +1,8 @@
 export class RegistrationRequestParseError extends Error {
     public readonly reason: RegistrationRequestParseErrorReason;
 
-    constructor(reason: RegistrationRequestParseErrorReason) {
-        super(DEFAULT_MESSAGES[reason]);
+    constructor(reason: RegistrationRequestParseErrorReason, options: { cause?: Error } = {}) {
+        super(DEFAULT_MESSAGES[reason], { cause: options.cause });
 
         this.name = "RegistrationRequestParseError";
         this.reason = reason;

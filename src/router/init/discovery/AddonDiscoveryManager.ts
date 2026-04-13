@@ -1,30 +1,35 @@
-import { KairoInitializer } from "../KairoInitializer";
-import { DiscoveryListener } from "./DiscoveryListener";
+import { Disposable } from "../../../types/disposable";
+import { KairoContext } from "../../KairoContext";
 import { DiscoveryQueryParser } from "./DiscoveryQueryParser";
 import { DiscoveryResponder } from "./DiscoveryResponder";
 import { KairoIdProvider } from "./KairoIdProvider";
 
 // kjs-router-ch 0100
-export class AddonDiscoveryManager {
-    private readonly listener = new DiscoveryListener(this);
-    private readonly queryParser = new DiscoveryQueryParser(this);
-    private readonly responder = new DiscoveryResponder(this);
-    private readonly idProvider = new KairoIdProvider(this);
+export class AddonDiscoveryManager implements Disposable {
+    private context?: KairoContext;
 
-    public constructor(private readonly kairoInitializer: KairoInitializer) {}
+    constructor(
+        private readonly queryParser = new DiscoveryQueryParser(),
+        private readonly responder = new DiscoveryResponder(),
+        private readonly idProvider = new KairoIdProvider(),
+    ) {}
 
-    public setup(): void {
-        this.listener.setup();
+    setContext(context: KairoContext): void {
+        this.context = context;
     }
 
-    public handleRegistrationQuery(message: string) {
-        const query = this.queryParser.parse(message);
-        const kairoId = this.idProvider.provideId(
-            this.kairoInitializer.getAddonProperties(),
-            query,
-        );
+    handleRegistrationQuery(message: string): void {
+        if (!this.context) {
+            throw new Error("AddonDiscoveryManager: Context not set.");
+        }
 
-        this.kairoInitializer.setKairoId(kairoId);
+        const query = this.queryParser.parse(message);
+        const kairoId = this.idProvider.provideId(this.context.addonProperties, query);
+        this.context.kairoId = kairoId;
         this.responder.respond(kairoId);
+    }
+
+    dispose(): void {
+        this.context = undefined;
     }
 }

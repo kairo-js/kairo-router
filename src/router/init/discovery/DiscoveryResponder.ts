@@ -1,33 +1,28 @@
 import { system } from "@minecraft/server";
-import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
+import { toError } from "../../../utils/toError";
 import { DiscoveryEventId } from "./constants/DiscoveryEvent";
 import { DiscoveryResponseError, DiscoveryResponseErrorReason } from "./response/errors";
+import { DiscoveryResponse } from "./response/schema";
 import { stringifyDiscoveryResponse } from "./response/stringify";
-import { DiscoveryResponse } from "./response/types";
 
 // kjs-router-ch 0103
 export class DiscoveryResponder {
-    public constructor(manager: AddonDiscoveryManager) {}
+    public constructor() {}
 
-    public respond(addonId: string): void {
+    public respond(kairoId: string): void {
         const response: DiscoveryResponse = {
-            addonId,
+            kairoId,
             timestamp: system.currentTick,
         };
 
-        if (!validateDiscoveryResponse(response)) {
-            throw new DiscoveryResponseError(DiscoveryResponseErrorReason.InvalidStructure);
-        }
-
-        let responseStr: string;
         try {
-            responseStr = stringifyDiscoveryResponse(response);
-        } catch (e) {
+            const responseStr = stringifyDiscoveryResponse(response);
+
+            system.sendScriptEvent(DiscoveryEventId.Response, responseStr);
+        } catch (e: unknown) {
             throw new DiscoveryResponseError(DiscoveryResponseErrorReason.StringifyFailed, {
-                cause: e,
+                cause: toError(e),
             });
         }
-
-        system.sendScriptEvent(DiscoveryEventId.Response, responseStr);
     }
 }

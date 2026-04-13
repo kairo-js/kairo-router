@@ -1,7 +1,7 @@
 export class KairoRouterInitError extends Error {
     public readonly reason: KairoRouterInitErrorReason;
-    constructor(reason: KairoRouterInitErrorReason) {
-        super(DEFAULT_MESSAGES[reason]);
+    constructor(reason: KairoRouterInitErrorReason, options: { cause?: Error } = {}) {
+        super(DEFAULT_MESSAGES[reason], { cause: options.cause });
 
         this.name = "KairoRouterInitError";
         this.reason = reason;

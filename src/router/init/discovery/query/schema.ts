@@ -1,28 +1,18 @@
-import { JSONSchemaType } from "ajv";
-import { DiscoveryQuery } from "./types";
+import { Static, Type } from "@sinclair/typebox";
 
-export const discoveryQuerySchema: JSONSchemaType<DiscoveryQuery> = {
-    type: "object",
-    required: ["timestamp", "scoreboard"],
-    properties: {
-        timestamp: { type: "number" },
-        scoreboard: {
-            type: "object",
-            required: ["objective"],
-            properties: {
-                objective: {
-                    type: "object",
-                    required: ["id", "displayName"],
-                    properties: {
-                        id: { type: "string" },
-                        displayName: {
-                            type: "string",
-                            const: "kairo:id_checker",
-                        },
-                    },
-                },
-            },
-        },
+export const DiscoveryQuerySchema = Type.Object(
+    {
+        timestamp: Type.Number(),
+        scoreboard: Type.Object({
+            objective: Type.Object({
+                id: Type.String(),
+                displayName: Type.Literal("kairo:id_checker"),
+            }),
+        }),
     },
-    additionalProperties: false,
-};
+    {
+        additionalProperties: false,
+    },
+);
+
+export type DiscoveryQuery = Static<typeof DiscoveryQuerySchema>;

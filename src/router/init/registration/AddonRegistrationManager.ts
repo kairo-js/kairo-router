@@ -1,37 +1,50 @@
+import { KairoRegistry } from "../../../types/KairoRegistry";
+import { KairoContext } from "../../KairoContext";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "../errors";
-import { KairoInitializer } from "../KairoInitializer";
-import { RegistrationDataBuilder } from "./RegistrationDataBuilder";
-import { RegistrationListener } from "./RegistrationListener";
+import { KairoRegistryBuilder } from "./KairoRegistryBuilder";
 import { RegistrationRequestParser } from "./RegistrationRequestParser";
 import { RegistrationResponder } from "./RegistrationResponder";
 
 // kjs-router-ch 0200
 export class AddonRegistrationManager {
-    private readonly listener = new RegistrationListener(this);
-    private readonly parser = new RegistrationRequestParser(this);
-    private readonly dataBuilder = new RegistrationDataBuilder(this);
-    private readonly responder = new RegistrationResponder(this);
-    public constructor(private readonly kairoInitializer: KairoInitializer) {}
+    private context?: KairoContext;
+    public constructor(
+        private readonly parser = new RegistrationRequestParser(),
+        private readonly builder = new KairoRegistryBuilder(),
+        private readonly responder = new RegistrationResponder(),
+    ) {}
 
-    public setup(): void {
-        this.listener.setup();
+    setContext(context: KairoContext): void {
+        this.context = context;
     }
 
-    public handleRegistrationRequest(message: string): void {
+    handleRegistrationRequest(message: string): void {
+        if (!this.context) {
+            throw new Error("AddonRegistrationManager: Context not set.");
+        }
+
         const request = this.parser.parse(message);
-        const kairoId = this.kairoInitializer.getKairoId();
+        const kairoId = this.context.kairoId;
 
         if (request.rejects.includes(kairoId)) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.RegistrationRejected);
         }
+
         if (!request.approvals.includes(kairoId)) {
-            throw new KairoRouterInitError(KairoRouterInitErrorReason.RegistrationRequestNotFound);
+            return;
         }
 
-        const properties = this.kairoInitializer.getAddonProperties();
-        const addonData = this.dataBuilder.build(kairoId, properties);
-        this.responder.respond(addonData);
+        const properteis = this.context.addonProperties;
+        const registry: KairoRegistry = this.builder.build(kairoId, properteis);
+
+        this.context.kairoRegistry = registry;
+
+        this.responder.respond(registry);
     }
 
-    public handleRegistrationResult(message: string): void {}
+    handleRegistrationResult(message: string): void {}
+
+    dispose(): void {
+        this.context = undefined;
+    }
 }

@@ -1,8 +1,7 @@
 import { world } from "@minecraft/server";
 import { AddonProperties } from "../../../types/AddonProperties";
-import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
 import { ProvideKairoIdError, ProvideKairoIdErrorReason } from "./idProvider/errors";
-import { DiscoveryQuery } from "./query/types";
+import { DiscoveryQuery } from "./query/schema";
 
 // kjs-router-ch 0104
 export class KairoIdProvider {
@@ -11,7 +10,7 @@ export class KairoIdProvider {
     private PREFIX_LENGTH = 8;
     private ID_LENGTH = 16;
 
-    public constructor(manager: AddonDiscoveryManager) {}
+    public constructor() {}
 
     public provideId(properties: AddonProperties, query: DiscoveryQuery): string {
         const objective = world.scoreboard.getObjective(query.scoreboard.objective.id);

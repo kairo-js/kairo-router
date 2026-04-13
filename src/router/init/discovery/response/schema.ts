@@ -1,12 +1,11 @@
-import { JSONSchemaType } from "ajv";
-import { DiscoveryResponse } from "./types";
+import { Static, Type } from "@sinclair/typebox";
 
-export const discoveryResponseSchema: JSONSchemaType<DiscoveryResponse> = {
-    type: "object",
-    properties: {
-        addonId: { type: "string" },
-        timestamp: { type: "number" },
+export const DiscoveryResponseSchema = Type.Object(
+    {
+        kairoId: Type.String(),
+        timestamp: Type.Number(),
     },
-    required: ["addonId", "timestamp"],
-    additionalProperties: false,
-};
+    { additionalProperties: false },
+);
+
+export type DiscoveryResponse = Static<typeof DiscoveryResponseSchema>;

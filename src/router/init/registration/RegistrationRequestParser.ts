@@ -1,6 +1,5 @@
 import { system } from "@minecraft/server";
 import { TimestampValidator } from "../../../utils/TimestampValidator";
-import { AddonRegistrationManager } from "./AddonRegistrationManager";
 import {
     RegistrationRequestParseError,
     RegistrationRequestParseErrorReason,
@@ -10,7 +9,7 @@ import { validateRegistrationRequest } from "./request/validate";
 
 export class RegistrationRequestParser {
     private readonly TIMEOUT_TICKS = 10;
-    public constructor(manager: AddonRegistrationManager) {}
+    public constructor() {}
 
     public parse(message: string): RegistrationRequest {
         const parsed = this.parseJson(message);

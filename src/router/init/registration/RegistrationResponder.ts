@@ -1,5 +1,4 @@
 import { system } from "@minecraft/server";
-import { AddonRegistrationManager } from "./AddonRegistrationManager";
 import { RegistrationEventId } from "./constants/RegistrationEventId";
 import { AddonData } from "./dataBuilder/types";
 import { RegistrationResponseError, RegistrationResponseErrorReason } from "./response/errors";
@@ -8,7 +7,7 @@ import { RegistrationResponse } from "./response/types";
 
 // kjs-router-ch 0203
 export class RegistrationResponder {
-    public constructor(manager: AddonRegistrationManager) {}
+    public constructor() {}
 
     public respond(addonData: AddonData) {
         const response: RegistrationResponse = {
