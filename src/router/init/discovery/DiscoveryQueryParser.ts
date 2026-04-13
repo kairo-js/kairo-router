@@ -1,6 +1,6 @@
-import { system } from "@minecraft/server";
 import { TimestampValidator } from "../../../utils/TimestampValidator";
 import { toError } from "../../../utils/toError";
+import { KairoRuntime } from "../../KairoRuntime";
 import { DiscoveryQueryParseError, DiscoveryQueryParseErrorReason } from "./query/errors";
 import { DiscoveryQuery } from "./query/schema";
 import { validateDiscoveryQuery } from "./query/validate";
@@ -9,10 +9,11 @@ import { validateDiscoveryQuery } from "./query/validate";
 export class DiscoveryQueryParser {
     private readonly TIMEOUT_TICKS = 10;
 
-    public constructor() {}
+    public constructor(private readonly runtime: KairoRuntime) {}
 
     public parse(message: string): DiscoveryQuery {
         const parsed = this.parseJson(message);
+        const currentTick = this.runtime.currentTick;
 
         if (!validateDiscoveryQuery(parsed)) {
             throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.InvalidStructure, {
@@ -22,11 +23,11 @@ export class DiscoveryQueryParser {
 
         const query = parsed;
 
-        if (TimestampValidator.isExpired(system.currentTick, query.timestamp, this.TIMEOUT_TICKS)) {
+        if (TimestampValidator.isExpired(currentTick, query.timestamp, this.TIMEOUT_TICKS)) {
             throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.Timeout);
         }
 
-        if (TimestampValidator.isFuture(system.currentTick, query.timestamp)) {
+        if (TimestampValidator.isFuture(currentTick, query.timestamp)) {
             throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.FutureTimestamp);
         }
 

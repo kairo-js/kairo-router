@@ -1,5 +1,5 @@
-import { system } from "@minecraft/server";
 import { TimestampValidator } from "../../../utils/TimestampValidator";
+import { KairoRuntime } from "../../KairoRuntime";
 import {
     RegistrationRequestParseError,
     RegistrationRequestParseErrorReason,
@@ -9,10 +9,11 @@ import { validateRegistrationRequest } from "./request/validate";
 
 export class RegistrationRequestParser {
     private readonly TIMEOUT_TICKS = 10;
-    public constructor() {}
+    public constructor(private readonly runtime: KairoRuntime) {}
 
     public parse(message: string): RegistrationRequest {
         const parsed = this.parseJson(message);
+        const currentTick = this.runtime.currentTick;
 
         if (!validateRegistrationRequest(parsed)) {
             throw new RegistrationRequestParseError(
@@ -22,11 +23,11 @@ export class RegistrationRequestParser {
 
         const query = parsed;
 
-        if (TimestampValidator.isExpired(system.currentTick, query.timestamp, this.TIMEOUT_TICKS)) {
+        if (TimestampValidator.isExpired(currentTick, query.timestamp, this.TIMEOUT_TICKS)) {
             throw new RegistrationRequestParseError(RegistrationRequestParseErrorReason.Timeout);
         }
 
-        if (TimestampValidator.isFuture(system.currentTick, query.timestamp)) {
+        if (TimestampValidator.isFuture(currentTick, query.timestamp)) {
             throw new RegistrationRequestParseError(
                 RegistrationRequestParseErrorReason.FutureTimestamp,
             );

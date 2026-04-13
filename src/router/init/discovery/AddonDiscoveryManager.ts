@@ -1,5 +1,6 @@
 import { Disposable } from "../../../types/Disposable";
 import { KairoContext } from "../../KairoContext";
+import { KairoRuntime } from "../../KairoRuntime";
 import { DiscoveryQueryParser } from "./DiscoveryQueryParser";
 import { DiscoveryResponder } from "./DiscoveryResponder";
 import { KairoIdProvider } from "./KairoIdProvider";
@@ -7,15 +8,18 @@ import { KairoIdProvider } from "./KairoIdProvider";
 // kjs-router-ch 0100
 export class AddonDiscoveryManager implements Disposable {
     private context?: KairoContext;
+    private readonly queryParser: DiscoveryQueryParser;
+    private readonly idProvider: KairoIdProvider;
+    private readonly responder: DiscoveryResponder;
 
     constructor(
-        private readonly queryParser = new DiscoveryQueryParser(),
-        private readonly responder = new DiscoveryResponder(),
-        private readonly idProvider = new KairoIdProvider(),
-    ) {}
-
-    setContext(context: KairoContext): void {
+        context: KairoContext,
+        private readonly runtime: KairoRuntime,
+    ) {
         this.context = context;
+        this.queryParser = new DiscoveryQueryParser(this.runtime);
+        this.idProvider = new KairoIdProvider();
+        this.responder = new DiscoveryResponder(this.runtime);
     }
 
     handleRegistrationQuery(message: string): void {

@@ -1,5 +1,6 @@
 import { Disposable } from "../../types/Disposable";
 import { KairoContext } from "../KairoContext";
+import { KairoRuntime } from "../KairoRuntime";
 import { AddonDiscoveryManager } from "./discovery/AddonDiscoveryManager";
 import { KairoInitListener } from "./KairoInitListener";
 import { AddonRegistrationManager } from "./registration/AddonRegistrationManager";
@@ -8,14 +9,16 @@ import { KairoInitEventId } from "./types";
 // kjs-router-ch 0010
 export class KairoInitializer implements Disposable {
     private subscription?: Disposable;
+    private readonly discoveryManager: AddonDiscoveryManager;
+    private readonly registrationManager: AddonRegistrationManager;
+
     constructor(
         private readonly context: KairoContext,
-        private readonly discoveryManager = new AddonDiscoveryManager(),
-        private readonly registrationManager = new AddonRegistrationManager(),
+        private readonly runtime: KairoRuntime,
         private readonly initListener = new KairoInitListener(),
     ) {
-        this.discoveryManager.setContext(this.context);
-        this.registrationManager.setContext(this.context);
+        this.discoveryManager = new AddonDiscoveryManager(this.context, this.runtime);
+        this.registrationManager = new AddonRegistrationManager(this.context, this.runtime);
 
         this.initListener.setHandlers({
             [KairoInitEventId.DiscoveryQuery]: (msg) =>

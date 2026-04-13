@@ -1,5 +1,5 @@
 import { ScriptEventCommandMessageAfterEvent, ScriptEventSource, system } from "@minecraft/server";
-import { Disposable } from "../../types/disposable";
+import { Disposable } from "../../types/Disposable";
 import { KairoInitEventId } from "./types";
 
 type Handler = (message: string) => void;

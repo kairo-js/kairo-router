@@ -1,3 +1,4 @@
+import { MinecraftRuntime } from "../minecraft/MinecraftRuntime";
 import { AddonProperties } from "../types/AddonProperties";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
@@ -17,8 +18,9 @@ export class KairoRouter {
         }
 
         this._context = new KairoContext(properties);
+        const runtime = new MinecraftRuntime();
         // kjs-router-init-Fc (003): subscribe ScriptEvent to listen for kairo registration
-        this.initializer = new KairoInitializer(this._context);
+        this.initializer = new KairoInitializer(this._context, runtime);
         this.initializer.setup();
     }
 
