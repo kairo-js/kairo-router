@@ -1,17 +1,17 @@
 import { system } from "@minecraft/server";
-import { RegistrationEventId } from "./constants/RegistrationEventId";
-import { AddonData } from "./dataBuilder/types";
+import { KairoRegistry } from "../../../types/KairoRegistry";
+import { KairoInitEventId } from "../types";
 import { RegistrationResponseError, RegistrationResponseErrorReason } from "./response/errors";
+import { RegistrationResponse } from "./response/schema";
 import { stringifyRegistrationResponse } from "./response/stringify";
-import { RegistrationResponse } from "./response/types";
 
 // kjs-router-ch 0203
 export class RegistrationResponder {
     public constructor() {}
 
-    public respond(addonData: AddonData) {
+    public respond(kairoRegistry: KairoRegistry): void {
         const response: RegistrationResponse = {
-            addonData,
+            kairoRegistry,
             timestamp: system.currentTick,
         };
 
@@ -22,6 +22,6 @@ export class RegistrationResponder {
             throw new RegistrationResponseError(RegistrationResponseErrorReason.StringifyFailed);
         }
 
-        system.sendScriptEvent(RegistrationEventId.Response, responseStr);
+        system.sendScriptEvent(KairoInitEventId.RegistrationResponse, responseStr);
     }
 }

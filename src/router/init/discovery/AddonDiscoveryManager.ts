@@ -1,4 +1,4 @@
-import { Disposable } from "../../../types/disposable";
+import { Disposable } from "../../../types/Disposable";
 import { KairoContext } from "../../KairoContext";
 import { DiscoveryQueryParser } from "./DiscoveryQueryParser";
 import { DiscoveryResponder } from "./DiscoveryResponder";

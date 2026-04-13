@@ -1,70 +1,40 @@
-import { JSONSchemaType } from "ajv";
-import { RegistrationResponse } from "./types";
+import { Static, Type } from "@sinclair/typebox";
+import { SupportedTag } from "../../../../types/AddonProperties";
 
-export const registrationResponseSchema: JSONSchemaType<RegistrationResponse> = {
-    type: "object",
-    properties: {
-        addonData: {
-            type: "object",
-            properties: {
-                kairoId: { type: "string" },
-                addonId: { type: "string" },
-                name: { type: "string" },
-                description: { type: "string" },
-                version: {
-                    type: "object",
-                    properties: {
-                        major: { type: "number" },
-                        minor: { type: "number" },
-                        patch: { type: "number" },
-                        prerelease: { type: "string", nullable: true },
-                        build: { type: "string", nullable: true },
-                    },
-                    required: ["major", "minor", "patch"],
-                    additionalProperties: false,
-                },
-                metadata: {
-                    type: "object",
-                    properties: {
-                        authors: {
-                            type: "array",
-                            items: { type: "string" },
-                        },
-                        url: { type: "string", nullable: true },
-                        license: { type: "string", nullable: true },
-                    },
-                    required: ["authors"],
-                    additionalProperties: false,
-                },
-
-                requiredAddons: {
-                    type: "object",
-                    additionalProperties: { type: "string" },
-                } as any,
-
-                tags: {
-                    type: "array",
-                    items: {
-                        type: "string",
-                        enum: ["official", "approved", "stable", "experimental"],
-                    },
-                },
-            },
-            required: [
-                "kairoId",
-                "addonId",
-                "name",
-                "description",
-                "version",
-                "metadata",
-                "requiredAddons",
-                "tags",
-            ],
-            additionalProperties: false,
-        },
-
-        timestamp: { type: "number" },
+export const RegistrationResponseSchema = Type.Object(
+    {
+        kairoRegistry: Type.Object({
+            kairoId: Type.String(),
+            addonId: Type.String(),
+            name: Type.String(),
+            description: Type.String(),
+            version: Type.Object({
+                major: Type.Number(),
+                minor: Type.Number(),
+                patch: Type.Number(),
+                prerelease: Type.Optional(Type.String()),
+                build: Type.Optional(Type.String()),
+            }),
+            metadata: Type.Object({
+                authors: Type.Array(Type.String()),
+                url: Type.Optional(Type.String()),
+                license: Type.Optional(Type.String()),
+            }),
+            requiredAddons: Type.Record(Type.String(), Type.String()),
+            tags: Type.Array(
+                Type.Union([
+                    Type.Literal(SupportedTag.Official),
+                    Type.Literal(SupportedTag.Approved),
+                    Type.Literal(SupportedTag.Stable),
+                    Type.Literal(SupportedTag.Experimental),
+                ]),
+            ),
+        }),
+        timestamp: Type.Number(),
     },
-    required: ["addonData", "timestamp"],
-    additionalProperties: false,
-};
+    {
+        additionalProperties: false,
+    },
+);
+
+export type RegistrationResponse = Static<typeof RegistrationResponseSchema>;

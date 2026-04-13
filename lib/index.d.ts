@@ -55,11 +55,43 @@ declare enum SupportedTag {
     Experimental = "experimental"
 }
 
+interface KairoRegistry {
+    kairoId: string;
+    addonId: string;
+    name: string;
+    description: string;
+    version: SemVer;
+    metadata: {
+        authors: string[];
+        url?: string;
+        license?: string;
+    };
+    requiredAddons: {
+        [addonId: string]: string;
+    };
+    tags: SupportedTag[];
+}
+
+declare class KairoContext {
+    private readonly _properties;
+    private _kairoId?;
+    private _kairoRegistry?;
+    private constructor(_properties: AddonProperties);
+    get addonProperties(): AddonProperties;
+    get kairoId(): string;
+    set kairoId(value: string);
+    get kairoRegistry(): KairoRegistry;
+    set kairoRegistry(value: KairoRegistry);
+    isRegistered(): boolean;
+}
+
 declare class KairoRouter {
-    private isInitialized;
-    private readonly initializer;
+    private _context?;
+    private initializer?;
     private constructor();
     init(properties: AddonProperties): void;
+    get context(): KairoContext;
+    private completeInitialization;
 }
 
 declare const router: KairoRouter;

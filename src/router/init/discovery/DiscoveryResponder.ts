@@ -1,6 +1,6 @@
 import { system } from "@minecraft/server";
 import { toError } from "../../../utils/toError";
-import { DiscoveryEventId } from "./constants/DiscoveryEvent";
+import { KairoInitEventId } from "../types";
 import { DiscoveryResponseError, DiscoveryResponseErrorReason } from "./response/errors";
 import { DiscoveryResponse } from "./response/schema";
 import { stringifyDiscoveryResponse } from "./response/stringify";
@@ -18,7 +18,7 @@ export class DiscoveryResponder {
         try {
             const responseStr = stringifyDiscoveryResponse(response);
 
-            system.sendScriptEvent(DiscoveryEventId.Response, responseStr);
+            system.sendScriptEvent(KairoInitEventId.DiscoveryResponse, responseStr);
         } catch (e: unknown) {
             throw new DiscoveryResponseError(DiscoveryResponseErrorReason.StringifyFailed, {
                 cause: toError(e),

@@ -1,27 +1,14 @@
-import { JSONSchemaType } from "ajv";
-import { RegistrationRequest } from "./types";
+import { Static, Type } from "@sinclair/typebox";
 
-export const registrationRequestSchema: JSONSchemaType<RegistrationRequest> = {
-    type: "object",
-    properties: {
-        approvals: {
-            type: "array",
-            items: {
-                type: "string",
-            },
-            minItems: 0,
-        },
-        rejects: {
-            type: "array",
-            items: {
-                type: "string",
-            },
-            minItems: 0,
-        },
-        timestamp: {
-            type: "number",
-        },
+export const RegistrationRequestSchema = Type.Object(
+    {
+        approvals: Type.Array(Type.String()),
+        rejects: Type.Array(Type.String()),
+        timestamp: Type.Number(),
     },
-    required: ["approvals", "rejects", "timestamp"],
-    additionalProperties: false,
-};
+    {
+        additionalProperties: false,
+    },
+);
+
+export type RegistrationRequest = Static<typeof RegistrationRequestSchema>;

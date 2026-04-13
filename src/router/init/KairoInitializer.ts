@@ -1,4 +1,4 @@
-import { Disposable } from "../../types/disposable";
+import { Disposable } from "../../types/Disposable";
 import { KairoContext } from "../KairoContext";
 import { AddonDiscoveryManager } from "./discovery/AddonDiscoveryManager";
 import { KairoInitListener } from "./KairoInitListener";

@@ -1,5 +1,4 @@
 import { compile } from "../../../../utils/ajv-compile";
-import { registrationRequestSchema } from "./schema";
-import { RegistrationRequest } from "./types";
+import { RegistrationRequest, RegistrationRequestSchema } from "./schema";
 
-export const validateRegistrationRequest = compile<RegistrationRequest>(registrationRequestSchema);
+export const validateRegistrationRequest = compile<RegistrationRequest>(RegistrationRequestSchema);
