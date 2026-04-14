@@ -1,4 +1,4 @@
-import { KairoContext } from "../../KairoContext";
+import { AddonProperties } from "../../../types/AddonProperties";
 import { KairoRegistry } from "../../types/KairoRegistry";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "../errors";
 import { KairoRegistryBuilder } from "./KairoRegistryBuilder";
@@ -8,15 +8,17 @@ import { RegistrationResponder } from "./RegistrationResponder";
 // kjs-router-ch 0200
 export class AddonRegistrationManager {
     public constructor(
-        private readonly context: KairoContext,
         private readonly parser: RegistrationRequestParser,
         private readonly builder: KairoRegistryBuilder,
         private readonly responder: RegistrationResponder,
     ) {}
 
-    handleRegistrationRequest(message: string): void {
+    resolveRegistry(
+        message: string,
+        kairoId: string,
+        addonProperties: AddonProperties,
+    ): KairoRegistry | undefined {
         const request = this.parser.parse(message);
-        const kairoId = this.context.kairoId;
 
         if (request.rejects.includes(kairoId)) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.RegistrationRejected);
@@ -26,12 +28,8 @@ export class AddonRegistrationManager {
             return;
         }
 
-        const properties = this.context.addonProperties;
-        const registry: KairoRegistry = this.builder.build(kairoId, properties);
-
-        this.context.kairoRegistry = registry;
-
-        this.responder.respond(registry);
+        const registry: KairoRegistry = this.builder.build(kairoId, addonProperties);
+        return registry;
     }
 
     handleRegistrationResult(message: string): void {}

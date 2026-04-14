@@ -14,7 +14,7 @@ export class AddonDiscoveryManagerFactory {
 
     create(context: KairoContext): AddonDiscoveryManager {
         return new AddonDiscoveryManager(
-            context,
+            context.addonProperties,
             new DiscoveryQueryParser(this.runtime),
             new KairoIdProvider(this.idRegistryFactory),
             new DiscoveryResponder(this.runtime),

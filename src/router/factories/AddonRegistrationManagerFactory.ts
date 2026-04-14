@@ -2,15 +2,13 @@ import { AddonRegistrationManager } from "../init/registration/AddonRegistration
 import { KairoRegistryBuilder } from "../init/registration/KairoRegistryBuilder";
 import { RegistrationRequestParser } from "../init/registration/RegistrationRequestParser";
 import { RegistrationResponder } from "../init/registration/RegistrationResponder";
-import { KairoContext } from "../KairoContext";
 import { KairoRuntime } from "../types/KairoRuntime";
 
 export class AddonRegistrationManagerFactory {
     constructor(private readonly runtime: KairoRuntime) {}
 
-    create(context: KairoContext): AddonRegistrationManager {
+    create(): AddonRegistrationManager {
         return new AddonRegistrationManager(
-            context,
             new RegistrationRequestParser(this.runtime),
             new KairoRegistryBuilder(),
             new RegistrationResponder(this.runtime),

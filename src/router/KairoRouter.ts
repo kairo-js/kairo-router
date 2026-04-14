@@ -1,9 +1,9 @@
 import { AddonProperties } from "../types/AddonProperties";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
-import { KairoContext } from "./KairoContext";
+import { createKairoContext, KairoContext, KairoContextMutator } from "./KairoContext";
 
-type InitializerFactory = (context: KairoContext) => KairoInitializer;
+type InitializerFactory = (context: KairoContext, mutator: KairoContextMutator) => KairoInitializer;
 
 // kjs-router-ch 0001
 export class KairoRouter {
@@ -18,10 +18,11 @@ export class KairoRouter {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyInitialized);
         }
 
-        this._context = new KairoContext(properties);
+        const { context, mutator } = createKairoContext(properties);
+        this._context = context;
 
         // kjs-router-init-Fc (003): subscribe ScriptEvent to listen for kairo registration
-        this.initializer = this.createInitializer(this._context);
+        this.initializer = this.createInitializer(context, mutator);
         this.initializer.setup();
     }
 

@@ -1,23 +1,17 @@
 import { MinecraftRuntime } from "./minecraft/MinecraftRuntime";
 import { ScoreboardIdRegistryFactory } from "./minecraft/ScoreboardIdRegistryFactory";
-import { AddonDiscoveryManagerFactory } from "./router/factories/AddonDiscoveryManagerFactory";
-import { AddonRegistrationManagerFactory } from "./router/factories/AddonRegistrationManagerFactory";
-import { KairoInitializer } from "./router/init/KairoInitializer";
-import { KairoInitListener } from "./router/init/KairoInitListener";
-import { KairoContext } from "./router/KairoContext";
+import { KairoInitializerFactory } from "./router/factories/KairoInitializerFactory";
 import { KairoRouter } from "./router/KairoRouter";
 
 // kjs-router-init-Fc (001): create kairo router instance
-export const router = new KairoRouter((context: KairoContext) => {
-    const runtime = new MinecraftRuntime();
-    const idRegistryFactory = new ScoreboardIdRegistryFactory();
+const runtime = new MinecraftRuntime();
+const idRegistryFactory = new ScoreboardIdRegistryFactory();
 
-    const listener = new KairoInitListener(runtime);
-    const discovery = new AddonDiscoveryManagerFactory(runtime, idRegistryFactory).create(context);
-    const registration = new AddonRegistrationManagerFactory(runtime).create(context);
+const initializerFactory = new KairoInitializerFactory(runtime, idRegistryFactory);
 
-    return new KairoInitializer(listener, discovery, registration);
-});
+export const router = new KairoRouter((context, mutator) =>
+    initializerFactory.create(context, mutator),
+);
 
 export { KairoRouter } from "./router/KairoRouter";
 
