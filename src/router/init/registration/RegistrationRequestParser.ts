@@ -1,5 +1,5 @@
-import { KairoRuntime } from "../../../types/KairoRuntime";
 import { TimestampValidator } from "../../../utils/TimestampValidator";
+import { KairoRuntime } from "../../types/KairoRuntime";
 import {
     RegistrationRequestParseError,
     RegistrationRequestParseErrorReason,

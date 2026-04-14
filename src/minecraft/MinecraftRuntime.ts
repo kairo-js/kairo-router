@@ -1,6 +1,6 @@
 import { ScriptEventCommandMessageAfterEvent, ScriptEventSource, system } from "@minecraft/server";
-import { Disposable } from "../types/Disposable";
-import { KairoRuntime } from "../types/KairoRuntime";
+import { Disposable } from "../router/types/Disposable";
+import { KairoRuntime } from "../router/types/KairoRuntime";
 
 export class MinecraftRuntime implements KairoRuntime {
     currentTick(): number {

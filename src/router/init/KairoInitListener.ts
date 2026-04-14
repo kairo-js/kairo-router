@@ -1,5 +1,5 @@
-import { Disposable } from "../../types/Disposable";
-import { KairoRuntime } from "../../types/KairoRuntime";
+import { Disposable } from "../types/Disposable";
+import { KairoRuntime } from "../types/KairoRuntime";
 import { KairoInitEventId } from "./KairoInitEventId";
 
 type Handler = (message: string) => void;

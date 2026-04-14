@@ -1,5 +1,5 @@
-import { KairoRuntime } from "../../../types/KairoRuntime";
 import { toError } from "../../../utils/toError";
+import { KairoRuntime } from "../../types/KairoRuntime";
 import { KairoInitEventId } from "../KairoInitEventId";
 import { DiscoveryResponseError, DiscoveryResponseErrorReason } from "./response/errors";
 import { DiscoveryResponse } from "./response/schema";

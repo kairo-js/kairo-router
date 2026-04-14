@@ -1,5 +1,5 @@
-import { KairoRegistry } from "../../../types/KairoRegistry";
 import { KairoContext } from "../../KairoContext";
+import { KairoRegistry } from "../../types/KairoRegistry";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "../errors";
 import { KairoRegistryBuilder } from "./KairoRegistryBuilder";
 import { RegistrationRequestParser } from "./RegistrationRequestParser";
@@ -15,10 +15,6 @@ export class AddonRegistrationManager {
     ) {}
 
     handleRegistrationRequest(message: string): void {
-        if (!this.context) {
-            throw new Error("AddonRegistrationManager: Context not set.");
-        }
-
         const request = this.parser.parse(message);
         const kairoId = this.context.kairoId;
 

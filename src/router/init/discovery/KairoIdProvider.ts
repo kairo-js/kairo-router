@@ -1,5 +1,5 @@
 import { AddonProperties } from "../../../types/AddonProperties";
-import { IdRegistryFactory } from "../../../types/IdRegistryFactory";
+import { IdRegistryFactory } from "../../types/IdRegistryFactory";
 import { ProvideKairoIdError, ProvideKairoIdErrorReason } from "./idProvider/errors";
 import { DiscoveryQuery } from "./query/schema";
 

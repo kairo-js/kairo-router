@@ -1,6 +1,6 @@
-import { KairoRegistry } from "../../../types/KairoRegistry";
-import { KairoRuntime } from "../../../types/KairoRuntime";
 import { toError } from "../../../utils/toError";
+import { KairoRegistry } from "../../types/KairoRegistry";
+import { KairoRuntime } from "../../types/KairoRuntime";
 import { KairoInitEventId } from "../KairoInitEventId";
 import { RegistrationResponseError, RegistrationResponseErrorReason } from "./response/errors";
 import { RegistrationResponse } from "./response/schema";

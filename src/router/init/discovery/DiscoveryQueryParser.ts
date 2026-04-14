@@ -1,6 +1,6 @@
-import { KairoRuntime } from "../../../types/KairoRuntime";
 import { TimestampValidator } from "../../../utils/TimestampValidator";
 import { toError } from "../../../utils/toError";
+import { KairoRuntime } from "../../types/KairoRuntime";
 import { DiscoveryQueryParseError, DiscoveryQueryParseErrorReason } from "./query/errors";
 import { DiscoveryQuery } from "./query/schema";
 import { validateDiscoveryQuery } from "./query/validate";

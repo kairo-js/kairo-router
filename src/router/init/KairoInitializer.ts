@@ -1,4 +1,4 @@
-import { Disposable } from "../../types/Disposable";
+import { Disposable } from "../types/Disposable";
 import { AddonDiscoveryManager } from "./discovery/AddonDiscoveryManager";
 import { KairoInitEventId } from "./KairoInitEventId";
 import { KairoInitListener } from "./KairoInitListener";
@@ -12,16 +12,15 @@ export class KairoInitializer implements Disposable {
         private readonly initListener: KairoInitListener,
         private readonly discoveryManager: AddonDiscoveryManager,
         private readonly registrationManager: AddonRegistrationManager,
-    ) {
+    ) {}
+
+    setup(): void {
         this.initListener.setHandlers({
             [KairoInitEventId.DiscoveryQuery]: (msg) =>
                 this.discoveryManager.handleRegistrationQuery(msg),
             [KairoInitEventId.RegistrationRequest]: (msg) =>
                 this.registrationManager.handleRegistrationRequest(msg),
         });
-    }
-
-    setup(): void {
         this.subscription = this.initListener.setup();
     }
 

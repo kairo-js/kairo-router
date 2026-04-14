@@ -1,5 +1,5 @@
-import { Disposable } from "../../../types/Disposable";
 import { KairoContext } from "../../KairoContext";
+import { Disposable } from "../../types/Disposable";
 import { DiscoveryQueryParser } from "./DiscoveryQueryParser";
 import { DiscoveryResponder } from "./DiscoveryResponder";
 import { KairoIdProvider } from "./KairoIdProvider";
@@ -14,10 +14,6 @@ export class AddonDiscoveryManager implements Disposable {
     ) {}
 
     handleRegistrationQuery(message: string): void {
-        if (!this.context) {
-            throw new Error("AddonDiscoveryManager: Context not set.");
-        }
-
         const query = this.queryParser.parse(message);
         const kairoId = this.idProvider.provideId(this.context.addonProperties, query);
         this.context.kairoId = kairoId;
