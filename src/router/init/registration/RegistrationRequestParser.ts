@@ -1,4 +1,5 @@
 import { TimestampValidator } from "../../../utils/TimestampValidator";
+import { toError } from "../../../utils/toError";
 import {
     RegistrationRequestParseError,
     RegistrationRequestParseErrorReason,
@@ -16,6 +17,7 @@ export class RegistrationRequestParser {
         if (!validateRegistrationRequest(parsed)) {
             throw new RegistrationRequestParseError(
                 RegistrationRequestParseErrorReason.InvalidStructure,
+                { cause: toError(validateRegistrationRequest.errors) },
             );
         }
 
