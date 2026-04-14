@@ -1,12 +1,12 @@
-import { DiscoveryResponder } from "../init/discovery/DiscoveryResponder";
 import { KairoInitializer } from "../init/KairoInitializer";
 import { KairoInitListener } from "../init/KairoInitListener";
-import { RegistrationResponder } from "../init/registration/RegistrationResponder";
 import { KairoContext, KairoContextMutator } from "../KairoContext";
 import { IdRegistryFactory } from "../types/IdRegistryFactory";
 import { KairoRuntime } from "../types/KairoRuntime";
 import { AddonDiscoveryManagerFactory } from "./AddonDiscoveryManagerFactory";
 import { AddonRegistrationManagerFactory } from "./AddonRegistrationManagerFactory";
+import { DiscoveryResponderFactory } from "./DiscoveryResponderFactory";
+import { RegistrationResponderFactory } from "./RegistrationResponderFactory";
 
 export class KairoInitializerFactory {
     constructor(
@@ -21,10 +21,10 @@ export class KairoInitializerFactory {
             this.runtime,
             this.idRegistryFactory,
         ).create(context);
-        const discoveryResponder = new DiscoveryResponder(this.runtime);
+        const discoveryResponder = new DiscoveryResponderFactory(this.runtime).create();
 
         const registration = new AddonRegistrationManagerFactory(this.runtime).create();
-        const registrationResponder = new RegistrationResponder(this.runtime);
+        const registrationResponder = new RegistrationResponderFactory(this.runtime).create();
 
         return new KairoInitializer(
             context,
