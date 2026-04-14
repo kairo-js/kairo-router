@@ -117,12 +117,6 @@ declare class DiscoveryQueryParser {
     private parseJson;
 }
 
-declare class DiscoveryResponder {
-    private readonly runtime;
-    private constructor(runtime: KairoRuntime);
-    respond(kairoId: string): void;
-}
-
 interface IdRegistry {
     has(id: string): boolean;
     register(id: string): void;
@@ -147,11 +141,15 @@ declare class AddonDiscoveryManager implements Disposable {
     private readonly addonProperties;
     private readonly queryParser;
     private readonly idProvider;
-    private readonly responder;
-    private constructor(addonProperties: AddonProperties, queryParser: DiscoveryQueryParser, idProvider: KairoIdProvider, responder: DiscoveryResponder);
+    private constructor(addonProperties: AddonProperties, queryParser: DiscoveryQueryParser, idProvider: KairoIdProvider);
     resolveKairoId(message: string): string;
-    handleRegistrationQuery(message: string): string;
     dispose(): void;
+}
+
+declare class DiscoveryResponder {
+    private readonly runtime;
+    private constructor(runtime: KairoRuntime);
+    respond(kairoId: string): void;
 }
 
 declare enum KairoInitEventId {
@@ -192,20 +190,18 @@ declare class RegistrationRequestParser {
     private parseJson;
 }
 
+declare class AddonRegistrationManager {
+    private readonly parser;
+    private readonly builder;
+    private constructor(parser: RegistrationRequestParser, builder: KairoRegistryBuilder);
+    resolveRegistry(message: string, kairoId: string, addonProperties: AddonProperties): KairoRegistry | undefined;
+    dispose(): void;
+}
+
 declare class RegistrationResponder {
     private readonly runtime;
     private constructor(runtime: KairoRuntime);
     respond(kairoRegistry: KairoRegistry): void;
-}
-
-declare class AddonRegistrationManager {
-    private readonly parser;
-    private readonly builder;
-    private readonly responder;
-    private constructor(parser: RegistrationRequestParser, builder: KairoRegistryBuilder, responder: RegistrationResponder);
-    resolveRegistry(message: string, kairoId: string, addonProperties: AddonProperties): KairoRegistry | undefined;
-    handleRegistrationResult(message: string): void;
-    dispose(): void;
 }
 
 declare class KairoInitializer implements Disposable {

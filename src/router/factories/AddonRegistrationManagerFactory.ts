@@ -1,7 +1,6 @@
 import { AddonRegistrationManager } from "../init/registration/AddonRegistrationManager";
 import { KairoRegistryBuilder } from "../init/registration/KairoRegistryBuilder";
 import { RegistrationRequestParser } from "../init/registration/RegistrationRequestParser";
-import { RegistrationResponder } from "../init/registration/RegistrationResponder";
 import { KairoRuntime } from "../types/KairoRuntime";
 
 export class AddonRegistrationManagerFactory {
@@ -11,7 +10,6 @@ export class AddonRegistrationManagerFactory {
         return new AddonRegistrationManager(
             new RegistrationRequestParser(this.runtime),
             new KairoRegistryBuilder(),
-            new RegistrationResponder(this.runtime),
         );
     }
 }

@@ -1,6 +1,5 @@
 import { AddonDiscoveryManager } from "../init/discovery/AddonDiscoveryManager";
 import { DiscoveryQueryParser } from "../init/discovery/DiscoveryQueryParser";
-import { DiscoveryResponder } from "../init/discovery/DiscoveryResponder";
 import { KairoIdProvider } from "../init/discovery/KairoIdProvider";
 import { KairoContext } from "../KairoContext";
 import { IdRegistryFactory } from "../types/IdRegistryFactory";
@@ -17,7 +16,6 @@ export class AddonDiscoveryManagerFactory {
             context.addonProperties,
             new DiscoveryQueryParser(this.runtime),
             new KairoIdProvider(this.idRegistryFactory),
-            new DiscoveryResponder(this.runtime),
         );
     }
 }
