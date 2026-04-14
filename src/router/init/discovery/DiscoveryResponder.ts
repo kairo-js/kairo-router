@@ -9,7 +9,7 @@ import { stringifyDiscoveryResponse } from "./response/stringify";
 export class DiscoveryResponder {
     public constructor(private readonly runtime: KairoRuntime) {}
 
-    public respond(kairoId: string): void {
+    respond(kairoId: string): void {
         const response: DiscoveryResponse = {
             kairoId,
             timestamp: this.runtime.currentTick(),

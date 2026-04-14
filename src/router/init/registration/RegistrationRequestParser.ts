@@ -1,5 +1,4 @@
 import { TimestampValidator } from "../../../utils/TimestampValidator";
-import { KairoRuntime } from "../../types/KairoRuntime";
 import {
     RegistrationRequestParseError,
     RegistrationRequestParseErrorReason,
@@ -9,11 +8,10 @@ import { validateRegistrationRequest } from "./request/validate";
 
 export class RegistrationRequestParser {
     private readonly TIMEOUT_TICKS = 10;
-    public constructor(private readonly runtime: KairoRuntime) {}
+    constructor() {}
 
-    public parse(message: string): RegistrationRequest {
+    parse(message: string, currentTick: number): RegistrationRequest {
         const parsed = this.parseJson(message);
-        const currentTick = this.runtime.currentTick();
 
         if (!validateRegistrationRequest(parsed)) {
             throw new RegistrationRequestParseError(

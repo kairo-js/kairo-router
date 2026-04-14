@@ -2,7 +2,7 @@ import { AddonProperties } from "../../../types/AddonProperties";
 import { KairoRegistry } from "../../types/KairoRegistry";
 
 export class KairoRegistryBuilder {
-    public build(kairoId: string, props: AddonProperties): KairoRegistry {
+    build(kairoId: string, props: AddonProperties): KairoRegistry {
         return {
             kairoId: kairoId,
             addonId: props.id,

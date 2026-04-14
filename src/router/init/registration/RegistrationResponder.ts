@@ -8,9 +8,9 @@ import { stringifyRegistrationResponse } from "./response/stringify";
 
 // kjs-router-ch 0203
 export class RegistrationResponder {
-    public constructor(private readonly runtime: KairoRuntime) {}
+    constructor(private readonly runtime: KairoRuntime) {}
 
-    public respond(kairoRegistry: KairoRegistry): void {
+    respond(kairoRegistry: KairoRegistry): void {
         const response: RegistrationResponse = {
             kairoRegistry,
             timestamp: this.runtime.currentTick(),

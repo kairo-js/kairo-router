@@ -10,9 +10,9 @@ export class KairoIdProvider {
     private PREFIX_LENGTH = 8;
     private ID_LENGTH = 16;
 
-    public constructor(private readonly idRegistryFactory: IdRegistryFactory) {}
+    constructor(private readonly idRegistryFactory: IdRegistryFactory) {}
 
-    public provideId(properties: AddonProperties, query: DiscoveryQuery): string {
+    provideId(properties: AddonProperties, query: DiscoveryQuery): string {
         const registry = this.idRegistryFactory.create(query.idNamespace);
 
         const prefix = this.hash(properties.id);

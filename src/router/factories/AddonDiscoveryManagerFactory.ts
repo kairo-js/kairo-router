@@ -3,18 +3,14 @@ import { DiscoveryQueryParser } from "../init/discovery/DiscoveryQueryParser";
 import { KairoIdProvider } from "../init/discovery/KairoIdProvider";
 import { KairoContext } from "../KairoContext";
 import { IdRegistryFactory } from "../types/IdRegistryFactory";
-import { KairoRuntime } from "../types/KairoRuntime";
 
 export class AddonDiscoveryManagerFactory {
-    constructor(
-        private readonly runtime: KairoRuntime,
-        private readonly idRegistryFactory: IdRegistryFactory,
-    ) {}
+    constructor(private readonly idRegistryFactory: IdRegistryFactory) {}
 
     create(context: KairoContext): AddonDiscoveryManager {
         return new AddonDiscoveryManager(
             context.addonProperties,
-            new DiscoveryQueryParser(this.runtime),
+            new DiscoveryQueryParser(),
             new KairoIdProvider(this.idRegistryFactory),
         );
     }

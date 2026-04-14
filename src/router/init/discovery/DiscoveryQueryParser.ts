@@ -1,6 +1,5 @@
 import { TimestampValidator } from "../../../utils/TimestampValidator";
 import { toError } from "../../../utils/toError";
-import { KairoRuntime } from "../../types/KairoRuntime";
 import { DiscoveryQueryParseError, DiscoveryQueryParseErrorReason } from "./query/errors";
 import { DiscoveryQuery } from "./query/schema";
 import { validateDiscoveryQuery } from "./query/validate";
@@ -9,9 +8,9 @@ import { validateDiscoveryQuery } from "./query/validate";
 export class DiscoveryQueryParser {
     private readonly TIMEOUT_TICKS = 10;
 
-    public constructor(private readonly runtime: KairoRuntime) {}
+    constructor() {}
 
-    public parse(message: string): DiscoveryQuery {
+    parse(message: string, currentTick: number): DiscoveryQuery {
         const parsed = this.parseJson(message);
 
         if (!validateDiscoveryQuery(parsed)) {
@@ -21,8 +20,6 @@ export class DiscoveryQueryParser {
         }
 
         const query = parsed;
-
-        const currentTick = this.runtime.currentTick();
 
         if (TimestampValidator.isExpired(currentTick, query.timestamp, this.TIMEOUT_TICKS)) {
             throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.Timeout);
