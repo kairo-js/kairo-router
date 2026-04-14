@@ -144,12 +144,14 @@ interface IdRegistryFactory {
     create(objectiveId: string): IdRegistry;
 }
 
+type RandomSource = () => number;
 declare class KairoIdProvider {
     private readonly idRegistryFactory;
+    private readonly random;
     private CHARSET;
     private PREFIX_LENGTH;
     private ID_LENGTH;
-    private constructor(idRegistryFactory: IdRegistryFactory);
+    private constructor(idRegistryFactory: IdRegistryFactory, random?: RandomSource);
     provideId(properties: AddonProperties, query: DiscoveryQuery): string;
     private generateId;
     private hash;

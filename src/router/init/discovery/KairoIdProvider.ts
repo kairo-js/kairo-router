@@ -4,13 +4,18 @@ import { ProvideKairoIdError, ProvideKairoIdErrorReason } from "./idProvider/err
 import { DiscoveryQuery } from "./query/schema";
 
 // kjs-router-ch 0104
+type RandomSource = () => number;
+
 export class KairoIdProvider {
     private CHARSET =
         "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "?_-().";
     private PREFIX_LENGTH = 8;
     private ID_LENGTH = 16;
 
-    constructor(private readonly idRegistryFactory: IdRegistryFactory) {}
+    constructor(
+        private readonly idRegistryFactory: IdRegistryFactory,
+        private readonly random: RandomSource = Math.random,
+    ) {}
 
     provideId(properties: AddonProperties, query: DiscoveryQuery): string {
         const registry = this.idRegistryFactory.create(query.idNamespace);
@@ -39,7 +44,7 @@ export class KairoIdProvider {
         let result = "";
 
         for (let i = 0; i < length; i++) {
-            result += chars[(Math.random() * chars.length) | 0];
+            result += chars[(this.random() * chars.length) | 0];
         }
 
         return result;

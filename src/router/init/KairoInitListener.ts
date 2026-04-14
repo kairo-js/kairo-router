@@ -4,6 +4,8 @@ import { KairoInitEventId } from "./KairoInitEventId";
 
 type Handler = (message: string) => void;
 
+const KAIRO_INIT_EVENT_ID_SET = new Set<string>(Object.values(KairoInitEventId));
+
 export class KairoInitListener {
     private handlers: Partial<Record<KairoInitEventId, Handler>> = {};
     constructor(private readonly runtime: KairoRuntime) {}
@@ -23,6 +25,6 @@ export class KairoInitListener {
     };
 
     private isKairoInitEventId(id: string): id is KairoInitEventId {
-        return Object.values(KairoInitEventId).includes(id as any);
+        return KAIRO_INIT_EVENT_ID_SET.has(id);
     }
 }
