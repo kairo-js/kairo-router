@@ -18,7 +18,7 @@ export class AddonDiscoveryManager implements Disposable {
     ) {
         this.context = context;
         this.queryParser = new DiscoveryQueryParser(this.runtime);
-        this.idProvider = new KairoIdProvider();
+        this.idProvider = new KairoIdProvider(this.runtime);
         this.responder = new DiscoveryResponder(this.runtime);
     }
 

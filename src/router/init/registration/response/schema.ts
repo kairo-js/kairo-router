@@ -1,5 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
-import { SupportedTag } from "../../../../types/AddonProperties";
+import { SupportedTag } from "../../../../types/tags";
+
+const tagValues = Object.values(SupportedTag);
 
 export const RegistrationResponseSchema = Type.Object(
     {
@@ -21,14 +23,7 @@ export const RegistrationResponseSchema = Type.Object(
                 license: Type.Optional(Type.String()),
             }),
             requiredAddons: Type.Record(Type.String(), Type.String()),
-            tags: Type.Array(
-                Type.Union([
-                    Type.Literal(SupportedTag.Official),
-                    Type.Literal(SupportedTag.Approved),
-                    Type.Literal(SupportedTag.Stable),
-                    Type.Literal(SupportedTag.Experimental),
-                ]),
-            ),
+            tags: Type.Array(Type.Union(tagValues.map((tag) => Type.Literal(tag)))),
         }),
         timestamp: Type.Number(),
     },

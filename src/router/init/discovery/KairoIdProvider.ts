@@ -1,5 +1,5 @@
-import { world } from "@minecraft/server";
 import { AddonProperties } from "../../../types/AddonProperties";
+import { KairoRuntime } from "../../KairoRuntime";
 import { ProvideKairoIdError, ProvideKairoIdErrorReason } from "./idProvider/errors";
 import { DiscoveryQuery } from "./query/schema";
 
@@ -10,14 +10,10 @@ export class KairoIdProvider {
     private PREFIX_LENGTH = 8;
     private ID_LENGTH = 16;
 
-    public constructor() {}
+    public constructor(private readonly runtime: KairoRuntime) {}
 
     public provideId(properties: AddonProperties, query: DiscoveryQuery): string {
-        const objective = world.scoreboard.getObjective(query.scoreboard.objective.id);
-
-        if (!objective) {
-            throw new ProvideKairoIdError(ProvideKairoIdErrorReason.ObjectiveNotFound);
-        }
+        const registry = this.runtime.getIdRegistry(query.idNamespace);
 
         const prefix = this.hash(properties.id);
 
@@ -31,9 +27,9 @@ export class KairoIdProvider {
             if (attempts > 100) {
                 throw new ProvideKairoIdError(ProvideKairoIdErrorReason.IdGenerationFailed);
             }
-        } while (objective.hasParticipant(addonId));
+        } while (registry.has(addonId));
 
-        objective.setScore(addonId, 0);
+        registry.register(addonId);
 
         return addonId;
     }

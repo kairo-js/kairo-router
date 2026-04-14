@@ -1,3 +1,5 @@
+import { SupportedTag } from "./tags";
+
 export interface AddonProperties {
     readonly id: string;
     readonly metadata?: AddonMetadata;
@@ -54,11 +56,4 @@ export enum MinecraftModule {
 
 export interface RequiredAddons {
     readonly [addonId: string]: string;
-}
-
-export enum SupportedTag {
-    Official = "official",
-    Approved = "approved",
-    Stable = "stable",
-    Experimental = "experimental",
 }

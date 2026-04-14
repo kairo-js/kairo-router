@@ -1,5 +1,6 @@
 import { system } from "@minecraft/server";
-import { KairoRuntime } from "../router/KairoRuntime";
+import { IdRegistry, KairoRuntime } from "../router/KairoRuntime";
+import { ScoreboardIdRegistry } from "./ScoreboardIdRegistry";
 
 export class MinecraftRuntime implements KairoRuntime {
     get currentTick(): number {
@@ -7,5 +8,8 @@ export class MinecraftRuntime implements KairoRuntime {
     }
     send(id: string, message: string): void {
         system.sendScriptEvent(id, message);
+    }
+    getIdRegistry(objectiveId: string): IdRegistry {
+        return new ScoreboardIdRegistry(objectiveId);
     }
 }
