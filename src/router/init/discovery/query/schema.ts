@@ -2,7 +2,7 @@ import { Static, Type } from "@sinclair/typebox";
 
 export const DiscoveryQuerySchema = Type.Object(
     {
-        timestamp: Type.Number(),
+        timestamp: Type.Integer({ minimum: 0 }),
         idNamespace: Type.String(),
     },
     {
