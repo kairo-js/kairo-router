@@ -1,32 +1,25 @@
-import { ScriptEventCommandMessageAfterEvent, ScriptEventSource, system } from "@minecraft/server";
 import { Disposable } from "../../types/Disposable";
-import { KairoInitEventId } from "./types";
+import { KairoRuntime } from "../../types/KairoRuntime";
+import { KairoInitEventId } from "./KairoInitEventId";
 
 type Handler = (message: string) => void;
 
 export class KairoInitListener {
-    constructor(private handlers: Partial<Record<KairoInitEventId, Handler>> = {}) {}
+    private handlers: Partial<Record<KairoInitEventId, Handler>> = {};
+    constructor(private readonly runtime: KairoRuntime) {}
 
     setHandlers(handlers: Partial<Record<KairoInitEventId, Handler>>): void {
         this.handlers = handlers;
     }
 
     setup(): Disposable {
-        system.afterEvents.scriptEventReceive.subscribe(this.onEvent);
-
-        return {
-            dispose: () => {
-                system.afterEvents.scriptEventReceive.unsubscribe(this.onEvent);
-            },
-        };
+        return this.runtime.subscribe(this.onEvent);
     }
 
-    private onEvent = (ev: ScriptEventCommandMessageAfterEvent): void => {
-        if (ev.sourceType !== ScriptEventSource.Server) return;
+    private onEvent = (id: string, message: string) => {
+        if (!this.isKairoInitEventId(id)) return;
 
-        if (!this.isKairoInitEventId(ev.id)) return;
-
-        this.handlers[ev.id]?.(ev.message);
+        this.handlers[id]?.(message);
     };
 
     private isKairoInitEventId(id: string): id is KairoInitEventId {

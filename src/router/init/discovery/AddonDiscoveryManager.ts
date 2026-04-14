@@ -1,26 +1,17 @@
 import { Disposable } from "../../../types/Disposable";
 import { KairoContext } from "../../KairoContext";
-import { KairoRuntime } from "../../KairoRuntime";
 import { DiscoveryQueryParser } from "./DiscoveryQueryParser";
 import { DiscoveryResponder } from "./DiscoveryResponder";
 import { KairoIdProvider } from "./KairoIdProvider";
 
 // kjs-router-ch 0100
 export class AddonDiscoveryManager implements Disposable {
-    private context?: KairoContext;
-    private readonly queryParser: DiscoveryQueryParser;
-    private readonly idProvider: KairoIdProvider;
-    private readonly responder: DiscoveryResponder;
-
     constructor(
-        context: KairoContext,
-        private readonly runtime: KairoRuntime,
-    ) {
-        this.context = context;
-        this.queryParser = new DiscoveryQueryParser(this.runtime);
-        this.idProvider = new KairoIdProvider(this.runtime);
-        this.responder = new DiscoveryResponder(this.runtime);
-    }
+        private readonly context: KairoContext,
+        private readonly queryParser: DiscoveryQueryParser,
+        private readonly idProvider: KairoIdProvider,
+        private readonly responder: DiscoveryResponder,
+    ) {}
 
     handleRegistrationQuery(message: string): void {
         if (!this.context) {
@@ -33,7 +24,5 @@ export class AddonDiscoveryManager implements Disposable {
         this.responder.respond(kairoId);
     }
 
-    dispose(): void {
-        this.context = undefined;
-    }
+    dispose(): void {}
 }

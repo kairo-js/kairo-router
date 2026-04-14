@@ -14,4 +14,5 @@ export type {
     SemVer,
 } from "./types/AddonProperties";
 
-export { MinecraftModule, SupportedTag } from "./types/AddonProperties";
+export { MinecraftModule } from "./types/AddonProperties";
+export { SupportedTag } from "./types/tags";

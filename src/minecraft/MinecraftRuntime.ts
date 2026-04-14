@@ -1,15 +1,27 @@
-import { system } from "@minecraft/server";
-import { IdRegistry, KairoRuntime } from "../router/KairoRuntime";
-import { ScoreboardIdRegistry } from "./ScoreboardIdRegistry";
+import { ScriptEventCommandMessageAfterEvent, ScriptEventSource, system } from "@minecraft/server";
+import { Disposable } from "../types/Disposable";
+import { KairoRuntime } from "../types/KairoRuntime";
 
 export class MinecraftRuntime implements KairoRuntime {
-    get currentTick(): number {
+    currentTick(): number {
         return system.currentTick;
     }
     send(id: string, message: string): void {
         system.sendScriptEvent(id, message);
     }
-    getIdRegistry(objectiveId: string): IdRegistry {
-        return new ScoreboardIdRegistry(objectiveId);
+    subscribe(handler: (id: string, message: string) => void): Disposable {
+        const listener = (ev: ScriptEventCommandMessageAfterEvent) => {
+            if (ev.sourceType !== ScriptEventSource.Server) return;
+
+            handler(ev.id, ev.message);
+        };
+
+        system.afterEvents.scriptEventReceive.subscribe(listener);
+
+        return {
+            dispose: () => {
+                system.afterEvents.scriptEventReceive.unsubscribe(listener);
+            },
+        };
     }
 }

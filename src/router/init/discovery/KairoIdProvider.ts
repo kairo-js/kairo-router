@@ -1,5 +1,5 @@
 import { AddonProperties } from "../../../types/AddonProperties";
-import { KairoRuntime } from "../../KairoRuntime";
+import { IdRegistryFactory } from "../../../types/IdRegistryFactory";
 import { ProvideKairoIdError, ProvideKairoIdErrorReason } from "./idProvider/errors";
 import { DiscoveryQuery } from "./query/schema";
 
@@ -10,10 +10,10 @@ export class KairoIdProvider {
     private PREFIX_LENGTH = 8;
     private ID_LENGTH = 16;
 
-    public constructor(private readonly runtime: KairoRuntime) {}
+    public constructor(private readonly idRegistryFactory: IdRegistryFactory) {}
 
     public provideId(properties: AddonProperties, query: DiscoveryQuery): string {
-        const registry = this.runtime.getIdRegistry(query.idNamespace);
+        const registry = this.idRegistryFactory.create(query.idNamespace);
 
         const prefix = this.hash(properties.id);
 

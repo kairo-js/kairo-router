@@ -1,5 +1,5 @@
 import { world } from "@minecraft/server";
-import { IdRegistry } from "../router/KairoRuntime";
+import { IdRegistry } from "../types/IdRegistryFactory";
 
 export class ScoreboardIdRegistry implements IdRegistry {
     constructor(private readonly objectiveId: string) {}

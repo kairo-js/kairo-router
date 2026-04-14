@@ -1,3 +1,10 @@
+declare enum SupportedTag {
+    Official = "official",
+    Approved = "approved",
+    Stable = "stable",
+    Experimental = "experimental"
+}
+
 interface AddonProperties {
     readonly id: string;
     readonly metadata?: AddonMetadata;
@@ -47,12 +54,6 @@ declare enum MinecraftModule {
 }
 interface RequiredAddons {
     readonly [addonId: string]: string;
-}
-declare enum SupportedTag {
-    Official = "official",
-    Approved = "approved",
-    Stable = "stable",
-    Experimental = "experimental"
 }
 
 interface KairoRegistry {

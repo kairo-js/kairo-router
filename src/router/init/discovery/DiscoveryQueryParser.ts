@@ -1,6 +1,6 @@
+import { KairoRuntime } from "../../../types/KairoRuntime";
 import { TimestampValidator } from "../../../utils/TimestampValidator";
 import { toError } from "../../../utils/toError";
-import { KairoRuntime } from "../../KairoRuntime";
 import { DiscoveryQueryParseError, DiscoveryQueryParseErrorReason } from "./query/errors";
 import { DiscoveryQuery } from "./query/schema";
 import { validateDiscoveryQuery } from "./query/validate";
@@ -13,7 +13,6 @@ export class DiscoveryQueryParser {
 
     public parse(message: string): DiscoveryQuery {
         const parsed = this.parseJson(message);
-        const currentTick = this.runtime.currentTick;
 
         if (!validateDiscoveryQuery(parsed)) {
             throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.InvalidStructure, {
@@ -22,6 +21,8 @@ export class DiscoveryQueryParser {
         }
 
         const query = parsed;
+
+        const currentTick = this.runtime.currentTick();
 
         if (TimestampValidator.isExpired(currentTick, query.timestamp, this.TIMEOUT_TICKS)) {
             throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.Timeout);

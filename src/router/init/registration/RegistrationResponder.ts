@@ -1,7 +1,7 @@
 import { KairoRegistry } from "../../../types/KairoRegistry";
+import { KairoRuntime } from "../../../types/KairoRuntime";
 import { toError } from "../../../utils/toError";
-import { KairoRuntime } from "../../KairoRuntime";
-import { KairoInitEventId } from "../types";
+import { KairoInitEventId } from "../KairoInitEventId";
 import { RegistrationResponseError, RegistrationResponseErrorReason } from "./response/errors";
 import { RegistrationResponse } from "./response/schema";
 import { stringifyRegistrationResponse } from "./response/stringify";
@@ -13,7 +13,7 @@ export class RegistrationResponder {
     public respond(kairoRegistry: KairoRegistry): void {
         const response: RegistrationResponse = {
             kairoRegistry,
-            timestamp: this.runtime.currentTick,
+            timestamp: this.runtime.currentTick(),
         };
 
         try {

@@ -1,6 +1,5 @@
 import { KairoRegistry } from "../../../types/KairoRegistry";
 import { KairoContext } from "../../KairoContext";
-import { KairoRuntime } from "../../KairoRuntime";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "../errors";
 import { KairoRegistryBuilder } from "./KairoRegistryBuilder";
 import { RegistrationRequestParser } from "./RegistrationRequestParser";
@@ -8,19 +7,12 @@ import { RegistrationResponder } from "./RegistrationResponder";
 
 // kjs-router-ch 0200
 export class AddonRegistrationManager {
-    private context?: KairoContext;
-    private readonly parser: RegistrationRequestParser;
-    private readonly builder: KairoRegistryBuilder;
-    private readonly responder: RegistrationResponder;
     public constructor(
-        context: KairoContext,
-        private readonly runtime: KairoRuntime,
-    ) {
-        this.context = context;
-        this.parser = new RegistrationRequestParser(this.runtime);
-        this.builder = new KairoRegistryBuilder();
-        this.responder = new RegistrationResponder(this.runtime);
-    }
+        private readonly context: KairoContext,
+        private readonly parser: RegistrationRequestParser,
+        private readonly builder: KairoRegistryBuilder,
+        private readonly responder: RegistrationResponder,
+    ) {}
 
     handleRegistrationRequest(message: string): void {
         if (!this.context) {
@@ -38,8 +30,8 @@ export class AddonRegistrationManager {
             return;
         }
 
-        const properteis = this.context.addonProperties;
-        const registry: KairoRegistry = this.builder.build(kairoId, properteis);
+        const properties = this.context.addonProperties;
+        const registry: KairoRegistry = this.builder.build(kairoId, properties);
 
         this.context.kairoRegistry = registry;
 
@@ -48,7 +40,5 @@ export class AddonRegistrationManager {
 
     handleRegistrationResult(message: string): void {}
 
-    dispose(): void {
-        this.context = undefined;
-    }
+    dispose(): void {}
 }

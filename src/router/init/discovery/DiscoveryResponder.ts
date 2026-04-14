@@ -1,6 +1,6 @@
+import { KairoRuntime } from "../../../types/KairoRuntime";
 import { toError } from "../../../utils/toError";
-import { KairoRuntime } from "../../KairoRuntime";
-import { KairoInitEventId } from "../types";
+import { KairoInitEventId } from "../KairoInitEventId";
 import { DiscoveryResponseError, DiscoveryResponseErrorReason } from "./response/errors";
 import { DiscoveryResponse } from "./response/schema";
 import { stringifyDiscoveryResponse } from "./response/stringify";
@@ -12,7 +12,7 @@ export class DiscoveryResponder {
     public respond(kairoId: string): void {
         const response: DiscoveryResponse = {
             kairoId,
-            timestamp: this.runtime.currentTick,
+            timestamp: this.runtime.currentTick(),
         };
 
         try {
