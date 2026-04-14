@@ -103,6 +103,25 @@ interface KairoRuntime {
     subscribe(handler: (id: string, message: string) => void): Disposable;
 }
 
+declare enum KairoInitEventId {
+    DiscoveryQuery = "kairo:discovery_query",
+    DiscoveryResponse = "kairo:discovery_response",
+    RegistrationRequest = "kairo:registration_request",
+    RegistrationResponse = "kairo:registration_response",
+    RegistrationResult = "kairo:registration_result"
+}
+
+type Handler = (message: string) => void;
+declare class KairoInitListener {
+    private readonly runtime;
+    private handlers;
+    private constructor(runtime: KairoRuntime);
+    setHandlers(handlers: Partial<Record<KairoInitEventId, Handler>>): void;
+    setup(): Disposable;
+    private onEvent;
+    private isKairoInitEventId;
+}
+
 declare const DiscoveryQuerySchema: _sinclair_typebox.TObject<{
     timestamp: _sinclair_typebox.TNumber;
     idNamespace: _sinclair_typebox.TString;
@@ -150,33 +169,6 @@ declare class DiscoveryResponder {
     respond(kairoId: string): void;
 }
 
-declare class DiscoveryQueryHandler {
-    private readonly discoveryManager;
-    private readonly discoveryResponder;
-    private readonly runtime;
-    private constructor(discoveryManager: AddonDiscoveryManager, discoveryResponder: DiscoveryResponder, runtime: KairoRuntime);
-    handle: (msg: string) => string;
-}
-
-declare enum KairoInitEventId {
-    DiscoveryQuery = "kairo:discovery_query",
-    DiscoveryResponse = "kairo:discovery_response",
-    RegistrationRequest = "kairo:registration_request",
-    RegistrationResponse = "kairo:registration_response",
-    RegistrationResult = "kairo:registration_result"
-}
-
-type Handler = (message: string) => void;
-declare class KairoInitListener {
-    private readonly runtime;
-    private handlers;
-    private constructor(runtime: KairoRuntime);
-    setHandlers(handlers: Partial<Record<KairoInitEventId, Handler>>): void;
-    setup(): Disposable;
-    private onEvent;
-    private isKairoInitEventId;
-}
-
 declare class KairoRegistryBuilder {
     build(kairoId: string, props: AddonProperties): KairoRegistry;
 }
@@ -208,22 +200,17 @@ declare class RegistrationResponder {
     respond(kairoRegistry: KairoRegistry): void;
 }
 
-declare class RegistrationRequestHandler {
+declare class KairoInitializer implements Disposable {
+    private readonly initListener;
+    private readonly discoveryManager;
+    private readonly discoveryResponder;
     private readonly registrationManager;
     private readonly registrationResponder;
     private readonly context;
     private readonly runtime;
-    private constructor(registrationManager: AddonRegistrationManager, registrationResponder: RegistrationResponder, context: KairoContext, runtime: KairoRuntime);
-    handle: (msg: string) => KairoRegistry | undefined;
-}
-
-declare class KairoInitializer implements Disposable {
-    private readonly initListener;
-    private readonly discoveryHandler;
-    private readonly registrationHandler;
     private readonly contextMutator;
     private subscription?;
-    private constructor(initListener: KairoInitListener, discoveryHandler: DiscoveryQueryHandler, registrationHandler: RegistrationRequestHandler, contextMutator: KairoContextMutator);
+    private constructor(initListener: KairoInitListener, discoveryManager: AddonDiscoveryManager, discoveryResponder: DiscoveryResponder, registrationManager: AddonRegistrationManager, registrationResponder: RegistrationResponder, context: KairoContext, runtime: KairoRuntime, contextMutator: KairoContextMutator);
     setup(): void;
     dispose(): void;
     private handleDiscoveryQuery;
