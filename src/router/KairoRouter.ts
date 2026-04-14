@@ -3,14 +3,21 @@ import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors"
 import { KairoInitializer } from "./init/KairoInitializer";
 import { createKairoContext, KairoContext, KairoContextMutator } from "./KairoContext";
 
+/** @internal */
 type InitializerFactory = (context: KairoContext, mutator: KairoContextMutator) => KairoInitializer;
 
 // kjs-router-ch 0001
+/** @public */
 export class KairoRouter {
+    /** @internal */
     private _context?: KairoContext;
+    /** @internal */
     private initializer: KairoInitializer | null = null;
 
-    public constructor(private readonly createInitializer: InitializerFactory) {}
+    constructor(
+        /** @internal */
+        private readonly createInitializer: InitializerFactory,
+    ) {}
 
     // kjs-router-init-Fc (002): init hooks for addons to register with kairo
     public init(properties: AddonProperties): void {

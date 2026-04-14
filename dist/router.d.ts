@@ -32,8 +32,10 @@ export declare interface EngineVersion {
 
 /** @public */
 export declare class KairoContext {
-    /* Excluded from this release type: _state */
-    /* Excluded from this release type: _properties */
+    /** @internal */
+    private readonly _state;
+    /** @internal */
+    private readonly _properties;
     private constructor();
     get addonProperties(): AddonProperties;
     get kairoId(): string;
@@ -61,9 +63,12 @@ export declare interface KairoRegistry {
 
 /** @public */
 export declare class KairoRouter {
-    /* Excluded from this release type: createInitializer */
-    /* Excluded from this release type: _context */
-    /* Excluded from this release type: initializer */
+    /** @internal */
+    private readonly createInitializer;
+    /** @internal */
+    private _context?;
+    /** @internal */
+    private initializer;
     private constructor();
     init(properties: AddonProperties): void;
     get context(): KairoContext;

@@ -7,10 +7,10 @@ import { DiscoveryQuery } from "./query/schema";
 type RandomSource = () => number;
 
 export class KairoIdProvider {
-    private CHARSET =
+    private readonly CHARSET =
         "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "?_-().";
-    private PREFIX_LENGTH = 8;
-    private ID_LENGTH = 16;
+    private readonly PREFIX_LENGTH = 8;
+    private readonly ID_LENGTH = 16;
 
     constructor(
         private readonly idRegistryFactory: IdRegistryFactory,

@@ -1,5 +1,6 @@
 import { SupportedTag } from "./tags";
 
+/** @public */
 export interface AddonProperties {
     readonly id: string;
     readonly metadata?: AddonMetadata;
@@ -9,12 +10,14 @@ export interface AddonProperties {
     readonly tags?: SupportedTag[];
 }
 
+/** @public */
 export interface AddonMetadata {
     readonly authors?: string[];
     readonly url?: string;
     readonly license?: string;
 }
 
+/** @public */
 export interface AddonHeader {
     readonly name: string;
     readonly description: string;
@@ -22,6 +25,7 @@ export interface AddonHeader {
     readonly min_engine_version: EngineVersion;
 }
 
+/** @public */
 export interface SemVer {
     readonly major: number;
     readonly minor: number;
@@ -30,17 +34,20 @@ export interface SemVer {
     readonly build?: string;
 }
 
+/** @public */
 export interface EngineVersion {
     readonly major: number;
     readonly minor: number;
     readonly patch: number;
 }
 
+/** @public */
 export interface ManifestDependency {
     readonly module_name: MinecraftModule;
     readonly version: string;
 }
 
+/** @public */
 export enum MinecraftModule {
     Server = "@minecraft/server",
     ServerUi = "@minecraft/server-ui",
@@ -54,6 +61,7 @@ export enum MinecraftModule {
     ServerGraphics = "@minecraft/server-graphics",
 }
 
+/** @public */
 export interface RequiredAddons {
     readonly [addonId: string]: string;
 }

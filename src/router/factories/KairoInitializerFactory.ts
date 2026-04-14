@@ -8,6 +8,7 @@ import { IdRegistryFactory } from "../types/IdRegistryFactory";
 import { KairoRuntime } from "../types/KairoRuntime";
 import { KairoInitListenerFactory } from "./KairoInitListenerFactory";
 
+/** @internal */
 export class KairoInitializerFactory {
     constructor(
         private readonly runtime: KairoRuntime,

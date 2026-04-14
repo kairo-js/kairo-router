@@ -28,11 +28,14 @@ const initializerFactory = new KairoInitializerFactory(
     registrationResponderFactory,
 );
 
+/** @public */
 export const router = new KairoRouter((context, mutator) =>
     initializerFactory.create(context, mutator),
 );
 
+export { KairoContext } from "./router/KairoContext";
 export { KairoRouter } from "./router/KairoRouter";
+export { KairoRegistry } from "./router/types/KairoRegistry";
 
 export type {
     AddonHeader,
