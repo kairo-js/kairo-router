@@ -123,7 +123,7 @@ declare class KairoInitListener {
 }
 
 declare const DiscoveryQuerySchema: _sinclair_typebox.TObject<{
-    timestamp: _sinclair_typebox.TNumber;
+    timestamp: _sinclair_typebox.TInteger;
     idNamespace: _sinclair_typebox.TString;
 }>;
 type DiscoveryQuery = Static<typeof DiscoveryQuerySchema>;
@@ -178,7 +178,7 @@ declare class KairoRegistryBuilder {
 declare const RegistrationRequestSchema: _sinclair_typebox.TObject<{
     approvals: _sinclair_typebox.TArray<_sinclair_typebox.TString>;
     rejects: _sinclair_typebox.TArray<_sinclair_typebox.TString>;
-    timestamp: _sinclair_typebox.TNumber;
+    timestamp: _sinclair_typebox.TInteger;
 }>;
 type RegistrationRequest = Static<typeof RegistrationRequestSchema>;
 
