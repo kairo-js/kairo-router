@@ -153,10 +153,9 @@ declare class DiscoveryResponder {
 declare class DiscoveryQueryHandler {
     private readonly discoveryManager;
     private readonly discoveryResponder;
-    private readonly contextMutator;
     private readonly runtime;
-    private constructor(discoveryManager: AddonDiscoveryManager, discoveryResponder: DiscoveryResponder, contextMutator: KairoContextMutator, runtime: KairoRuntime);
-    handle: (msg: string) => void;
+    private constructor(discoveryManager: AddonDiscoveryManager, discoveryResponder: DiscoveryResponder, runtime: KairoRuntime);
+    handle: (msg: string) => string;
 }
 
 declare enum KairoInitEventId {
@@ -213,20 +212,22 @@ declare class RegistrationRequestHandler {
     private readonly registrationManager;
     private readonly registrationResponder;
     private readonly context;
-    private readonly contextMutator;
     private readonly runtime;
-    private constructor(registrationManager: AddonRegistrationManager, registrationResponder: RegistrationResponder, context: KairoContext, contextMutator: KairoContextMutator, runtime: KairoRuntime);
-    handle: (msg: string) => void;
+    private constructor(registrationManager: AddonRegistrationManager, registrationResponder: RegistrationResponder, context: KairoContext, runtime: KairoRuntime);
+    handle: (msg: string) => KairoRegistry | undefined;
 }
 
 declare class KairoInitializer implements Disposable {
     private readonly initListener;
     private readonly discoveryHandler;
     private readonly registrationHandler;
+    private readonly contextMutator;
     private subscription?;
-    private constructor(initListener: KairoInitListener, discoveryHandler: DiscoveryQueryHandler, registrationHandler: RegistrationRequestHandler);
+    private constructor(initListener: KairoInitListener, discoveryHandler: DiscoveryQueryHandler, registrationHandler: RegistrationRequestHandler, contextMutator: KairoContextMutator);
     setup(): void;
     dispose(): void;
+    private handleDiscoveryQuery;
+    private handleRegistrationRequest;
 }
 
 type InitializerFactory = (context: KairoContext, mutator: KairoContextMutator) => KairoInitializer;

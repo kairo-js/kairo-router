@@ -1,5 +1,6 @@
-import { KairoContext, KairoContextMutator } from "../../KairoContext";
+import { KairoContext } from "../../KairoContext";
 import { KairoRuntime } from "../../types/KairoRuntime";
+import { KairoRegistry } from "../../types/KairoRegistry";
 import { AddonRegistrationManager } from "./AddonRegistrationManager";
 import { RegistrationResponder } from "./RegistrationResponder";
 
@@ -8,11 +9,10 @@ export class RegistrationRequestHandler {
         private readonly registrationManager: AddonRegistrationManager,
         private readonly registrationResponder: RegistrationResponder,
         private readonly context: KairoContext,
-        private readonly contextMutator: KairoContextMutator,
         private readonly runtime: KairoRuntime,
     ) {}
 
-    handle = (msg: string): void => {
+    handle = (msg: string): KairoRegistry | undefined => {
         const registry = this.registrationManager.resolveRegistry(
             msg,
             this.runtime.currentTick(),
@@ -22,7 +22,7 @@ export class RegistrationRequestHandler {
 
         if (!registry) return;
 
-        this.contextMutator.setKairoRegistry(registry);
         this.registrationResponder.respond(registry);
+        return registry;
     };
 }

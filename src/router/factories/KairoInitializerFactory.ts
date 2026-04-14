@@ -34,19 +34,14 @@ export class KairoInitializerFactory {
 
         return new KairoInitializer(
             listener,
-            this.discoveryHandlerFactory.create(
-                discovery,
-                discoveryResponder,
-                mutator,
-                this.runtime,
-            ),
+            this.discoveryHandlerFactory.create(discovery, discoveryResponder, this.runtime),
             this.registrationHandlerFactory.create(
                 registration,
                 registrationResponder,
                 context,
-                mutator,
                 this.runtime,
             ),
+            mutator,
         );
     }
 }

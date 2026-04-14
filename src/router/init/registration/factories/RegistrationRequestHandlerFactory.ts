@@ -1,4 +1,4 @@
-import { KairoContext, KairoContextMutator } from "../../../KairoContext";
+import { KairoContext } from "../../../KairoContext";
 import { KairoRuntime } from "../../../types/KairoRuntime";
 import { AddonRegistrationManager } from "../AddonRegistrationManager";
 import { RegistrationRequestHandler } from "../RegistrationRequestHandler";
@@ -11,9 +11,8 @@ export class RegistrationRequestHandlerFactory {
         registration: AddonRegistrationManager,
         responder: RegistrationResponder,
         context: KairoContext,
-        mutator: KairoContextMutator,
         runtime: KairoRuntime,
     ): RegistrationRequestHandler {
-        return new RegistrationRequestHandler(registration, responder, context, mutator, runtime);
+        return new RegistrationRequestHandler(registration, responder, context, runtime);
     }
 }
