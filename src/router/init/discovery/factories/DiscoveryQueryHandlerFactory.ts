@@ -1,4 +1,3 @@
-import { KairoContextMutator } from "../../../KairoContext";
 import { KairoRuntime } from "../../../types/KairoRuntime";
 import { AddonDiscoveryManager } from "../AddonDiscoveryManager";
 import { DiscoveryQueryHandler } from "../DiscoveryQueryHandler";
@@ -10,9 +9,8 @@ export class DiscoveryQueryHandlerFactory {
     create(
         discovery: AddonDiscoveryManager,
         responder: DiscoveryResponder,
-        mutator: KairoContextMutator,
         runtime: KairoRuntime,
     ): DiscoveryQueryHandler {
-        return new DiscoveryQueryHandler(discovery, responder, mutator, runtime);
+        return new DiscoveryQueryHandler(discovery, responder, runtime);
     }
 }
