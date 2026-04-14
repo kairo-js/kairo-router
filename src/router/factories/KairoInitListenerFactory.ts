@@ -2,9 +2,9 @@ import { KairoInitListener } from "../init/KairoInitListener";
 import { KairoRuntime } from "../types/KairoRuntime";
 
 export class KairoInitListenerFactory {
-    constructor(private readonly runtime: KairoRuntime) {}
+    constructor() {}
 
-    create(): KairoInitListener {
-        return new KairoInitListener(this.runtime);
+    create(runtime: KairoRuntime): KairoInitListener {
+        return new KairoInitListener(runtime);
     }
 }
