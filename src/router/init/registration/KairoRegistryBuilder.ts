@@ -2,20 +2,20 @@ import { AddonProperties } from "../../../types/AddonProperties";
 import { KairoRegistry } from "../../types/KairoRegistry";
 
 export class KairoRegistryBuilder {
-    build(kairoId: string, props: AddonProperties): KairoRegistry {
+    build(kairoId: string, properties: AddonProperties): KairoRegistry {
         return {
             kairoId: kairoId,
-            addonId: props.id,
-            name: props.header.name,
-            description: props.header.description,
-            version: props.header.version,
+            addonId: properties.id,
+            name: properties.header.name,
+            description: properties.header.description,
+            version: properties.header.version,
             metadata: {
-                authors: props.metadata?.authors ?? [],
-                url: props.metadata?.url,
-                license: props.metadata?.license,
+                authors: properties.metadata?.authors ?? [],
+                url: properties.metadata?.url,
+                license: properties.metadata?.license,
             },
-            requiredAddons: props.requiredAddons ?? {},
-            tags: props.tags ?? [],
+            requiredAddons: properties.requiredAddons ?? {},
+            tags: properties.tags ?? [],
         };
     }
 }

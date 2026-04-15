@@ -5,8 +5,10 @@ const file = path.resolve("lib/index.d.ts");
 
 let text = fs.readFileSync(file, "utf8");
 
-text = text.replace(/constructor\s*\([^)]*\)/g, "private constructor()");
+text = text.replace(/export declare class KairoRouter[\s\S]*?constructor\s*\([^)]*\)/, (match) =>
+    match.replace(/constructor\s*\([^)]*\)/, "private constructor()"),
+);
 
 fs.writeFileSync(file, text);
 
-console.log("patched constructors to private and removed params");
+console.log("patched KairoRouter constructor to private");

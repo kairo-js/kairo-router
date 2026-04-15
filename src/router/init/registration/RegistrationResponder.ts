@@ -8,18 +8,18 @@ import { stringifyRegistrationResponse } from "./response/stringify";
 
 // kjs-router-ch 0203
 export class RegistrationResponder {
-    constructor(private readonly runtime: KairoRuntime) {}
+    constructor() {}
 
-    respond(kairoRegistry: KairoRegistry): void {
+    respond(runtime: KairoRuntime, kairoRegistry: KairoRegistry): void {
         const response: RegistrationResponse = {
             kairoRegistry,
-            timestamp: this.runtime.currentTick(),
+            timestamp: runtime.currentTick(),
         };
 
         try {
             const responseStr = stringifyRegistrationResponse(response);
 
-            this.runtime.send(KairoInitEventId.RegistrationResponse, responseStr);
+            runtime.send(KairoInitEventId.RegistrationResponse, responseStr);
         } catch (e: unknown) {
             throw new RegistrationResponseError(RegistrationResponseErrorReason.StringifyFailed, {
                 cause: toError(e),

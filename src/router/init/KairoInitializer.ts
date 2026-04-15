@@ -1,10 +1,10 @@
-import { Disposable } from "../types/Disposable";
 import { KairoContext, KairoContextMutator } from "../KairoContext";
+import { Disposable } from "../types/Disposable";
 import { KairoRuntime } from "../types/KairoRuntime";
-import { KairoInitEventId } from "./KairoInitEventId";
-import { KairoInitListener } from "./KairoInitListener";
 import { AddonDiscoveryManager } from "./discovery/AddonDiscoveryManager";
 import { DiscoveryResponder } from "./discovery/DiscoveryResponder";
+import { KairoInitEventId } from "./KairoInitEventId";
+import { KairoInitListener } from "./KairoInitListener";
 import { AddonRegistrationManager } from "./registration/AddonRegistrationManager";
 import { RegistrationResponder } from "./registration/RegistrationResponder";
 
@@ -12,14 +12,15 @@ import { RegistrationResponder } from "./registration/RegistrationResponder";
 export class KairoInitializer implements Disposable {
     private subscription?: Disposable;
 
+    private readonly initListener = new KairoInitListener();
+    private readonly discoveryManager = new AddonDiscoveryManager();
+    private readonly discoveryResponder = new DiscoveryResponder();
+    private readonly registrationManager = new AddonRegistrationManager();
+    private readonly registrationResponder = new RegistrationResponder();
+
     constructor(
-        private readonly initListener: KairoInitListener,
-        private readonly discoveryManager: AddonDiscoveryManager,
-        private readonly discoveryResponder: DiscoveryResponder,
-        private readonly registrationManager: AddonRegistrationManager,
-        private readonly registrationResponder: RegistrationResponder,
-        private readonly context: KairoContext,
         private readonly runtime: KairoRuntime,
+        private readonly context: KairoContext,
         private readonly contextMutator: KairoContextMutator,
     ) {}
 
@@ -29,7 +30,7 @@ export class KairoInitializer implements Disposable {
             [KairoInitEventId.RegistrationRequest]: this.handleRegistrationRequest,
         });
 
-        this.subscription = this.initListener.setup();
+        this.subscription = this.initListener.setup(this.runtime);
     }
 
     dispose(): void {
@@ -38,9 +39,13 @@ export class KairoInitializer implements Disposable {
     }
 
     private handleDiscoveryQuery = (message: string): void => {
-        const kairoId = this.discoveryManager.resolveKairoId(message, this.runtime.currentTick());
+        const kairoId = this.discoveryManager.resolveKairoId(
+            message,
+            this.runtime,
+            this.context.addonProperties.id,
+        );
 
-        this.discoveryResponder.respond(kairoId);
+        this.discoveryResponder.respond(this.runtime, kairoId);
         this.contextMutator.setKairoId(kairoId);
     };
 
@@ -54,7 +59,7 @@ export class KairoInitializer implements Disposable {
 
         if (!registry) return;
 
-        this.registrationResponder.respond(registry);
+        this.registrationResponder.respond(this.runtime, registry);
         this.contextMutator.setKairoRegistry(registry);
     };
 }

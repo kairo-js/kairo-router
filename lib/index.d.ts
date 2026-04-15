@@ -1,20 +1,13 @@
 /** @public */
-export declare interface AddonHeader {
-    readonly name: string;
-    readonly description: string;
-    readonly version: SemVer;
-    readonly min_engine_version: EngineVersion;
+declare enum SupportedTag {
+    Official = "official",
+    Approved = "approved",
+    Stable = "stable",
+    Experimental = "experimental"
 }
 
 /** @public */
-export declare interface AddonMetadata {
-    readonly authors?: string[];
-    readonly url?: string;
-    readonly license?: string;
-}
-
-/** @public */
-export declare interface AddonProperties {
+interface AddonProperties {
     readonly id: string;
     readonly metadata?: AddonMetadata;
     readonly header: AddonHeader;
@@ -22,27 +15,58 @@ export declare interface AddonProperties {
     readonly requiredAddons?: RequiredAddons;
     readonly tags?: SupportedTag[];
 }
-
 /** @public */
-export declare interface EngineVersion {
+interface AddonMetadata {
+    readonly authors?: string[];
+    readonly url?: string;
+    readonly license?: string;
+}
+/** @public */
+interface AddonHeader {
+    readonly name: string;
+    readonly description: string;
+    readonly version: SemVer;
+    readonly min_engine_version: EngineVersion;
+}
+/** @public */
+interface SemVer {
+    readonly major: number;
+    readonly minor: number;
+    readonly patch: number;
+    readonly prerelease?: string;
+    readonly build?: string;
+}
+/** @public */
+interface EngineVersion {
     readonly major: number;
     readonly minor: number;
     readonly patch: number;
 }
-
 /** @public */
-export declare class KairoContext {
-    /* Excluded from this release type: _state */
-    /* Excluded from this release type: _properties */
-    private constructor();
-    get addonProperties(): AddonProperties;
-    get kairoId(): string;
-    get kairoRegistry(): KairoRegistry;
-    isRegistered(): boolean;
+interface ManifestDependency {
+    readonly module_name: MinecraftModule;
+    readonly version: string;
+}
+/** @public */
+declare enum MinecraftModule {
+    Server = "@minecraft/server",
+    ServerUi = "@minecraft/server-ui",
+    ServerGameTest = "@minecraft/server-gametest",
+    ServerEditor = "@minecraft/server-editor",
+    ServerEditorPrivateBindings = "@minecraft/server-editor-private-bindings",
+    ServerNet = "@minecraft/server-net",
+    ServerAdmin = "@minecraft/server-admin",
+    DebugUtilities = "@minecraft/debug-utilities",
+    Diagnostics = "@minecraft/diagnostics",
+    ServerGraphics = "@minecraft/server-graphics"
+}
+/** @public */
+interface RequiredAddons {
+    readonly [addonId: string]: string;
 }
 
 /** @public */
-export declare interface KairoRegistry {
+interface KairoRegistry {
     kairoId: string;
     addonId: string;
     name: string;
@@ -59,59 +83,57 @@ export declare interface KairoRegistry {
     tags: SupportedTag[];
 }
 
+declare class MutableKairoContextState {
+    kairoId?: string;
+    kairoRegistry?: KairoRegistry;
+}
 /** @public */
-export declare class KairoRouter {
-    /* Excluded from this release type: createInitializer */
-    /* Excluded from this release type: _context */
-    /* Excluded from this release type: initializer */
-    private constructor();
-    init(properties: AddonProperties): void;
-    get context(): KairoContext;
+declare class KairoContext {
+    /** @internal */
+    private readonly _state;
+    /** @internal */
+    private readonly _properties;
+    constructor(
+    /** @internal */
+    _state: MutableKairoContextState, 
+    /** @internal */
+    _properties: AddonProperties);
+    get addonProperties(): AddonProperties;
+    get kairoId(): string;
+    get kairoRegistry(): KairoRegistry;
+    isRegistered(): boolean;
+}
+
+interface Disposable {
+    dispose(): void;
+}
+
+interface IdRegistry {
+    has(id: string): boolean;
+    register(id: string): void;
+}
+
+interface KairoRuntime {
+    currentTick(): number;
+    send(id: string, message: string): void;
+    subscribe(handler: (id: string, message: string) => void): Disposable;
+    createIdRegistry(objectiveId: string): IdRegistry;
+}
+
+type RuntimeOption = KairoRuntime | "minecraft";
+declare class KairoRouter {
+    /** @internal */
+    private kairoContext?;
+    /** @internal */
+    private runtime?;
+    constructor();
+    init(properties: AddonProperties, options?: {
+        runtime?: RuntimeOption;
+    }): Promise<void>;
+    getKairoContext(): KairoContext;
 }
 
 /** @public */
-export declare interface ManifestDependency {
-    readonly module_name: MinecraftModule;
-    readonly version: string;
-}
+declare const router: KairoRouter;
 
-/** @public */
-export declare enum MinecraftModule {
-    Server = "@minecraft/server",
-    ServerUi = "@minecraft/server-ui",
-    ServerGameTest = "@minecraft/server-gametest",
-    ServerEditor = "@minecraft/server-editor",
-    ServerEditorPrivateBindings = "@minecraft/server-editor-private-bindings",
-    ServerNet = "@minecraft/server-net",
-    ServerAdmin = "@minecraft/server-admin",
-    DebugUtilities = "@minecraft/debug-utilities",
-    Diagnostics = "@minecraft/diagnostics",
-    ServerGraphics = "@minecraft/server-graphics"
-}
-
-/** @public */
-export declare interface RequiredAddons {
-    readonly [addonId: string]: string;
-}
-
-/** @public */
-export declare const router: KairoRouter;
-
-/** @public */
-export declare interface SemVer {
-    readonly major: number;
-    readonly minor: number;
-    readonly patch: number;
-    readonly prerelease?: string;
-    readonly build?: string;
-}
-
-/** @public */
-export declare enum SupportedTag {
-    Official = "official",
-    Approved = "approved",
-    Stable = "stable",
-    Experimental = "experimental"
-}
-
-export { }
+export { type AddonHeader, type AddonMetadata, type AddonProperties, type EngineVersion, KairoContext, type KairoRegistry, KairoRouter, type ManifestDependency, MinecraftModule, type RequiredAddons, type SemVer, SupportedTag, router };

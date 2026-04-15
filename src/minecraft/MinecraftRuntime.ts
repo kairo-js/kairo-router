@@ -1,6 +1,7 @@
 import { ScriptEventCommandMessageAfterEvent, ScriptEventSource, system } from "@minecraft/server";
 import { Disposable } from "../router/types/Disposable";
 import { KairoRuntime } from "../router/types/KairoRuntime";
+import { ScoreboardIdRegistry } from "./ScoreboardIdRegistry";
 
 export class MinecraftRuntime implements KairoRuntime {
     currentTick(): number {
@@ -23,5 +24,9 @@ export class MinecraftRuntime implements KairoRuntime {
                 system.afterEvents.scriptEventReceive.unsubscribe(listener);
             },
         };
+    }
+
+    createIdRegistry(objectiveId: string): ScoreboardIdRegistry {
+        return new ScoreboardIdRegistry(objectiveId);
     }
 }

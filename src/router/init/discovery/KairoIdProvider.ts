@@ -1,42 +1,33 @@
-import { AddonProperties } from "../../../types/AddonProperties";
-import { IdRegistryFactory } from "../../types/IdRegistryFactory";
+import { IdRegistry } from "../../types/IdRegistry";
 import { ProvideKairoIdError, ProvideKairoIdErrorReason } from "./idProvider/errors";
-import { DiscoveryQuery } from "./query/schema";
 
 // kjs-router-ch 0104
-type RandomSource = () => number;
-
 export class KairoIdProvider {
     private readonly CHARSET =
         "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "?_-().";
     private readonly PREFIX_LENGTH = 8;
     private readonly ID_LENGTH = 16;
 
-    constructor(
-        private readonly idRegistryFactory: IdRegistryFactory,
-        private readonly random: RandomSource = Math.random,
-    ) {}
+    constructor() {}
 
-    provideId(properties: AddonProperties, query: DiscoveryQuery): string {
-        const registry = this.idRegistryFactory.create(query.idNamespace);
+    provideId(idRegistry: IdRegistry, addonId: string): string {
+        const prefix = this.hash(addonId);
 
-        const prefix = this.hash(properties.id);
-
-        let addonId: string;
+        let kairoId: string;
         let attempts = 0;
 
         do {
-            addonId = `${prefix}-${this.generateId()}`;
+            kairoId = `${prefix}-${this.generateId()}`;
             attempts++;
 
             if (attempts > 100) {
                 throw new ProvideKairoIdError(ProvideKairoIdErrorReason.IdGenerationFailed);
             }
-        } while (registry.has(addonId));
+        } while (idRegistry.has(kairoId));
 
-        registry.register(addonId);
+        idRegistry.register(kairoId);
 
-        return addonId;
+        return kairoId;
     }
 
     private generateId(length: number = this.ID_LENGTH): string {
@@ -44,7 +35,7 @@ export class KairoIdProvider {
         let result = "";
 
         for (let i = 0; i < length; i++) {
-            result += chars[(this.random() * chars.length) | 0];
+            result += chars[(Math.random() * chars.length) | 0];
         }
 
         return result;

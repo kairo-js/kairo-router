@@ -1,42 +1,46 @@
+import { MinecraftRuntime } from "../minecraft/MinecraftRuntime";
 import { AddonProperties } from "../types/AddonProperties";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
-import { createKairoContext, KairoContext, KairoContextMutator } from "./KairoContext";
+import { createKairoContext, KairoContext } from "./KairoContext";
+import { KairoRuntime } from "./types/KairoRuntime";
 
-/** @internal */
-type InitializerFactory = (context: KairoContext, mutator: KairoContextMutator) => KairoInitializer;
+type RuntimeOption = KairoRuntime | "minecraft";
 
 // kjs-router-ch 0001
-/** @public */
 export class KairoRouter {
     /** @internal */
-    private _context?: KairoContext;
+    private kairoContext?: KairoContext;
+
     /** @internal */
-    private initializer: KairoInitializer | null = null;
+    private runtime?: KairoRuntime;
 
-    constructor(
-        /** @internal */
-        private readonly createInitializer: InitializerFactory,
-    ) {}
-
-    // kjs-router-init-Fc (002): init hooks for addons to register with kairo
-    public init(properties: AddonProperties): void {
-        if (this._context) {
+    constructor() {}
+    async init(properties: AddonProperties, options?: { runtime?: RuntimeOption }): Promise<void> {
+        if (this.kairoContext) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyInitialized);
         }
+        const runtimeOption = options?.runtime ?? "minecraft";
+        this.runtime = resolveRuntime(runtimeOption);
 
         const { context, mutator } = createKairoContext(properties);
-        this._context = context;
+        this.kairoContext = context;
 
-        // kjs-router-init-Fc (003): subscribe ScriptEvent to listen for kairo registration
-        this.initializer = this.createInitializer(context, mutator);
-        this.initializer.setup();
+        const initializer = new KairoInitializer(this.runtime, context, mutator);
+        initializer.setup();
     }
 
-    get context(): KairoContext {
-        if (!this._context) {
+    getKairoContext(): KairoContext {
+        if (!this.kairoContext) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
         }
-        return this._context;
+        return this.kairoContext;
     }
+}
+
+function resolveRuntime(option: RuntimeOption): KairoRuntime {
+    if (option === "minecraft") {
+        return new MinecraftRuntime();
+    }
+    return option;
 }

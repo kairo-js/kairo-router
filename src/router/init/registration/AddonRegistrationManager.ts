@@ -6,10 +6,9 @@ import { RegistrationRequestParser } from "./RegistrationRequestParser";
 
 // kjs-router-ch 0200
 export class AddonRegistrationManager {
-    constructor(
-        private readonly parser: RegistrationRequestParser,
-        private readonly builder: KairoRegistryBuilder,
-    ) {}
+    private readonly requestParser = new RegistrationRequestParser();
+    private readonly regitryBuilder = new KairoRegistryBuilder();
+    constructor() {}
 
     resolveRegistry(
         message: string,
@@ -17,7 +16,7 @@ export class AddonRegistrationManager {
         kairoId: string,
         addonProperties: AddonProperties,
     ): KairoRegistry | undefined {
-        const request = this.parser.parse(message, currentTick);
+        const request = this.requestParser.parse(message, currentTick);
 
         if (request.rejects.includes(kairoId)) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.RegistrationRejected);
@@ -27,7 +26,7 @@ export class AddonRegistrationManager {
             return;
         }
 
-        const registry: KairoRegistry = this.builder.build(kairoId, addonProperties);
+        const registry: KairoRegistry = this.regitryBuilder.build(kairoId, addonProperties);
         return registry;
     }
 }

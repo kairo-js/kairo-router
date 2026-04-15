@@ -7,18 +7,18 @@ import { stringifyDiscoveryResponse } from "./response/stringify";
 
 // kjs-router-ch 0103
 export class DiscoveryResponder {
-    public constructor(private readonly runtime: KairoRuntime) {}
+    public constructor() {}
 
-    respond(kairoId: string): void {
+    respond(runtime: KairoRuntime, kairoId: string): void {
         const response: DiscoveryResponse = {
             kairoId,
-            timestamp: this.runtime.currentTick(),
+            timestamp: runtime.currentTick(),
         };
 
         try {
             const responseStr = stringifyDiscoveryResponse(response);
 
-            this.runtime.send(KairoInitEventId.DiscoveryResponse, responseStr);
+            runtime.send(KairoInitEventId.DiscoveryResponse, responseStr);
         } catch (e: unknown) {
             throw new DiscoveryResponseError(DiscoveryResponseErrorReason.StringifyFailed, {
                 cause: toError(e),
