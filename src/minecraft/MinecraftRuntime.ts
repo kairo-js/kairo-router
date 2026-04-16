@@ -1,4 +1,10 @@
-import { ScriptEventCommandMessageAfterEvent, ScriptEventSource, system } from "@minecraft/server";
+import {
+    ScriptEventCommandMessageAfterEvent,
+    ScriptEventSource,
+    system,
+    world,
+    WorldLoadAfterEvent,
+} from "@minecraft/server";
 import { Disposable } from "../router/types/Disposable";
 import { KairoRuntime } from "../router/types/KairoRuntime";
 import { ScoreboardIdRegistry } from "./ScoreboardIdRegistry";
@@ -22,6 +28,20 @@ export class MinecraftRuntime implements KairoRuntime {
         return {
             dispose: () => {
                 system.afterEvents.scriptEventReceive.unsubscribe(listener);
+            },
+        };
+    }
+
+    subscribeWorldLoad(handler: () => void): Disposable {
+        const listener = (_ev: WorldLoadAfterEvent) => {
+            handler();
+        };
+
+        world.afterEvents.worldLoad.subscribe(listener);
+
+        return {
+            dispose: () => {
+                world.afterEvents.worldLoad.unsubscribe(listener);
             },
         };
     }
