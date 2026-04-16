@@ -117,6 +117,7 @@ interface KairoRuntime {
     currentTick(): number;
     send(id: string, message: string): void;
     subscribe(handler: (id: string, message: string) => void): Disposable;
+    subscribeWorldLoad(handler: () => void): Disposable;
     createIdRegistry(objectiveId: string): IdRegistry;
 }
 
