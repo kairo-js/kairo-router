@@ -8,4 +8,4 @@ This project uses **pnpm** as the package manager.
 - Install dependencies: `pnpm install`
 - Build: `pnpm run build`
 
-The build pipeline compiles type definitions with `tsc` and bundles JavaScript with `esbuild` (`build.mjs`).
+The build pipeline uses `tsup` to bundle JavaScript (ESM) and emit type declarations, then runs `.build/postprocess-dts.js` to post-process the generated `lib/index.d.ts`.
