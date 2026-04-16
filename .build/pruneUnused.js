@@ -2,18 +2,30 @@ import { SyntaxKind } from "ts-morph";
 
 export function pruneUnused(source, rootNames) {
     const roots = new Set(rootNames);
-
+    const declarations = [
+        ...source.getClasses(),
+        ...source.getInterfaces(),
+        ...source.getTypeAliases(),
+    ];
+    const declarationNames = new Set(
+        declarations.map((declaration) => declaration.getName()).filter(Boolean),
+    );
     const typeRefsMap = new Map();
 
-    for (const cls of source.getClasses()) {
-        const name = cls.getName();
+    for (const declaration of declarations) {
+        const name = declaration.getName();
         if (!name) continue;
 
         const refs = new Set();
 
-        cls.forEachDescendant((node) => {
-            if (node.getKind() === SyntaxKind.TypeReference) {
-                refs.add(node.getText());
+        declaration.forEachDescendant((node) => {
+            if (node.getKind() !== SyntaxKind.TypeReference) return;
+
+            const typeNameNode = node.getFirstChildByKind(SyntaxKind.Identifier);
+            const ref = typeNameNode?.getText();
+
+            if (ref && declarationNames.has(ref) && ref !== name) {
+                refs.add(ref);
             }
         });
 
