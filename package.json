@@ -33,7 +33,6 @@
         "@minecraft/server-ui": "^2.0.0"
     },
     "devDependencies": {
-        "@microsoft/api-extractor": "^7.58.2",
         "@minecraft/server": "^2.5.0",
         "@minecraft/server-ui": "^2.0.0",
         "@types/seedrandom": "^3.0.8",
