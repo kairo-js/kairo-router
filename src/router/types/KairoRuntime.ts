@@ -8,8 +8,10 @@ export interface KairoRuntime {
 
     // アドオン間通信のための送受信機能
     send(id: string, message: string): void;
-    subscribe(handler: (id: string, message: string) => void): Disposable;
-    subscribeWorldLoad(handler: () => void): Disposable;
+    receive(handler: (id: string, message: string) => void): Disposable;
+
+    // 環境の読み込み完了の検知
+    onReady(handler: () => void): Disposable;
 
     // kairoId の生成に使う
     createIdRegistry(objectiveId: string): IdRegistry;

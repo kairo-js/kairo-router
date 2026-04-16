@@ -7,7 +7,6 @@ class MutableKairoContextState {
     kairoRegistry?: KairoRegistry;
 }
 
-/** @public */
 export class KairoContext {
     constructor(
         /** @internal */

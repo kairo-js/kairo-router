@@ -1,7 +1,6 @@
 import { KairoRouter } from "./router/KairoRouter";
 
 // kjs-router-init-Fc (001): create kairo router instance
-/** @public */
 export const router = new KairoRouter();
 
 export { KairoContext } from "./router/KairoContext";

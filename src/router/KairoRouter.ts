@@ -5,9 +5,10 @@ import { KairoInitializer } from "./init/KairoInitializer";
 import { createKairoContext, KairoContext } from "./KairoContext";
 import { KairoRuntime } from "./types/KairoRuntime";
 
-type RuntimeOption = KairoRuntime | "minecraft";
+export type RuntimeOption = KairoRuntime | "minecraft";
 
 // kjs-router-ch 0001
+
 export class KairoRouter {
     /** @internal */
     private kairoContext?: KairoContext;

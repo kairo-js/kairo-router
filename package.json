@@ -24,7 +24,7 @@
     "scripts": {
         "clean": "tsup --clean",
         "build": "tsup",
-        "postbuild": "node .build/patch-dts.js",
+        "postbuild": "node .build/postprocess-dts.js",
         "version:patch": "pnpm version patch",
         "prepublishOnly": "pnpm run version:patch && pnpm run build"
     },
@@ -39,6 +39,7 @@
         "@types/seedrandom": "^3.0.8",
         "ajv-cli": "^5.0.0",
         "prettier": "^3.8.1",
+        "ts-morph": "^28.0.0",
         "tsup": "^8.5.1",
         "typescript": "^5.9.3"
     },

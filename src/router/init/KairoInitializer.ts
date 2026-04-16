@@ -34,12 +34,10 @@ export class KairoInitializer implements Disposable {
     ) {}
 
     setup(): void {
-        this.initListener.setHandlers({
+        this.subscription = this.initListener.setup(this.runtime, {
             [KairoInitEventId.DiscoveryQuery]: this.handleDiscoveryQuery,
             [KairoInitEventId.RegistrationRequest]: this.handleRegistrationRequest,
         });
-
-        this.subscription = this.initListener.setup(this.runtime);
     }
 
     dispose(): void {

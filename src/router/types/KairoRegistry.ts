@@ -1,7 +1,6 @@
 import { SemVer } from "../../types/AddonProperties";
 import { SupportedTag } from "../../types/tags";
 
-/** @public */
 export interface KairoRegistry {
     kairoId: string;
     addonId: string;

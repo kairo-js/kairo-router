@@ -12,18 +12,15 @@ export class KairoInitListener {
     private pendingMessages: { id: KairoInitEventId; message: string }[] = [];
     constructor() {}
 
-    setHandlers(handlers: Partial<Record<KairoInitEventId, Handler>>): void {
+    setup(runtime: KairoRuntime, handlers: Partial<Record<KairoInitEventId, Handler>>): Disposable {
         this.handlers = handlers;
-    }
-
-    setup(runtime: KairoRuntime): Disposable {
-        const eventSubscription = runtime.subscribe(this.onEvent);
-        const worldLoadSubscription = runtime.subscribeWorldLoad(this.onWorldLoad);
+        const receiveSubscription = runtime.receive(this.onEvent);
+        const onReadySubscription = runtime.onReady(this.onWorldLoad);
 
         return {
             dispose: () => {
-                eventSubscription.dispose();
-                worldLoadSubscription.dispose();
+                receiveSubscription.dispose();
+                onReadySubscription.dispose();
             },
         };
     }

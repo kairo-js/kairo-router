@@ -16,7 +16,7 @@ export class MinecraftRuntime implements KairoRuntime {
     send(id: string, message: string): void {
         system.sendScriptEvent(id, message);
     }
-    subscribe(handler: (id: string, message: string) => void): Disposable {
+    receive(handler: (id: string, message: string) => void): Disposable {
         const listener = (ev: ScriptEventCommandMessageAfterEvent) => {
             if (ev.sourceType !== ScriptEventSource.Server) return;
 
@@ -32,7 +32,7 @@ export class MinecraftRuntime implements KairoRuntime {
         };
     }
 
-    subscribeWorldLoad(handler: () => void): Disposable {
+    onReady(handler: () => void): Disposable {
         const listener = (_ev: WorldLoadAfterEvent) => {
             handler();
         };
