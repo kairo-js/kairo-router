@@ -24,7 +24,7 @@
     "scripts": {
         "clean": "tsup --clean",
         "build": "tsup",
-        "postbuild": "node .build/patch-dts.js && api-extractor run --local",
+        "postbuild": "node .build/patch-dts.js",
         "version:patch": "pnpm version patch",
         "prepublishOnly": "pnpm run version:patch && pnpm run build"
     },
