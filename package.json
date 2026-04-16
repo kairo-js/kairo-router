@@ -36,6 +36,7 @@
         "@microsoft/api-extractor": "^7.58.2",
         "@minecraft/server": "^2.5.0",
         "@minecraft/server-ui": "^2.0.0",
+        "@types/seedrandom": "^3.0.8",
         "ajv-cli": "^5.0.0",
         "prettier": "^3.8.1",
         "tsup": "^8.5.1",
@@ -44,6 +45,7 @@
     "dependencies": {
         "@sinclair/typebox": "^0.34.49",
         "ajv": "^8.18.0",
-        "fast-json-stringify": "^6.3.0"
+        "fast-json-stringify": "^6.3.0",
+        "seedrandom": "^3.0.5"
     }
 }

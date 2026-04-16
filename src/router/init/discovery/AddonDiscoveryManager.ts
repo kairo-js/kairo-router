@@ -1,12 +1,11 @@
 import { KairoRuntime } from "../../types/KairoRuntime";
+import { KairoIdProvider } from "../KairoIdProvider";
 import { DiscoveryQueryParser } from "./DiscoveryQueryParser";
-import { KairoIdProvider } from "./KairoIdProvider";
 
 // kjs-router-ch 0100
 export class AddonDiscoveryManager {
     private readonly queryParser = new DiscoveryQueryParser();
-    private readonly idProvider = new KairoIdProvider();
-    constructor() {}
+    constructor(private readonly idProvider: KairoIdProvider) {}
 
     resolveKairoId(message: string, runtime: KairoRuntime, addonId: string): string {
         const query = this.queryParser.parse(message, runtime.currentTick());

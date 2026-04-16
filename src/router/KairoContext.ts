@@ -1,4 +1,5 @@
 import { AddonProperties } from "../types/AddonProperties";
+import { KairoContextError, KairoContextErrorReason } from "./errors/KairoContextError";
 import { KairoRegistry } from "./types/KairoRegistry";
 
 class MutableKairoContextState {
@@ -23,14 +24,14 @@ export class KairoContext {
 
     get kairoId(): string {
         if (!this._state.kairoId) {
-            throw new Error("kairo: kairoId not set.");
+            throw new KairoContextError(KairoContextErrorReason.KairoIdNotSet);
         }
         return this._state.kairoId;
     }
 
     get kairoRegistry(): KairoRegistry {
         if (!this._state.kairoRegistry) {
-            throw new Error("kairo: Registry not completed.");
+            throw new KairoContextError(KairoContextErrorReason.RegistryNotCompleted);
         }
         return this._state.kairoRegistry;
     }
@@ -55,14 +56,14 @@ export function createKairoContext(properties: AddonProperties): {
     const mutator: KairoContextMutator = {
         setKairoId(value: string) {
             if (state.kairoId) {
-                throw new Error("kairo: kairoId is already frozen.");
+                throw new KairoContextError(KairoContextErrorReason.KairoIdAlreadySet);
             }
             state.kairoId = value;
         },
 
         setKairoRegistry(value: KairoRegistry) {
             if (state.kairoRegistry) {
-                throw new Error("kairo: Registry is already frozen.");
+                throw new KairoContextError(KairoContextErrorReason.RegistryAlreadyCompleted);
             }
             state.kairoRegistry = Object.freeze(value);
         },

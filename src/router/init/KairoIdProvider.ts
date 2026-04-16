@@ -1,5 +1,6 @@
-import { IdRegistry } from "../../types/IdRegistry";
-import { ProvideKairoIdError, ProvideKairoIdErrorReason } from "./idProvider/errors";
+import { IdRegistry } from "../types/IdRegistry";
+import { Random } from "../types/Random";
+import { ProvideKairoIdError, ProvideKairoIdErrorReason } from "./discovery/idProvider/errors";
 
 // kjs-router-ch 0104
 export class KairoIdProvider {
@@ -8,7 +9,7 @@ export class KairoIdProvider {
     private readonly PREFIX_LENGTH = 8;
     private readonly ID_LENGTH = 16;
 
-    constructor() {}
+    constructor(private readonly random: Random) {}
 
     provideId(idRegistry: IdRegistry, addonId: string): string {
         const prefix = this.hash(addonId);
@@ -35,7 +36,7 @@ export class KairoIdProvider {
         let result = "";
 
         for (let i = 0; i < length; i++) {
-            result += chars[(Math.random() * chars.length) | 0];
+            result += chars[(this.random.next() * chars.length) | 0];
         }
 
         return result;

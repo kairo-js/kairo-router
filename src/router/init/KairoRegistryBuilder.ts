@@ -1,5 +1,5 @@
-import { AddonProperties } from "../../../types/AddonProperties";
-import { KairoRegistry } from "../../types/KairoRegistry";
+import { AddonProperties } from "../../types/AddonProperties";
+import { KairoRegistry } from "../types/KairoRegistry";
 
 export class KairoRegistryBuilder {
     build(kairoId: string, properties: AddonProperties): KairoRegistry {

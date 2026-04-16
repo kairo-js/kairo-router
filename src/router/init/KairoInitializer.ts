@@ -1,10 +1,14 @@
+import { SeedRandom } from "../../utils/SeedRandom";
 import { KairoContext, KairoContextMutator } from "../KairoContext";
 import { Disposable } from "../types/Disposable";
 import { KairoRuntime } from "../types/KairoRuntime";
+import { Random } from "../types/Random";
 import { AddonDiscoveryManager } from "./discovery/AddonDiscoveryManager";
 import { DiscoveryResponder } from "./discovery/DiscoveryResponder";
+import { KairoIdProvider } from "./KairoIdProvider";
 import { KairoInitEventId } from "./KairoInitEventId";
 import { KairoInitListener } from "./KairoInitListener";
+import { KairoRegistryBuilder } from "./KairoRegistryBuilder";
 import { AddonRegistrationManager } from "./registration/AddonRegistrationManager";
 import { RegistrationResponder } from "./registration/RegistrationResponder";
 
@@ -12,10 +16,15 @@ import { RegistrationResponder } from "./registration/RegistrationResponder";
 export class KairoInitializer implements Disposable {
     private subscription?: Disposable;
 
+    private readonly random: Random = new SeedRandom();
+
+    private readonly idProvider = new KairoIdProvider(this.random);
+    private readonly registryBuilder = new KairoRegistryBuilder();
+
     private readonly initListener = new KairoInitListener();
-    private readonly discoveryManager = new AddonDiscoveryManager();
+    private readonly discoveryManager = new AddonDiscoveryManager(this.idProvider);
     private readonly discoveryResponder = new DiscoveryResponder();
-    private readonly registrationManager = new AddonRegistrationManager();
+    private readonly registrationManager = new AddonRegistrationManager(this.registryBuilder);
     private readonly registrationResponder = new RegistrationResponder();
 
     constructor(

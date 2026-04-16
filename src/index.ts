@@ -7,6 +7,7 @@ export const router = new KairoRouter();
 export { KairoContext } from "./router/KairoContext";
 export { KairoRouter } from "./router/KairoRouter";
 export { KairoRegistry } from "./router/types/KairoRegistry";
+export { KairoRuntime } from "./router/types/KairoRuntime";
 
 export type {
     AddonHeader,

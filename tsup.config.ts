@@ -7,5 +7,5 @@ export default defineConfig({
     outDir: "lib",
     clean: true,
     external: ["@minecraft/server", "@minecraft/server-ui"],
-    noExternal: ["@sinclair/typebox", "ajv", "fast-json-stringify"],
+    noExternal: ["@sinclair/typebox", "ajv", "fast-json-stringify", "seedrandom"],
 });
