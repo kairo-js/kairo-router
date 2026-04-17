@@ -7,9 +7,13 @@ import {
 } from "@minecraft/server";
 import { Disposable } from "../router/types/Disposable";
 import { KairoRuntime } from "../router/types/KairoRuntime";
+import { Random } from "../router/types/Random";
 import { ScoreboardIdRegistry } from "./ScoreboardIdRegistry";
+import { SeedRandom } from "../utils/SeedRandom";
 
 export class MinecraftRuntime implements KairoRuntime {
+    constructor(private readonly options: { randomSeed?: string } = {}) {}
+
     currentTick(): number {
         return system.currentTick;
     }
@@ -48,5 +52,9 @@ export class MinecraftRuntime implements KairoRuntime {
 
     createIdRegistry(objectiveId: string): ScoreboardIdRegistry {
         return new ScoreboardIdRegistry(objectiveId);
+    }
+
+    createRandom(): Random {
+        return new SeedRandom(this.options.randomSeed);
     }
 }
