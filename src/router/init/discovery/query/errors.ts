@@ -1,5 +1,6 @@
 export class DiscoveryQueryParseError extends Error {
     public readonly reason: DiscoveryQueryParseErrorReason;
+    public readonly cause?: Error;
 
     constructor(reason: DiscoveryQueryParseErrorReason, options: { cause?: Error } = {}) {
         super(DEFAULT_MESSAGES[reason], { cause: options.cause });

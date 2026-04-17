@@ -25,7 +25,7 @@ export const RegistrationResponseSchema = Type.Object(
             requiredAddons: Type.Record(Type.String(), Type.String()),
             tags: Type.Array(Type.Union(tagValues.map((tag) => Type.Literal(tag)))),
         }),
-        timestamp: Type.Number(),
+        timestamp: Type.Integer({ minimum: 0 }),
     },
     {
         additionalProperties: false,
