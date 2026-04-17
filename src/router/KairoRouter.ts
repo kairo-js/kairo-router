@@ -1,9 +1,11 @@
 import { MinecraftRuntime } from "../minecraft/MinecraftRuntime";
 import { AddonProperties } from "../types/AddonProperties";
+import { SeedRandom } from "../utils/SeedRandom";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
 import { createKairoContext, KairoContext } from "./KairoContext";
 import { KairoRuntime } from "./types/KairoRuntime";
+import { Random } from "./types/Random";
 
 export type RuntimeOption = KairoRuntime | "minecraft";
 
@@ -27,7 +29,12 @@ export class KairoRouter {
         const { context, mutator } = createKairoContext(properties);
         this.kairoContext = context;
 
-        const initializer = new KairoInitializer(this.runtime, context, mutator);
+        const initializer = new KairoInitializer(
+            this.runtime,
+            context,
+            mutator,
+            resolveRandom(this.runtime),
+        );
         initializer.setup();
     }
 
@@ -44,4 +51,11 @@ function resolveRuntime(option: RuntimeOption): KairoRuntime {
         return new MinecraftRuntime();
     }
     return option;
+}
+
+function resolveRandom(runtime: KairoRuntime): Random {
+    if ("createRandom" in runtime && typeof runtime.createRandom === "function") {
+        return runtime.createRandom();
+    }
+    return new SeedRandom();
 }

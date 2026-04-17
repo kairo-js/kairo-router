@@ -16,8 +16,6 @@ import { RegistrationResponder } from "./registration/RegistrationResponder";
 export class KairoInitializer implements Disposable {
     private subscription?: Disposable;
 
-    private readonly random: Random = new SeedRandom();
-
     private readonly idProvider = new KairoIdProvider(this.random);
     private readonly registryBuilder = new KairoRegistryBuilder();
 
@@ -31,6 +29,7 @@ export class KairoInitializer implements Disposable {
         private readonly runtime: KairoRuntime,
         private readonly context: KairoContext,
         private readonly contextMutator: KairoContextMutator,
+        private readonly random: Random = new SeedRandom(),
     ) {}
 
     setup(): void {

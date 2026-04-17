@@ -1,5 +1,6 @@
 import { Disposable } from "./Disposable";
 import { IdRegistry } from "./IdRegistry";
+import { Random } from "./Random";
 
 // 環境に依存する機能を抽象化するインターフェース
 export interface KairoRuntime {
@@ -15,4 +16,7 @@ export interface KairoRuntime {
 
     // kairoId の生成に使う
     createIdRegistry(objectiveId: string): IdRegistry;
+
+    // kairoId の乱数生成に使う（未実装の場合はデフォルト実装を使う）
+    createRandom?(): Random;
 }

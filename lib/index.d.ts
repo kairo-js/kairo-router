@@ -91,12 +91,17 @@ interface IdRegistry {
     register(id: string): void;
 }
 
+interface Random {
+    next(): number;
+}
+
 interface KairoRuntime {
     currentTick(): number;
     send(id: string, message: string): void;
     receive(handler: (id: string, message: string) => void): Disposable;
     onReady(handler: () => void): Disposable;
     createIdRegistry(objectiveId: string): IdRegistry;
+    createRandom?(): Random;
 }
 
 type RuntimeOption = KairoRuntime | "minecraft";
