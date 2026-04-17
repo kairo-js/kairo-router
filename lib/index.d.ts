@@ -13,7 +13,33 @@ interface AddonProperties {
     readonly requiredAddons?: RequiredAddons;
     readonly tags?: SupportedTag[];
 }
-
+interface AddonMetadata {
+    readonly authors?: string[];
+    readonly url?: string;
+    readonly license?: string;
+}
+interface AddonHeader {
+    readonly name: string;
+    readonly description: string;
+    readonly version: SemVer;
+    readonly min_engine_version: EngineVersion;
+}
+interface SemVer {
+    readonly major: number;
+    readonly minor: number;
+    readonly patch: number;
+    readonly prerelease?: string;
+    readonly build?: string;
+}
+interface EngineVersion {
+    readonly major: number;
+    readonly minor: number;
+    readonly patch: number;
+}
+interface ManifestDependency {
+    readonly module_name: MinecraftModule;
+    readonly version: string;
+}
 declare enum MinecraftModule {
     Server = "@minecraft/server",
     ServerUi = "@minecraft/server-ui",
@@ -25,6 +51,9 @@ declare enum MinecraftModule {
     DebugUtilities = "@minecraft/debug-utilities",
     Diagnostics = "@minecraft/diagnostics",
     ServerGraphics = "@minecraft/server-graphics"
+}
+interface RequiredAddons {
+    readonly [addonId: string]: string;
 }
 
 interface KairoRegistry {
@@ -51,6 +80,23 @@ declare class KairoContext {
     get kairoId(): string;
     get kairoRegistry(): KairoRegistry;
     isRegistered(): boolean;
+}
+
+interface Disposable {
+    dispose(): void;
+}
+
+interface IdRegistry {
+    has(id: string): boolean;
+    register(id: string): void;
+}
+
+interface KairoRuntime {
+    currentTick(): number;
+    send(id: string, message: string): void;
+    receive(handler: (id: string, message: string) => void): Disposable;
+    onReady(handler: () => void): Disposable;
+    createIdRegistry(objectiveId: string): IdRegistry;
 }
 
 type RuntimeOption = KairoRuntime | "minecraft";
