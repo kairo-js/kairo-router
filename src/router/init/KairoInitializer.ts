@@ -16,13 +16,13 @@ import { RegistrationResponder } from "./registration/RegistrationResponder";
 export class KairoInitializer implements Disposable {
     private subscription?: Disposable;
 
-    private readonly idProvider = new KairoIdProvider(this.random);
-    private readonly registryBuilder = new KairoRegistryBuilder();
+    private readonly idProvider: KairoIdProvider;
+    private readonly registryBuilder: KairoRegistryBuilder;
 
     private readonly initListener = new KairoInitListener();
-    private readonly discoveryManager = new AddonDiscoveryManager(this.idProvider);
+    private readonly discoveryManager: AddonDiscoveryManager;
     private readonly discoveryResponder = new DiscoveryResponder();
-    private readonly registrationManager = new AddonRegistrationManager(this.registryBuilder);
+    private readonly registrationManager: AddonRegistrationManager;
     private readonly registrationResponder = new RegistrationResponder();
 
     constructor(
@@ -30,7 +30,13 @@ export class KairoInitializer implements Disposable {
         private readonly context: KairoContext,
         private readonly contextMutator: KairoContextMutator,
         private readonly random: Random = new SeedRandom(),
-    ) {}
+    ) {
+        this.idProvider = new KairoIdProvider(this.random);
+        this.registryBuilder = new KairoRegistryBuilder();
+
+        this.discoveryManager = new AddonDiscoveryManager(this.idProvider);
+        this.registrationManager = new AddonRegistrationManager(this.registryBuilder);
+    }
 
     setup(): void {
         this.subscription = this.initListener.setup(this.runtime, {
