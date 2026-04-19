@@ -1,5 +1,10 @@
 import { Static, Type } from "@sinclair/typebox";
 
-const ActivationResponseSchema = Type.Object({});
+export const ActivationResponseSchema = Type.Object(
+    {
+        timestamp: Type.Integer({ minimum: 0 }),
+    },
+    { additionalProperties: false },
+);
 
 export type ActivationResponse = Static<typeof ActivationResponseSchema>;
