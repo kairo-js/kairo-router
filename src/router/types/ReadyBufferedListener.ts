@@ -1,3 +1,4 @@
+import { KairoListenerError, KairoListenerErrorReason } from "../errors/KairoListenerError";
 import { ReadyState } from "../ReadyState";
 import { Disposable } from "./Disposable";
 import { KairoRuntime } from "./KairoRuntime";
@@ -12,7 +13,7 @@ export abstract class ReadyBufferedListener<TId extends string> {
 
     setup(runtime: KairoRuntime): Disposable {
         if (this.isSetup) {
-            throw new Error("Listener is already set up");
+            throw new KairoListenerError(KairoListenerErrorReason.AlreadySetUp);
         }
         this.isSetup = true;
 
@@ -57,9 +58,6 @@ export abstract class ReadyBufferedListener<TId extends string> {
         }
     };
 
-    // ---- variation points ----
-
     protected abstract filter(id: string): id is TId;
-
     protected abstract handle(id: TId, message: string): void;
 }
