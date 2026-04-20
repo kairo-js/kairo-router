@@ -4,6 +4,7 @@ import { SeedRandom } from "../utils/SeedRandom";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
 import { createKairoContext, KairoContext } from "./KairoContext";
+import { ReadyState } from "./ReadyState";
 import { KairoRuntime } from "./types/KairoRuntime";
 import { Random } from "./types/Random";
 
@@ -12,11 +13,9 @@ export type RuntimeOption = KairoRuntime | "minecraft";
 // kjs-router-ch 0001
 
 export class KairoRouter {
-    /** @internal */
     private kairoContext?: KairoContext;
-
-    /** @internal */
     private runtime?: KairoRuntime;
+    private readyState = new ReadyState();
 
     constructor() {}
     async init(properties: AddonProperties, options?: { runtime?: RuntimeOption }): Promise<void> {
@@ -26,6 +25,10 @@ export class KairoRouter {
         const runtimeOption = options?.runtime ?? "minecraft";
         this.runtime = resolveRuntime(runtimeOption);
 
+        this.runtime.onReady(() => {
+            this.readyState.markReady();
+        });
+
         const { context, mutator } = createKairoContext(properties);
         this.kairoContext = context;
 
@@ -34,6 +37,7 @@ export class KairoRouter {
             context,
             mutator,
             resolveRandom(this.runtime),
+            this.readyState,
         );
         initializer.setup();
     }

@@ -1,5 +1,6 @@
 import { SeedRandom } from "../../utils/SeedRandom";
 import { KairoContext, KairoContextMutator } from "../KairoContext";
+import { ReadyState } from "../ReadyState";
 import { Disposable } from "../types/Disposable";
 import { KairoRuntime } from "../types/KairoRuntime";
 import { Random } from "../types/Random";
@@ -19,7 +20,7 @@ export class KairoInitializer implements Disposable {
     private readonly idProvider: KairoIdProvider;
     private readonly registryBuilder: KairoRegistryBuilder;
 
-    private readonly initListener = new KairoInitListener();
+    private readonly initListener: KairoInitListener;
     private readonly discoveryManager: AddonDiscoveryManager;
     private readonly discoveryResponder = new DiscoveryResponder();
     private readonly registrationManager: AddonRegistrationManager;
@@ -30,7 +31,13 @@ export class KairoInitializer implements Disposable {
         private readonly context: KairoContext,
         private readonly contextMutator: KairoContextMutator,
         private readonly random: Random = new SeedRandom(),
+        private readonly readyState: ReadyState,
     ) {
+        this.initListener = new KairoInitListener(this.readyState, {
+            [KairoInitEventId.DiscoveryQuery]: this.handleDiscoveryQuery,
+            [KairoInitEventId.RegistrationRequest]: this.handleRegistrationRequest,
+        });
+
         this.idProvider = new KairoIdProvider(this.random);
         this.registryBuilder = new KairoRegistryBuilder();
 
@@ -39,10 +46,7 @@ export class KairoInitializer implements Disposable {
     }
 
     setup(): void {
-        this.subscription = this.initListener.setup(this.runtime, {
-            [KairoInitEventId.DiscoveryQuery]: this.handleDiscoveryQuery,
-            [KairoInitEventId.RegistrationRequest]: this.handleRegistrationRequest,
-        });
+        this.subscription = this.initListener.setup(this.runtime);
     }
 
     dispose(): void {

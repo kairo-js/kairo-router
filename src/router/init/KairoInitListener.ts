@@ -1,55 +1,33 @@
-import { Disposable } from "../types/Disposable";
+import { ReadyState } from "../ReadyState";
 import { KairoRuntime } from "../types/KairoRuntime";
+import { ReadyBufferedListener } from "../types/ReadyBufferedListener";
 import { KairoInitEventId } from "./KairoInitEventId";
 
 type Handler = (message: string) => void;
 
-const KAIRO_INIT_EVENT_ID_SET = new Set<string>(Object.values(KairoInitEventId));
+const KAIRO_INIT_EVENT_ID_SET = new Set<KairoInitEventId>(Object.values(KairoInitEventId));
 
-export class KairoInitListener {
-    private handlers: Partial<Record<KairoInitEventId, Handler>> = {};
-    private hasWorldLoaded = false;
-    private pendingMessages: { id: KairoInitEventId; message: string }[] = [];
-    constructor() {}
-
-    setup(runtime: KairoRuntime, handlers: Partial<Record<KairoInitEventId, Handler>>): Disposable {
-        this.handlers = handlers;
-        const receiveSubscription = runtime.receive(this.onEvent);
-        const onReadySubscription = runtime.onReady(this.onWorldLoad);
-
-        return {
-            dispose: () => {
-                receiveSubscription.dispose();
-                onReadySubscription.dispose();
-            },
-        };
+export class KairoInitListener extends ReadyBufferedListener<KairoInitEventId> {
+    constructor(
+        protected readonly readyState: ReadyState,
+        private readonly handlers: Partial<Record<KairoInitEventId, Handler>>,
+    ) {
+        super(readyState);
     }
 
-    private onEvent = (id: string, message: string) => {
-        if (!this.isKairoInitEventId(id)) return;
-
-        if (!this.hasWorldLoaded) {
-            this.pendingMessages.push({ id, message });
-            return;
+    setup(runtime: KairoRuntime) {
+        if (this.handlers !== undefined) {
+            throw new Error("KairoInitListener is already set up");
         }
 
-        this.handlers[id]?.(message);
-    };
+        return super.setup(runtime);
+    }
 
-    private onWorldLoad = () => {
-        if (this.hasWorldLoaded) return;
+    protected filter(id: string): id is KairoInitEventId {
+        return KAIRO_INIT_EVENT_ID_SET.has(id as KairoInitEventId);
+    }
 
-        this.hasWorldLoaded = true;
-
-        const messages = this.pendingMessages;
-        this.pendingMessages = [];
-
-        for (const { id, message } of messages) {
-            this.handlers[id]?.(message);
-        }
-    };
-
-    private isKairoInitEventId(id: string): id is KairoInitEventId {
-        return KAIRO_INIT_EVENT_ID_SET.has(id);
+    protected handle(id: KairoInitEventId, message: string): void {
+        this.handlers?.[id]?.(message);
     }
 }
