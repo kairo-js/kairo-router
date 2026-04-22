@@ -14,3 +14,19 @@ export class TimestampValidator {
         );
     }
 }
+
+export function validateTimestamp(
+    currentTick: number,
+    timestamp: number,
+    timeout: number,
+    onTimeout: () => Error,
+    onFuture: () => Error,
+) {
+    if (TimestampValidator.isExpired(currentTick, timestamp, timeout)) {
+        throw onTimeout();
+    }
+
+    if (TimestampValidator.isFuture(currentTick, timestamp)) {
+        throw onFuture();
+    }
+}
