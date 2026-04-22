@@ -23,7 +23,7 @@ export class DiscoveryQueryParser {
             });
         }
 
-        const query = parsed;
+        const query: DiscoveryQuery = parsed;
 
         validateTimestamp(
             currentTick,

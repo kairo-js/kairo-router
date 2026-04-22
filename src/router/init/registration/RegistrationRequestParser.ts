@@ -25,11 +25,11 @@ export class RegistrationRequestParser {
             );
         }
 
-        const query = parsed;
+        const request: RegistrationRequest = parsed;
 
         validateTimestamp(
             currentTick,
-            query.timestamp,
+            request.timestamp,
             this.TIMEOUT_TICKS,
             () => new RegistrationRequestParseError(RegistrationRequestParseErrorReason.Timeout),
             () =>
@@ -38,6 +38,6 @@ export class RegistrationRequestParser {
                 ),
         );
 
-        return query;
+        return request;
     }
 }
