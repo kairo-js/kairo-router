@@ -79,6 +79,9 @@ declare class KairoContext {
     get addonProperties(): AddonProperties;
     get kairoId(): string;
     get kairoRegistry(): KairoRegistry;
+    get activationState(): "active" | "inactive";
+    get activationTick(): number;
+    isActive(): boolean;
     isRegistered(): boolean;
 }
 
