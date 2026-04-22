@@ -1,4 +1,4 @@
-import { TimestampValidator } from "../../../utils/TimestampValidator";
+import { safeJsonParse } from "../../../utils/jsonParse";
 import { toError } from "../../../utils/toError";
 import { DiscoveryQueryParseError, DiscoveryQueryParseErrorReason } from "./query/errors";
 import { DiscoveryQuery } from "./query/schema";
@@ -11,7 +11,10 @@ export class DiscoveryQueryParser {
     constructor() {}
 
     parse(message: string, currentTick: number): DiscoveryQuery {
-        const parsed = this.parseJson(message);
+        const parsed = safeJsonParse(
+            message,
+            () => new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.InvalidJSON),
+        );
 
         if (!validateDiscoveryQuery(parsed)) {
             throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.InvalidStructure, {
@@ -19,24 +22,8 @@ export class DiscoveryQueryParser {
             });
         }
 
-        const query = parsed;
-
-        if (TimestampValidator.isExpired(currentTick, query.timestamp, this.TIMEOUT_TICKS)) {
-            throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.Timeout);
-        }
-
-        if (TimestampValidator.isFuture(currentTick, query.timestamp)) {
-            throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.FutureTimestamp);
-        }
+        const query: DiscoveryQuery = parsed;
 
         return query;
-    }
-
-    private parseJson(message: string): unknown {
-        try {
-            return JSON.parse(message);
-        } catch {
-            throw new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.InvalidJSON);
-        }
     }
 }

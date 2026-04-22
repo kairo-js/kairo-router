@@ -1,4 +1,4 @@
-import { TimestampValidator } from "../../../utils/TimestampValidator";
+import { safeJsonParse } from "../../../utils/jsonParse";
 import { toError } from "../../../utils/toError";
 import {
     RegistrationRequestParseError,
@@ -9,10 +9,13 @@ import { validateRegistrationRequest } from "./request/validate";
 
 export class RegistrationRequestParser {
     private readonly TIMEOUT_TICKS = 10;
-    constructor() {}
 
     parse(message: string, currentTick: number): RegistrationRequest {
-        const parsed = this.parseJson(message);
+        const parsed = safeJsonParse(
+            message,
+            () =>
+                new RegistrationRequestParseError(RegistrationRequestParseErrorReason.InvalidJSON),
+        );
 
         if (!validateRegistrationRequest(parsed)) {
             throw new RegistrationRequestParseError(
@@ -21,28 +24,8 @@ export class RegistrationRequestParser {
             );
         }
 
-        const query = parsed;
+        const request: RegistrationRequest = parsed;
 
-        if (TimestampValidator.isExpired(currentTick, query.timestamp, this.TIMEOUT_TICKS)) {
-            throw new RegistrationRequestParseError(RegistrationRequestParseErrorReason.Timeout);
-        }
-
-        if (TimestampValidator.isFuture(currentTick, query.timestamp)) {
-            throw new RegistrationRequestParseError(
-                RegistrationRequestParseErrorReason.FutureTimestamp,
-            );
-        }
-
-        return query;
-    }
-
-    private parseJson(message: string): unknown {
-        try {
-            return JSON.parse(message);
-        } catch {
-            throw new RegistrationRequestParseError(
-                RegistrationRequestParseErrorReason.InvalidJSON,
-            );
-        }
+        return request;
     }
 }

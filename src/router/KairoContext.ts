@@ -5,6 +5,9 @@ import { KairoRegistry } from "./types/KairoRegistry";
 class MutableKairoContextState {
     kairoId?: string;
     kairoRegistry?: KairoRegistry;
+
+    activationState: "active" | "inactive" = "inactive";
+    activationTick: number = 0;
 }
 
 export class KairoContext {
@@ -35,6 +38,18 @@ export class KairoContext {
         return this._state.kairoRegistry;
     }
 
+    get activationState(): "active" | "inactive" {
+        return this._state.activationState;
+    }
+
+    get activationTick(): number {
+        return this._state.activationTick;
+    }
+
+    isActive(): boolean {
+        return this._state.activationState === "active";
+    }
+
     isRegistered(): boolean {
         return !!this._state.kairoRegistry;
     }
@@ -43,6 +58,8 @@ export class KairoContext {
 export interface KairoContextMutator {
     setKairoId(value: string): void;
     setKairoRegistry(value: KairoRegistry): void;
+
+    setActivationState(value: "active" | "inactive", tick: number): void;
 }
 
 export function createKairoContext(properties: AddonProperties): {
@@ -65,6 +82,14 @@ export function createKairoContext(properties: AddonProperties): {
                 throw new KairoContextError(KairoContextErrorReason.RegistryAlreadyCompleted);
             }
             state.kairoRegistry = Object.freeze(value);
+        },
+
+        setActivationState(value: "active" | "inactive", tick: number) {
+            state.activationState = value;
+
+            if (value === "active") {
+                state.activationTick = tick;
+            }
         },
     };
 
