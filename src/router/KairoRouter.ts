@@ -2,13 +2,17 @@ import { MinecraftRuntime } from "../minecraft/MinecraftRuntime";
 import { AddonProperties } from "../types/AddonProperties";
 import { SeedRandom } from "../utils/SeedRandom";
 import { ActivationController } from "./activation/ActivationController";
+import { EventRegistry } from "./EventRegistry";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
+import { KairoAfterEvents } from "./KairoAfterEvents";
+import { KairoBeforeEvents } from "./KairoBeforeEvents";
 import { createKairoContext, KairoContext, KairoContextMutator } from "./KairoContext";
 import { KairoEventId } from "./KairoEventId";
 import { KairoRouterListener } from "./KairoRouterListener";
 import { ReadyState } from "./ReadyState";
 import { Disposable } from "./types/Disposable";
+import { KairoEventMap } from "./types/KairoEventMap";
 import { KairoRuntime } from "./types/KairoRuntime";
 import { Random } from "./types/Random";
 
@@ -23,6 +27,11 @@ export class KairoRouter {
     private readyState = new ReadyState();
     private routerListener?: Disposable;
 
+    private eventRegistry = new EventRegistry<KairoEventMap>();
+
+    public afterEvents = new KairoAfterEvents(this.eventRegistry);
+    public beforeEvents = new KairoBeforeEvents(this.eventRegistry);
+
     constructor() {}
     async init(properties: AddonProperties, options?: { runtime?: RuntimeOption }): Promise<void> {
         if (this.kairoContext) {
@@ -30,6 +39,14 @@ export class KairoRouter {
         }
         const runtimeOption = options?.runtime ?? "minecraft";
         this.runtime = resolveRuntime(runtimeOption);
+
+        this.runtime.bindEvents?.((ev) => {
+            if (ev.phase === "after") {
+                this.eventRegistry.emitAfter(ev.name as any, ev.payload);
+            } else {
+                this.eventRegistry.emitBefore(ev.name as any, ev.payload);
+            }
+        });
 
         if (!this.readyState.isReady()) {
             this.runtime.onReady(() => {
@@ -73,6 +90,7 @@ export class KairoRouter {
         const activationController = new ActivationController(
             this.kairoContext,
             this.kairoContextMutator,
+            this.eventRegistry,
         );
         const handlers = this.buildHandlers(activationController);
         const listener = new KairoRouterListener(this.readyState, handlers);
