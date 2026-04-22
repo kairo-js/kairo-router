@@ -4,15 +4,13 @@ import { ReadyState } from "../ReadyState";
 import { Disposable } from "../types/Disposable";
 import { KairoRuntime } from "../types/KairoRuntime";
 import { Random } from "../types/Random";
-import { AddonDiscoveryManager } from "./discovery/AddonDiscoveryManager";
-import { DiscoveryResponder } from "./discovery/DiscoveryResponder";
+import { DiscoveryController } from "./discovery/DiscoveryController";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./errors";
 import { KairoIdProvider } from "./KairoIdProvider";
 import { KairoInitEventId } from "./KairoInitEventId";
 import { KairoInitListener } from "./KairoInitListener";
 import { KairoRegistryBuilder } from "./KairoRegistryBuilder";
-import { AddonRegistrationManager } from "./registration/AddonRegistrationManager";
-import { RegistrationResponder } from "./registration/RegistrationResponder";
+import { RegistrationController } from "./registration/RegistrationController";
 
 enum InitPhase {
     Discovery,
@@ -30,10 +28,8 @@ export class KairoInitializer implements Disposable {
     private readonly registryBuilder: KairoRegistryBuilder;
 
     private readonly initListener: KairoInitListener;
-    private readonly discoveryManager: AddonDiscoveryManager;
-    private readonly discoveryResponder: DiscoveryResponder;
-    private readonly registrationManager: AddonRegistrationManager;
-    private readonly registrationResponder: RegistrationResponder;
+    private readonly discoveryController: DiscoveryController;
+    private readonly registrationController: RegistrationController;
 
     constructor(
         private readonly runtime: KairoRuntime,
@@ -41,16 +37,15 @@ export class KairoInitializer implements Disposable {
         private readonly contextMutator: KairoContextMutator,
         private readonly random: Random = new SeedRandom(),
         private readonly readyState: ReadyState,
+        private readonly onCompleted?: () => void,
         private readonly onDisposed?: () => void,
     ) {
         this.idProvider = new KairoIdProvider(this.random);
         this.registryBuilder = new KairoRegistryBuilder();
 
-        this.discoveryManager = new AddonDiscoveryManager(this.idProvider);
-        this.discoveryResponder = new DiscoveryResponder();
+        this.discoveryController = new DiscoveryController(this.idProvider);
 
-        this.registrationManager = new AddonRegistrationManager(this.registryBuilder);
-        this.registrationResponder = new RegistrationResponder();
+        this.registrationController = new RegistrationController(this.registryBuilder);
 
         this.initListener = new KairoInitListener(this.readyState, {
             [KairoInitEventId.DiscoveryQuery]: this.handleDiscoveryQuery,
@@ -80,14 +75,11 @@ export class KairoInitializer implements Disposable {
         this.assertPhase(InitPhase.Discovery);
 
         try {
-            const kairoId = this.discoveryManager.resolveKairoId(
-                message,
-                this.runtime,
-                this.context.addonProperties.id,
-            );
-
-            this.discoveryResponder.respond(this.runtime, kairoId);
-            this.contextMutator.setKairoId(kairoId);
+            this.discoveryController.handleDiscoveryQuery(message, {
+                runtime: this.runtime,
+                context: this.context,
+                contextMutator: this.contextMutator,
+            });
 
             this.phase = InitPhase.Registration;
         } catch (error) {
@@ -100,23 +92,20 @@ export class KairoInitializer implements Disposable {
         this.assertPhase(InitPhase.Registration);
 
         try {
-            const registry = this.registrationManager.resolveRegistry(
-                message,
-                this.runtime.currentTick(),
-                this.context.kairoId,
-                this.context.addonProperties,
-            );
+            const registry = this.registrationController.handleRegistrationRequest(message, {
+                runtime: this.runtime,
+                context: this.context,
+                contextMutator: this.contextMutator,
+            });
 
             if (!registry) {
                 this.dispose();
                 return;
             }
 
-            this.registrationResponder.respond(this.runtime, registry);
-            this.contextMutator.setKairoRegistry(registry);
-
             this.phase = InitPhase.Completed;
             this.dispose();
+            this.onCompleted?.();
         } catch (error) {
             this.dispose();
             throw error;
