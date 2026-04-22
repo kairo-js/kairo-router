@@ -27,5 +27,5 @@ export interface KairoRuntime {
     createRandom?(): Random;
 
     // 環境固有のイベント
-    bindEvents(handler: (ev: RuntimeEvent) => void): Disposable;
+    bindEvents?(handler: (ev: RuntimeEvent) => void): Disposable;
 }

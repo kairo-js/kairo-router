@@ -40,7 +40,7 @@ export class KairoRouter {
         const runtimeOption = options?.runtime ?? "minecraft";
         this.runtime = resolveRuntime(runtimeOption);
 
-        this.runtime.bindEvents((ev) => {
+        this.runtime.bindEvents?.((ev) => {
             if (ev.phase === "after") {
                 this.eventRegistry.emitAfter(ev.name as any, ev.payload);
             } else {
