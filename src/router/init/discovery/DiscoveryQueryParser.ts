@@ -1,5 +1,4 @@
 import { safeJsonParse } from "../../../utils/jsonParse";
-import { validateTimestamp } from "../../../utils/TimestampValidator";
 import { toError } from "../../../utils/toError";
 import { DiscoveryQueryParseError, DiscoveryQueryParseErrorReason } from "./query/errors";
 import { DiscoveryQuery } from "./query/schema";
@@ -24,14 +23,6 @@ export class DiscoveryQueryParser {
         }
 
         const query: DiscoveryQuery = parsed;
-
-        validateTimestamp(
-            currentTick,
-            query.timestamp,
-            this.TIMEOUT_TICKS,
-            () => new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.Timeout),
-            () => new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.FutureTimestamp),
-        );
 
         return query;
     }

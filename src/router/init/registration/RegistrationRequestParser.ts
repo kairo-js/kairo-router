@@ -1,5 +1,4 @@
 import { safeJsonParse } from "../../../utils/jsonParse";
-import { validateTimestamp } from "../../../utils/TimestampValidator";
 import { toError } from "../../../utils/toError";
 import {
     RegistrationRequestParseError,
@@ -26,17 +25,6 @@ export class RegistrationRequestParser {
         }
 
         const request: RegistrationRequest = parsed;
-
-        validateTimestamp(
-            currentTick,
-            request.timestamp,
-            this.TIMEOUT_TICKS,
-            () => new RegistrationRequestParseError(RegistrationRequestParseErrorReason.Timeout),
-            () =>
-                new RegistrationRequestParseError(
-                    RegistrationRequestParseErrorReason.FutureTimestamp,
-                ),
-        );
 
         return request;
     }

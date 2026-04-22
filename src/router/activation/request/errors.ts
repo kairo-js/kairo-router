@@ -12,14 +12,9 @@ export class ActivationRequestParseError extends Error {
 export enum ActivationRequestParseErrorReason {
     InvalidJSON = "InvalidJSON",
     InvalidStructure = "InvalidStructure",
-    Timeout = "Timeout",
-    FutureTimestamp = "FutureTimestamp",
 }
 
 const DEFAULT_MESSAGES: Record<ActivationRequestParseErrorReason, string> = {
     [ActivationRequestParseErrorReason.InvalidJSON]: "Failed to parse ActivationRequest JSON.",
     [ActivationRequestParseErrorReason.InvalidStructure]: "Invalid ActivationRequest structure.",
-    [ActivationRequestParseErrorReason.Timeout]: "ActivationRequest has timed out.",
-    [ActivationRequestParseErrorReason.FutureTimestamp]:
-        "ActivationRequest timestamp is in the future.",
 };
