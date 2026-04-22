@@ -2,6 +2,12 @@ import { Disposable } from "./Disposable";
 import { IdRegistry } from "./IdRegistry";
 import { Random } from "./Random";
 
+export type RuntimeEvent = {
+    phase: "after" | "before";
+    name: string;
+    payload: any;
+};
+
 // 環境に依存する機能を抽象化するインターフェース
 export interface KairoRuntime {
     // TimeStamp の検証などに使う
@@ -19,4 +25,7 @@ export interface KairoRuntime {
 
     // kairoId の乱数生成に使う（未実装の場合はデフォルト実装を使う）
     createRandom?(): Random;
+
+    // 環境固有のイベント
+    bindEvents(handler: (ev: RuntimeEvent) => void): Disposable;
 }
