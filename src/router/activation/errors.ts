@@ -12,9 +12,13 @@ export class ActivationRequestError extends Error {
 export enum ActivationRequestErrorReason {
     Timeout = "Timeout",
     FutureTimestamp = "FutureTimestamp",
+    AlreadyActivated = "AlreadyActivated",
+    AlreadyDeactivated = "AlreadyDeactivated",
 }
 
 const DEFAULT_MESSAGES: Record<ActivationRequestErrorReason, string> = {
     [ActivationRequestErrorReason.Timeout]: "ActivationRequest has timed out.",
     [ActivationRequestErrorReason.FutureTimestamp]: "ActivationRequest timestamp is in the future.",
+    [ActivationRequestErrorReason.AlreadyActivated]: "Addon is already activated.",
+    [ActivationRequestErrorReason.AlreadyDeactivated]: "Addon is already deactivated.",
 };

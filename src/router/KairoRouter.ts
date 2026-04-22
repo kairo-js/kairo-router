@@ -1,10 +1,14 @@
 import { MinecraftRuntime } from "../minecraft/MinecraftRuntime";
 import { AddonProperties } from "../types/AddonProperties";
 import { SeedRandom } from "../utils/SeedRandom";
+import { ActivationController } from "./activation/ActivationController";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
-import { createKairoContext, KairoContext } from "./KairoContext";
+import { createKairoContext, KairoContext, KairoContextMutator } from "./KairoContext";
+import { KairoEventId } from "./KairoEventId";
+import { KairoRouterListener } from "./KairoRouterListener";
 import { ReadyState } from "./ReadyState";
+import { Disposable } from "./types/Disposable";
 import { KairoRuntime } from "./types/KairoRuntime";
 import { Random } from "./types/Random";
 
@@ -14,8 +18,10 @@ export type RuntimeOption = KairoRuntime | "minecraft";
 
 export class KairoRouter {
     private kairoContext?: KairoContext;
+    private kairoContextMutator?: KairoContextMutator;
     private runtime?: KairoRuntime;
     private readyState = new ReadyState();
+    private routerListener?: Disposable;
 
     constructor() {}
     async init(properties: AddonProperties, options?: { runtime?: RuntimeOption }): Promise<void> {
@@ -25,12 +31,15 @@ export class KairoRouter {
         const runtimeOption = options?.runtime ?? "minecraft";
         this.runtime = resolveRuntime(runtimeOption);
 
-        this.runtime.onReady(() => {
-            this.readyState.markReady();
-        });
+        if (!this.readyState.isReady()) {
+            this.runtime.onReady(() => {
+                this.readyState.markReady();
+            });
+        }
 
         const { context, mutator } = createKairoContext(properties);
         this.kairoContext = context;
+        this.kairoContextMutator = mutator;
 
         const initializer = new KairoInitializer(
             this.runtime,
@@ -38,6 +47,9 @@ export class KairoRouter {
             mutator,
             resolveRandom(this.runtime),
             this.readyState,
+            () => {
+                this.startRouterListener();
+            },
         );
         initializer.setup();
     }
@@ -48,6 +60,42 @@ export class KairoRouter {
         }
         return this.kairoContext;
     }
+
+    private startRouterListener(): void {
+        if (!this.runtime || !this.kairoContext || !this.kairoContextMutator) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
+        }
+
+        if (this.routerListener) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyInitialized);
+        }
+
+        const activationController = new ActivationController(
+            this.kairoContext,
+            this.kairoContextMutator,
+        );
+        const handlers = this.buildHandlers(activationController);
+        const listener = new KairoRouterListener(this.readyState, handlers);
+
+        this.routerListener = listener.setup(this.runtime);
+    }
+
+    private buildHandlers(controller: ActivationController) {
+        return {
+            [KairoEventId.ActivationResponse]: (message: string) =>
+                this.handleActivationRequest(controller, message),
+        };
+    }
+
+    private handleActivationRequest = (controller: ActivationController, message: string): void => {
+        if (!this.runtime) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
+        }
+
+        controller.handleActivationRequest(message, {
+            runtime: this.runtime,
+        });
+    };
 }
 
 function resolveRuntime(option: RuntimeOption): KairoRuntime {

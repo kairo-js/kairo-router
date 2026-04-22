@@ -1,48 +1,40 @@
+import { KairoContext, KairoContextMutator } from "../KairoContext";
 import { ActivationRequestParser } from "./ActivationRequestParser";
 import { ActivationRequestValidator } from "./ActivationRequestValidator";
 import { ActivationRequest } from "./request/schema";
-
-type ActivationState = "active" | "inactive";
+import { ActivationResult } from "./result/schema";
 
 export class AddonActivationManager {
     private readonly parser = new ActivationRequestParser();
     private readonly validator = new ActivationRequestValidator();
 
-    private state: ActivationState = "inactive";
-    private activationTick = 0;
+    constructor() {}
 
-    resolveRequest(message: string, currentTick: number): ActivationRequest {
+    resolveRequest(message: string, currentTick: number, context: KairoContext): ActivationRequest {
         const request = this.parser.parse(message, currentTick);
-        this.validator.validateRequest(request, currentTick);
+        this.validator.validateRequest(request, currentTick, context.isActive());
         return request;
     }
 
-    apply(request: ActivationRequest, currentTick: number): void {
+    apply(
+        request: ActivationRequest,
+        currentTick: number,
+        contextMutator: KairoContextMutator,
+    ): ActivationResult {
         if (request.type === "activate") {
-            this.activate(currentTick);
-        } else {
-            this.deactivate();
+            contextMutator.setActivationState("active", currentTick);
+
+            return {
+                success: true,
+                action: "activate",
+            };
         }
-    }
 
-    private activate(currentTick: number): void {
-        if (this.state === "active") return;
+        contextMutator.setActivationState("inactive", currentTick);
 
-        this.state = "active";
-        this.activationTick = currentTick;
-    }
-
-    private deactivate(): void {
-        if (this.state === "inactive") return;
-
-        this.state = "inactive";
-    }
-
-    isActive(): boolean {
-        return this.state === "active";
-    }
-
-    getCurrentTick(runtimeTick: number): number {
-        return runtimeTick - this.activationTick;
+        return {
+            success: true,
+            action: "deactivate",
+        };
     }
 }
