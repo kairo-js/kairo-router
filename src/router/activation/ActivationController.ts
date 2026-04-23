@@ -26,12 +26,12 @@ export class ActivationController {
     handleActivationRequest = (message: string, deps: { runtime: KairoRuntime }): void => {
         const currentTick = deps.runtime.currentTick();
         const request = this.activationManager.resolveRequest(message, currentTick, this.context);
-        const result = this.apply(request, currentTick);
+        const result = this.apply(request);
 
         this.activationResponder.respond(result, deps.runtime);
     };
 
-    private apply(request: ActivationRequest, tick: number): ActivationResult {
+    private apply(request: ActivationRequest): ActivationResult {
         const next = request.type === "activate" ? "active" : "inactive";
 
         // beforeEvents
@@ -39,7 +39,7 @@ export class ActivationController {
             this.eventRegistry.emitBefore("addonDeactivate", new AddonDeactivateBeforeEvent());
         }
 
-        this.contextMutator.setActivationState(next, tick);
+        this.contextMutator.setActivationState(next);
 
         // afterEvents
         if (next === "active") {

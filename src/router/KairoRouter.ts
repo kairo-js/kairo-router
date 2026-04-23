@@ -26,6 +26,7 @@ export class KairoRouter {
     private kairoContextMutator?: KairoContextMutator;
     private runtime?: KairoRuntime;
     private scheduler?: KairoScheduler;
+    private activationStartedTick?: number;
     private readyState = new ReadyState();
     private routerListener?: Disposable;
     private runtimeInjectedEventListener?: Disposable;
@@ -80,6 +81,16 @@ export class KairoRouter {
     runTimeout(callback: () => void, tickDelay?: number): number {
         this.assertRunnable();
         return this.scheduler!.runTimeout(callback, tickDelay);
+    }
+
+    get currentTick(): number {
+        if (!this.runtime) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
+        }
+        if (this.activationStartedTick === undefined) {
+            return 0;
+        }
+        return this.runtime.currentTick() - this.activationStartedTick;
     }
 
     private startRouterListener(): void {

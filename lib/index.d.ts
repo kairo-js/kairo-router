@@ -2,7 +2,7 @@ declare enum SupportedTag {
     Official = "official",
     Approved = "approved",
     Stable = "stable",
-    Experimental = "experimental"
+    Experimental = "experimental",
 }
 
 interface AddonProperties {
@@ -50,7 +50,7 @@ declare enum MinecraftModule {
     ServerAdmin = "@minecraft/server-admin",
     DebugUtilities = "@minecraft/debug-utilities",
     Diagnostics = "@minecraft/diagnostics",
-    ServerGraphics = "@minecraft/server-graphics"
+    ServerGraphics = "@minecraft/server-graphics",
 }
 interface RequiredAddons {
     readonly [addonId: string]: string;
@@ -65,11 +65,9 @@ interface Subscribable<T> {
     unsubscribe(fn: (arg: T) => void): void;
 }
 
-declare class AddonActivateAfterEvent {
-}
+declare class AddonActivateAfterEvent {}
 
-declare class AddonDeactivateBeforeEvent {
-}
+declare class AddonDeactivateBeforeEvent {}
 
 /**
  * Minecraft PlayerJoinAfterEvent
@@ -119,13 +117,11 @@ interface KairoRegistry {
 }
 
 declare class KairoContext {
-    private constructor(
-);
+    private constructor();
     get addonProperties(): AddonProperties;
     get kairoId(): string;
     get kairoRegistry(): KairoRegistry;
     get activationState(): "active" | "inactive";
-    get activationTick(): number;
     isActive(): boolean;
     isRegistered(): boolean;
 }
@@ -165,15 +161,36 @@ type RuntimeOption = KairoRuntime | "minecraft";
 declare class KairoRouter {
     afterEvents: KairoAfterEvents<KairoEventMap>;
     beforeEvents: KairoBeforeEvents<KairoEventMap>;
-    init(properties: AddonProperties, options?: {
-        runtime?: RuntimeOption;
-    }): Promise<void>;
+    init(
+        properties: AddonProperties,
+        options?: {
+            runtime?: RuntimeOption;
+        },
+    ): Promise<void>;
     getKairoContext(): KairoContext;
     runInterval(callback: () => void, tickInterval?: number): number;
     runTimeout(callback: () => void, tickDelay?: number): number;
     private constructor();
+    get currentTick(): number;
 }
 
 declare const router: KairoRouter;
 
-export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AddonHeader, type AddonMetadata, type AddonProperties, type EngineVersion, KairoContext, type KairoRegistry, KairoRouter, type KairoRuntime, type ManifestDependency, MinecraftModule, type RequiredAddons, type SemVer, SupportedTag, router };
+export {
+    AddonActivateAfterEvent,
+    AddonDeactivateBeforeEvent,
+    KairoContext,
+    KairoRouter,
+    MinecraftModule,
+    router,
+    SupportedTag,
+    type AddonHeader,
+    type AddonMetadata,
+    type AddonProperties,
+    type EngineVersion,
+    type KairoRegistry,
+    type KairoRuntime,
+    type ManifestDependency,
+    type RequiredAddons,
+    type SemVer,
+};
