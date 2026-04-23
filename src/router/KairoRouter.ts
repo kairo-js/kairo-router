@@ -30,25 +30,28 @@ export class KairoRouter {
     private readyState = new ReadyState();
     private routerListener?: Disposable;
     private runtimeInjectedEventListener?: Disposable;
+    private runtimeEventDisposables: Set<Disposable> = new Set();
 
-    private eventRegistry = new EventRegistry<KairoEventMap>();
+    private eventRegistry!: EventRegistry<KairoEventMap>;
+    public afterEvents!: KairoAfterEvents<KairoEventMap>;
+    public beforeEvents!: KairoBeforeEvents<KairoEventMap>;
 
-    public afterEvents = new KairoAfterEvents(this.eventRegistry);
-    public beforeEvents = new KairoBeforeEvents(this.eventRegistry);
-
-    async init(properties: AddonProperties, options?: { runtime?: RuntimeOption }): Promise<void> {
+    init(properties: AddonProperties, options?: { runtime?: RuntimeOption }): void {
         if (this.kairoContext) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyInitialized);
         }
 
         const runtimeOption = options?.runtime ?? "minecraft";
         this.runtime = resolveRuntime(runtimeOption);
-
         this.scheduler = new KairoScheduler(this.runtime.scheduler);
 
         const { context, mutator } = createKairoContext(properties);
         this.kairoContext = context;
         this.kairoContextMutator = mutator;
+
+        this.eventRegistry = new EventRegistry<KairoEventMap>(this.kairoContext);
+        this.afterEvents = new KairoAfterEvents<KairoEventMap>(this.eventRegistry);
+        this.beforeEvents = new KairoBeforeEvents<KairoEventMap>(this.eventRegistry);
 
         if (!this.readyState.isReady()) {
             this.runtime.onReady(() => {
@@ -142,12 +145,13 @@ export class KairoRouter {
     }
 
     private attachRuntimeEvents() {
-        if (!this.runtime) {
-            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
-        }
+        if (!this.runtime) throw new Error("not init");
+
         if (this.runtimeInjectedEventListener) return;
 
         this.runtimeInjectedEventListener = this.runtime.bindEvents((ev) => {
+            if (!this.kairoContext?.isActive()) return;
+
             if (ev.phase === "after") {
                 this.eventRegistry.emitAfter(ev.name as any, ev.payload);
             } else {
@@ -157,7 +161,11 @@ export class KairoRouter {
     }
 
     private detachRuntimeEvents() {
-        this.runtimeInjectedEventListener?.dispose();
+        for (const d of this.runtimeEventDisposables) {
+            d.dispose();
+        }
+
+        this.runtimeEventDisposables.clear();
         this.runtimeInjectedEventListener = undefined;
     }
 
