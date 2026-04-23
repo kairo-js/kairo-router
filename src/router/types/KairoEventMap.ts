@@ -1,6 +1,6 @@
-import { AddonActivateAfterEvent } from "../events/AddonActivateAfterEvent";
-import { AddonDeactivateBeforeEvent } from "../events/AddonDeactivateBeforeEvent";
-import { PlayerJoinAfterEv } from "../events/PlayerJoinAfterEv";
+import { AddonActivateAfterEvent } from "../events/classes/AddonActivateAfterEvent";
+import { AddonDeactivateBeforeEvent } from "../events/classes/AddonDeactivateBeforeEvent";
+import { PlayerJoinAfterEv } from "../events/classes/PlayerJoinAfterEv";
 
 export interface KairoEventMap {
     after: {

@@ -1,6 +1,6 @@
+import { KairoEventMap } from "../types/KairoEventMap";
+import { asSubscribable } from "../types/Subscribable";
 import { EventRegistry } from "./EventRegistry";
-import { KairoEventMap } from "./types/KairoEventMap";
-import { asSubscribable } from "./types/Subscribable";
 
 export class KairoAfterEvents<E extends KairoEventMap> {
     constructor(private registry: EventRegistry<E>) {}

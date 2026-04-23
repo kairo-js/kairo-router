@@ -1,5 +1,5 @@
-import { InternalEvent } from "./types/InternalEvent";
-import { KairoEventMap } from "./types/KairoEventMap";
+import { InternalEvent } from "../types/InternalEvent";
+import { KairoEventMap } from "../types/KairoEventMap";
 
 export class EventRegistry<E extends KairoEventMap> {
     private after = new Map<string, InternalEvent<any>>();
