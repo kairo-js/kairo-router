@@ -24,6 +24,7 @@ export class KairoRouter {
     private kairoContext?: KairoContext;
     private kairoContextMutator?: KairoContextMutator;
     private runtime?: KairoRuntime;
+    private activationStartedTick?: number;
     private readyState = new ReadyState();
     private routerListener?: Disposable;
     private runtimeInjectedEventListener?: Disposable;
@@ -70,6 +71,16 @@ export class KairoRouter {
         return this.kairoContext;
     }
 
+    get currentTick(): number {
+        if (!this.runtime) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
+        }
+        if (this.activationStartedTick === undefined) {
+            return 0;
+        }
+        return this.runtime.currentTick() - this.activationStartedTick;
+    }
+
     private startRouterListener(): void {
         if (!this.runtime || !this.kairoContext || !this.kairoContextMutator) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
@@ -84,8 +95,14 @@ export class KairoRouter {
             this.kairoContextMutator,
             this.eventRegistry,
             {
-                onActivate: () => this.attachRuntimeEvents(),
-                onDeactivate: () => this.detachRuntimeEvents(),
+                onActivate: () => {
+                    this.activationStartedTick = this.runtime?.currentTick();
+                    this.attachRuntimeEvents();
+                },
+                onDeactivate: () => {
+                    this.activationStartedTick = undefined;
+                    this.detachRuntimeEvents();
+                },
             },
         );
         const handlers = this.buildHandlers(activationController);
