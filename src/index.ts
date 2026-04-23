@@ -20,3 +20,6 @@ export type {
 
 export { MinecraftModule } from "./types/AddonProperties";
 export { SupportedTag } from "./types/tags";
+
+export { AddonActivateAfterEvent } from "./router/events/classes/AddonActivateAfterEvent";
+export { AddonDeactivateBeforeEvent } from "./router/events/classes/AddonDeactivateBeforeEvent";

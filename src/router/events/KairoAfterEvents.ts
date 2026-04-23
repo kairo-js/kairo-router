@@ -3,13 +3,10 @@ import { asSubscribable } from "../types/Subscribable";
 import { EventRegistry } from "./EventRegistry";
 
 export class KairoAfterEvents<E extends KairoEventMap> {
-    constructor(private registry: EventRegistry<E>) {}
-
-    get addonActivate() {
-        return asSubscribable(this.registry.getAfter("addonActivate"));
-    }
-
-    get playerJoin() {
-        return asSubscribable(this.registry.getAfter("playerJoin"));
+    readonly addonActivate;
+    readonly playerJoin;
+    constructor(private readonly registry: EventRegistry<E>) {
+        this.addonActivate = asSubscribable(this.registry.getAfter("addonActivate"));
+        this.playerJoin = asSubscribable(this.registry.getAfter("playerJoin"));
     }
 }

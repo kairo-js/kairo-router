@@ -60,13 +60,6 @@ interface Disposable {
     dispose(): void;
 }
 
-declare class InternalEvent<T> implements Subscribable<T> {
-    private listeners;
-    subscribe(fn: (arg: T) => void): Disposable;
-    unsubscribe(fn: (arg: T) => void): void;
-    emit(arg: T): void;
-}
-
 interface Subscribable<T> {
     subscribe(fn: (arg: T) => void): Disposable;
     unsubscribe(fn: (arg: T) => void): void;
@@ -78,41 +71,30 @@ declare class AddonActivateAfterEvent {
 declare class AddonDeactivateBeforeEvent {
 }
 
-interface PlayerJoinAfterEv {
+interface KairoPlayerJoinAfterEvent {
     readonly playerId: string;
     readonly playerName: string;
 }
 
 interface KairoEventMap {
-    after: {
-        addonActivate: AddonActivateAfterEvent;
-        playerJoin: PlayerJoinAfterEv;
+    readonly after: {
+        readonly addonActivate: AddonActivateAfterEvent;
+        readonly playerJoin: KairoPlayerJoinAfterEvent;
     };
-    before: {
-        addonDeactivate: AddonDeactivateBeforeEvent;
+    readonly before: {
+        readonly addonDeactivate: AddonDeactivateBeforeEvent;
     };
-}
-
-declare class EventRegistry<E extends KairoEventMap> {
-    private after;
-    private before;
-    getAfter<K extends keyof E["after"]>(name: K): InternalEvent<E["after"][K]>;
-    getBefore<K extends keyof E["before"]>(name: K): InternalEvent<E["before"][K]>;
-    emitAfter<K extends keyof E["after"]>(name: K, payload: E["after"][K]): void;
-    emitBefore<K extends keyof E["before"]>(name: K, payload: E["before"][K]): void;
 }
 
 declare class KairoAfterEvents<E extends KairoEventMap> {
-    private registry;
-    constructor(registry: EventRegistry<E>);
-    get addonActivate(): Subscribable<E["after"]["addonActivate"]>;
-    get playerJoin(): Subscribable<E["after"]["playerJoin"]>;
+    readonly addonActivate: Subscribable<E["after"]["addonActivate"]>;
+    readonly playerJoin: Subscribable<E["after"]["playerJoin"]>;
+    private constructor();
 }
 
 declare class KairoBeforeEvents<E extends KairoEventMap> {
-    private registry;
-    constructor(registry: EventRegistry<E>);
-    get addonDeactivate(): Subscribable<E["before"]["addonDeactivate"]>;
+    readonly addonDeactivate: Subscribable<E["before"]["addonDeactivate"]>;
+    private constructor();
 }
 
 interface KairoRegistry {
@@ -181,4 +163,4 @@ declare class KairoRouter {
 
 declare const router: KairoRouter;
 
-export { type AddonHeader, type AddonMetadata, type AddonProperties, type EngineVersion, KairoContext, type KairoRegistry, KairoRouter, type KairoRuntime, type ManifestDependency, MinecraftModule, type RequiredAddons, type SemVer, SupportedTag, router };
+export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AddonHeader, type AddonMetadata, type AddonProperties, type EngineVersion, KairoContext, type KairoRegistry, KairoRouter, type KairoRuntime, type ManifestDependency, MinecraftModule, type RequiredAddons, type SemVer, SupportedTag, router };

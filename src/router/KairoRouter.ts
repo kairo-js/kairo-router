@@ -43,7 +43,6 @@ export class KairoRouter {
         const { context, mutator } = createKairoContext(properties);
         this.kairoContext = context;
         this.kairoContextMutator = mutator;
-        this.syncRuntimeInjectedEvents();
 
         if (!this.readyState.isReady()) {
             this.runtime.onReady(() => {
@@ -84,6 +83,10 @@ export class KairoRouter {
             this.kairoContext,
             this.kairoContextMutator,
             this.eventRegistry,
+            {
+                onActivate: () => this.attachRuntimeEvents(),
+                onDeactivate: () => this.detachRuntimeEvents(),
+            },
         );
         const handlers = this.buildHandlers(activationController);
         const listener = new KairoRouterListener(this.readyState, handlers);
@@ -106,28 +109,25 @@ export class KairoRouter {
         controller.handleActivationRequest(message, {
             runtime: this.runtime,
         });
-
-        this.syncRuntimeInjectedEvents();
     };
 
-    private syncRuntimeInjectedEvents(): void {
-        if (!this.runtime || !this.kairoContext || !this.runtime.bindEvents) {
-            return;
+    private attachRuntimeEvents() {
+        if (!this.runtime) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
         }
+        if (!this.runtime.bindEvents) return;
+        if (this.runtimeInjectedEventListener) return;
 
-        if (this.kairoContext.isActive()) {
-            if (!this.runtimeInjectedEventListener) {
-                this.runtimeInjectedEventListener = this.runtime.bindEvents((ev) => {
-                    if (ev.phase === "after") {
-                        this.eventRegistry.emitAfter(ev.name as any, ev.payload);
-                    } else {
-                        this.eventRegistry.emitBefore(ev.name as any, ev.payload);
-                    }
-                });
+        this.runtimeInjectedEventListener = this.runtime.bindEvents((ev) => {
+            if (ev.phase === "after") {
+                this.eventRegistry.emitAfter(ev.name as any, ev.payload);
+            } else {
+                this.eventRegistry.emitBefore(ev.name as any, ev.payload);
             }
-            return;
-        }
+        });
+    }
 
+    private detachRuntimeEvents() {
         this.runtimeInjectedEventListener?.dispose();
         this.runtimeInjectedEventListener = undefined;
     }

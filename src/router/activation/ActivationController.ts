@@ -17,6 +17,10 @@ export class ActivationController {
         private readonly context: KairoContext,
         private readonly contextMutator: KairoContextMutator,
         private readonly eventRegistry: EventRegistry<KairoEventMap>,
+        private readonly lifecycle: {
+            onActivate: () => void;
+            onDeactivate: () => void;
+        },
     ) {}
 
     handleActivationRequest = (message: string, deps: { runtime: KairoRuntime }): void => {
@@ -39,7 +43,10 @@ export class ActivationController {
 
         // afterEvents
         if (next === "active") {
+            this.lifecycle.onActivate();
             this.eventRegistry.emitAfter("addonActivate", new AddonActivateAfterEvent());
+        } else {
+            this.lifecycle.onDeactivate();
         }
 
         return {
