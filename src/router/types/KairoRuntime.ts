@@ -1,5 +1,6 @@
 import { Disposable } from "./Disposable";
 import { IdRegistry } from "./IdRegistry";
+import { KairoSchedulerRuntime } from "./KairoSchedulerRuntime";
 import { Random } from "./Random";
 
 export type RuntimeEvent = {
@@ -27,5 +28,8 @@ export interface KairoRuntime {
     createRandom?(): Random;
 
     // 環境固有のイベント
-    bindEvents?(handler: (ev: RuntimeEvent) => void): Disposable;
+    bindEvents(handler: (ev: RuntimeEvent) => void): Disposable;
+
+    // runInterval, runTimeout の実装
+    scheduler: KairoSchedulerRuntime;
 }

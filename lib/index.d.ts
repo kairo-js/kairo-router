@@ -71,6 +71,10 @@ declare class AddonActivateAfterEvent {
 declare class AddonDeactivateBeforeEvent {
 }
 
+/**
+ * Minecraft PlayerJoinAfterEvent
+ * https://learn.microsoft.com/ja-jp/minecraft/creator/scriptapi/minecraft/server/playerjoinafterevent?view=minecraft-bedrock-stable
+ */
 interface KairoPlayerJoinAfterEvent {
     readonly playerId: string;
     readonly playerName: string;
@@ -131,6 +135,12 @@ interface IdRegistry {
     register(id: string): void;
 }
 
+interface KairoSchedulerRuntime {
+    runInterval(callback: () => void, tickInterval?: number): number;
+    runTimeout(callback: () => void, tickDelay?: number): number;
+    clearRun(runId: number): void;
+}
+
 interface Random {
     next(): number;
 }
@@ -147,18 +157,21 @@ interface KairoRuntime {
     onReady(handler: () => void): Disposable;
     createIdRegistry(objectiveId: string): IdRegistry;
     createRandom?(): Random;
-    bindEvents?(handler: (ev: RuntimeEvent) => void): Disposable;
+    bindEvents(handler: (ev: RuntimeEvent) => void): Disposable;
+    scheduler: KairoSchedulerRuntime;
 }
 
 type RuntimeOption = KairoRuntime | "minecraft";
 declare class KairoRouter {
     afterEvents: KairoAfterEvents<KairoEventMap>;
     beforeEvents: KairoBeforeEvents<KairoEventMap>;
-    private constructor();
     init(properties: AddonProperties, options?: {
         runtime?: RuntimeOption;
     }): Promise<void>;
     getKairoContext(): KairoContext;
+    runInterval(callback: () => void, tickInterval?: number): number;
+    runTimeout(callback: () => void, tickDelay?: number): number;
+    private constructor();
 }
 
 declare const router: KairoRouter;

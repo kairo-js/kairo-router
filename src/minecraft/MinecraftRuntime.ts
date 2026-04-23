@@ -7,6 +7,7 @@ import {
 } from "@minecraft/server";
 import { Disposable } from "../router/types/Disposable";
 import { KairoRuntime, RuntimeEvent } from "../router/types/KairoRuntime";
+import { KairoSchedulerRuntime } from "../router/types/KairoSchedulerRuntime";
 import { Random } from "../router/types/Random";
 import { SeedRandom } from "../utils/SeedRandom";
 import { ScoreboardIdRegistry } from "./ScoreboardIdRegistry";
@@ -82,4 +83,10 @@ export class MinecraftRuntime implements KairoRuntime {
             dispose: () => disposables.forEach((d) => d.dispose()),
         };
     }
+
+    scheduler: KairoSchedulerRuntime = {
+        runInterval: (cb, tick) => system.runInterval(cb, tick),
+        runTimeout: (cb, tick) => system.runTimeout(cb, tick),
+        clearRun: (id) => system.clearRun(id),
+    };
 }

@@ -1,5 +1,6 @@
 export class KairoContextError extends Error {
     public readonly reason: KairoContextErrorReason;
+    public readonly cause?: Error;
     constructor(reason: KairoContextErrorReason, options: { cause?: Error } = {}) {
         super(DEFAULT_MESSAGES[reason], { cause: options.cause });
 
