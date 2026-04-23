@@ -56,6 +56,65 @@ interface RequiredAddons {
     readonly [addonId: string]: string;
 }
 
+interface Disposable {
+    dispose(): void;
+}
+
+declare class InternalEvent<T> implements Subscribable<T> {
+    private listeners;
+    subscribe(fn: (arg: T) => void): Disposable;
+    unsubscribe(fn: (arg: T) => void): void;
+    emit(arg: T): void;
+}
+
+interface Subscribable<T> {
+    subscribe(fn: (arg: T) => void): Disposable;
+    unsubscribe(fn: (arg: T) => void): void;
+}
+
+declare class AddonActivateAfterEvent {
+}
+
+declare class AddonDeactivateBeforeEvent {
+}
+
+interface PlayerJoinAfterEv {
+    readonly playerId: string;
+    readonly playerName: string;
+}
+
+interface KairoEventMap {
+    after: {
+        addonActivate: AddonActivateAfterEvent;
+        playerJoin: PlayerJoinAfterEv;
+    };
+    before: {
+        addonDeactivate: AddonDeactivateBeforeEvent;
+    };
+}
+
+declare class EventRegistry<E extends KairoEventMap> {
+    private after;
+    private before;
+    getAfter<K extends keyof E["after"]>(name: K): InternalEvent<E["after"][K]>;
+    getBefore<K extends keyof E["before"]>(name: K): InternalEvent<E["before"][K]>;
+    emitAfter<K extends keyof E["after"]>(name: K, payload: E["after"][K]): void;
+    emitBefore<K extends keyof E["before"]>(name: K, payload: E["before"][K]): void;
+}
+
+declare class KairoAfterEvents<E extends KairoEventMap> {
+    private registry;
+    constructor(registry: EventRegistry<E>);
+    get addonActivate(): Subscribable<E["after"]["addonActivate"]>;
+    get playerJoin(): Subscribable<E["after"]["playerJoin"]>;
+}
+
+declare class KairoBeforeEvents<E extends KairoEventMap> {
+    private registry;
+    constructor(registry: EventRegistry<E>);
+    get addonDeactivate(): Subscribable<E["before"]["addonDeactivate"]>;
+}
+
 interface KairoRegistry {
     kairoId: string;
     addonId: string;
@@ -85,10 +144,6 @@ declare class KairoContext {
     isRegistered(): boolean;
 }
 
-interface Disposable {
-    dispose(): void;
-}
-
 interface IdRegistry {
     has(id: string): boolean;
     register(id: string): void;
@@ -98,6 +153,11 @@ interface Random {
     next(): number;
 }
 
+type RuntimeEvent = {
+    phase: "after" | "before";
+    name: string;
+    payload: any;
+};
 interface KairoRuntime {
     currentTick(): number;
     send(id: string, message: string): void;
@@ -105,10 +165,13 @@ interface KairoRuntime {
     onReady(handler: () => void): Disposable;
     createIdRegistry(objectiveId: string): IdRegistry;
     createRandom?(): Random;
+    bindEvents?(handler: (ev: RuntimeEvent) => void): Disposable;
 }
 
 type RuntimeOption = KairoRuntime | "minecraft";
 declare class KairoRouter {
+    afterEvents: KairoAfterEvents<KairoEventMap>;
+    beforeEvents: KairoBeforeEvents<KairoEventMap>;
     private constructor();
     init(properties: AddonProperties, options?: {
         runtime?: RuntimeOption;
