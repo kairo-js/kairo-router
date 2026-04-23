@@ -71,6 +71,10 @@ declare class AddonActivateAfterEvent {
 declare class AddonDeactivateBeforeEvent {
 }
 
+/**
+ * Minecraft PlayerJoinAfterEvent
+ * https://learn.microsoft.com/ja-jp/minecraft/creator/scriptapi/minecraft/server/playerjoinafterevent?view=minecraft-bedrock-stable
+ */
 interface KairoPlayerJoinAfterEvent {
     readonly playerId: string;
     readonly playerName: string;
@@ -121,7 +125,6 @@ declare class KairoContext {
     get kairoId(): string;
     get kairoRegistry(): KairoRegistry;
     get activationState(): "active" | "inactive";
-    get activationTick(): number;
     isActive(): boolean;
     isRegistered(): boolean;
 }
@@ -159,6 +162,7 @@ declare class KairoRouter {
         runtime?: RuntimeOption;
     }): Promise<void>;
     getKairoContext(): KairoContext;
+    get currentTick(): number;
 }
 
 declare const router: KairoRouter;
