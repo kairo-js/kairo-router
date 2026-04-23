@@ -26,6 +26,7 @@ export class KairoRouter {
     private runtime?: KairoRuntime;
     private readyState = new ReadyState();
     private routerListener?: Disposable;
+    private runtimeInjectedEventListener?: Disposable;
 
     private eventRegistry = new EventRegistry<KairoEventMap>();
 
@@ -39,24 +40,16 @@ export class KairoRouter {
         }
         const runtimeOption = options?.runtime ?? "minecraft";
         this.runtime = resolveRuntime(runtimeOption);
-
-        this.runtime.bindEvents?.((ev) => {
-            if (ev.phase === "after") {
-                this.eventRegistry.emitAfter(ev.name as any, ev.payload);
-            } else {
-                this.eventRegistry.emitBefore(ev.name as any, ev.payload);
-            }
-        });
+        const { context, mutator } = createKairoContext(properties);
+        this.kairoContext = context;
+        this.kairoContextMutator = mutator;
+        this.syncRuntimeInjectedEvents();
 
         if (!this.readyState.isReady()) {
             this.runtime.onReady(() => {
                 this.readyState.markReady();
             });
         }
-
-        const { context, mutator } = createKairoContext(properties);
-        this.kairoContext = context;
-        this.kairoContextMutator = mutator;
 
         const initializer = new KairoInitializer(
             this.runtime,
@@ -113,7 +106,31 @@ export class KairoRouter {
         controller.handleActivationRequest(message, {
             runtime: this.runtime,
         });
+
+        this.syncRuntimeInjectedEvents();
     };
+
+    private syncRuntimeInjectedEvents(): void {
+        if (!this.runtime || !this.kairoContext || !this.runtime.bindEvents) {
+            return;
+        }
+
+        if (this.kairoContext.isActive()) {
+            if (!this.runtimeInjectedEventListener) {
+                this.runtimeInjectedEventListener = this.runtime.bindEvents((ev) => {
+                    if (ev.phase === "after") {
+                        this.eventRegistry.emitAfter(ev.name as any, ev.payload);
+                    } else {
+                        this.eventRegistry.emitBefore(ev.name as any, ev.payload);
+                    }
+                });
+            }
+            return;
+        }
+
+        this.runtimeInjectedEventListener?.dispose();
+        this.runtimeInjectedEventListener = undefined;
+    }
 }
 
 function resolveRuntime(option: RuntimeOption): KairoRuntime {
