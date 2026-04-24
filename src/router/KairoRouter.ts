@@ -18,13 +18,13 @@ import { KairoEventMap } from "./types/KairoEventMap";
 import { KairoRuntime } from "./types/KairoRuntime";
 import { Random } from "./types/Random";
 
-export type RuntimeOption = KairoRuntime | "minecraft";
+export type RuntimeOption = KairoRuntime<KairoEventMap> | "minecraft";
 
 // kjs-router-ch 0001
 export class KairoRouter {
     private kairoContext?: KairoContext;
     private kairoContextMutator?: KairoContextMutator;
-    private runtime?: KairoRuntime;
+    private runtime?: KairoRuntime<KairoEventMap>;
     private scheduler?: KairoScheduler;
     private activationStartedTick?: number;
     private readyState = new ReadyState();
@@ -152,9 +152,9 @@ export class KairoRouter {
             if (!this.kairoContext?.isActive()) return;
 
             if (ev.phase === "after") {
-                this.eventRegistry.emitAfter(ev.name as any, ev.payload);
+                this.eventRegistry.emitAfter(ev.name, ev.payload);
             } else {
-                this.eventRegistry.emitBefore(ev.name as any, ev.payload);
+                this.eventRegistry.emitBefore(ev.name, ev.payload);
             }
         });
     }
@@ -175,14 +175,14 @@ export class KairoRouter {
     }
 }
 
-function resolveRuntime(option: RuntimeOption): KairoRuntime {
+function resolveRuntime(option: RuntimeOption): KairoRuntime<KairoEventMap> {
     if (option === "minecraft") {
         return new MinecraftRuntime();
     }
     return option;
 }
 
-function resolveRandom(runtime: KairoRuntime): Random {
+function resolveRandom(runtime: KairoRuntime<KairoEventMap>): Random {
     if ("createRandom" in runtime && typeof runtime.createRandom === "function") {
         return runtime.createRandom();
     }
