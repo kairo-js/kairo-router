@@ -37,10 +37,6 @@ export class KairoContext {
         return this._state.kairoRegistry;
     }
 
-    get activationState(): "active" | "inactive" {
-        return this._state.activationState;
-    }
-
     isActive(): boolean {
         return this._state.activationState === "active";
     }
