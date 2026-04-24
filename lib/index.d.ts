@@ -94,9 +94,11 @@ interface Subscribable<T> {
 }
 
 declare class AddonActivateAfterEvent {
+    private constructor();
 }
 
 declare class AddonDeactivateBeforeEvent {
+    private constructor();
 }
 
 /**

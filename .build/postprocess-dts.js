@@ -12,7 +12,14 @@ const project = new Project({
 
 const source = project.addSourceFileAtPath(filePath);
 
-const ROOT_CLASSES = ["KairoContext", "KairoRouter", "KairoAfterEvents", "KairoBeforeEvents"];
+const ROOT_CLASSES = [
+    "KairoContext",
+    "KairoRouter",
+    "KairoAfterEvents",
+    "KairoBeforeEvents",
+    "AddonActivateAfterEvent",
+    "AddonDeactivateBeforeEvent",
+];
 patchClasses(source, ROOT_CLASSES);
 pruneUnused(source, ROOT_CLASSES);
 
