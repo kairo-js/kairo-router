@@ -71,7 +71,7 @@ export class KairoRouter {
         initializer.setup();
     }
 
-    getKairoContext(): KairoContext {
+    get systemInfo(): KairoContext {
         this.assertRunnable();
         return this.kairoContext!;
     }
