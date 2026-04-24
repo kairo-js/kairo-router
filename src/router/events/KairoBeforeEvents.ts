@@ -5,6 +5,11 @@ import { EventRegistry } from "./EventRegistry";
 export class KairoBeforeEvents<E extends KairoEventMap> {
     readonly addonDeactivate;
     constructor(private registry: EventRegistry<E>) {
-        this.addonDeactivate = asSubscribable(this.registry.getBefore("addonDeactivate"));
+        this.addonDeactivate = asSubscribable(
+            this.registry.getBefore("addonDeactivate", {
+                requireActiveOnSubscribe: false,
+                clearOnDeactivate: false,
+            }),
+        );
     }
 }

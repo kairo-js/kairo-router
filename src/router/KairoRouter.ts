@@ -30,7 +30,6 @@ export class KairoRouter {
     private readyState = new ReadyState();
     private routerListener?: Disposable;
     private runtimeInjectedEventListener?: Disposable;
-    private runtimeEventDisposables: Set<Disposable> = new Set();
 
     private eventRegistry!: EventRegistry<KairoEventMap>;
     public afterEvents!: KairoAfterEvents<KairoEventMap>;
@@ -161,11 +160,7 @@ export class KairoRouter {
     }
 
     private detachRuntimeEvents() {
-        for (const d of this.runtimeEventDisposables) {
-            d.dispose();
-        }
-
-        this.runtimeEventDisposables.clear();
+        this.runtimeInjectedEventListener?.dispose();
         this.runtimeInjectedEventListener = undefined;
     }
 

@@ -47,6 +47,7 @@ export class ActivationController {
             this.eventRegistry.emitAfter("addonActivate", new AddonActivateAfterEvent());
         } else {
             this.lifecycle.onDeactivate();
+            this.eventRegistry.clearActiveScopedListeners();
         }
 
         return {
