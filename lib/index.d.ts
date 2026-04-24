@@ -175,14 +175,14 @@ type RuntimeOption = KairoRuntime<KairoEventMap> | "minecraft";
 declare class KairoRouter {
     readonly afterEvents: KairoAfterEvents<KairoEventMap>;
     readonly beforeEvents: KairoBeforeEvents<KairoEventMap>;
+    get currentTick(): number;
+    get systemInfo(): KairoContext;
+    clearRun(runId: number): void;
     init(properties: AddonProperties, options?: {
         runtime?: RuntimeOption;
     }): void;
-    get systemInfo(): KairoContext;
-    get currentTick(): number;
     runInterval(callback: () => void, tickInterval?: number): number;
     runTimeout(callback: () => void, tickDelay?: number): number;
-    clearRun(runId: number): void;
     private constructor();
 }
 

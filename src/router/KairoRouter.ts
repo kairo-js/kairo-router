@@ -39,6 +39,26 @@ export class KairoRouter {
     public readonly afterEvents = new KairoAfterEvents<KairoEventMap>(this.eventRegistry);
     public readonly beforeEvents = new KairoBeforeEvents<KairoEventMap>(this.eventRegistry);
 
+    get currentTick(): number {
+        if (!this.runtime) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
+        }
+        if (this.activationTickIntervalId === undefined) {
+            return 0;
+        }
+        return this.activationCurrentTick;
+    }
+
+    get systemInfo(): KairoContext {
+        this.assertRunnable();
+        return this.kairoContext!;
+    }
+
+    clearRun(runId: number): void {
+        this.assertRunnable();
+        this.scheduler!.clearRun(runId);
+    }
+
     init(properties: AddonProperties, options?: { runtime?: RuntimeOption }): void {
         if (this.kairoContext) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyInitialized);
@@ -70,21 +90,6 @@ export class KairoRouter {
         initializer.setup();
     }
 
-    get systemInfo(): KairoContext {
-        this.assertRunnable();
-        return this.kairoContext!;
-    }
-
-    get currentTick(): number {
-        if (!this.runtime) {
-            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
-        }
-        if (this.activationTickIntervalId === undefined) {
-            return 0;
-        }
-        return this.activationCurrentTick;
-    }
-
     runInterval(callback: () => void, tickInterval?: number): number {
         this.assertRunnable();
         return this.scheduler!.runInterval(callback, tickInterval);
@@ -93,11 +98,6 @@ export class KairoRouter {
     runTimeout(callback: () => void, tickDelay?: number): number {
         this.assertRunnable();
         return this.scheduler!.runTimeout(callback, tickDelay);
-    }
-
-    clearRun(runId: number): void {
-        this.assertRunnable();
-        this.scheduler!.clearRun(runId);
     }
 
     private startRouterListener(): void {
