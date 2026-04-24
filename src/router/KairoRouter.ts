@@ -86,6 +86,11 @@ export class KairoRouter {
         return this.scheduler!.runTimeout(callback, tickDelay);
     }
 
+    clearRun(runId: number): void {
+        this.assertRunnable();
+        this.scheduler!.clearRun(runId);
+    }
+
     get currentTick(): number {
         if (!this.runtime) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
