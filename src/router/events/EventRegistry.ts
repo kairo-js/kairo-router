@@ -9,16 +9,28 @@ export class EventRegistry<E extends KairoEventMap> {
 
     constructor(private context: KairoContext) {}
 
-    getAfter<K extends keyof E["after"]>(name: K): InternalEvent<E["after"][K]> {
+    getAfter<K extends keyof E["after"]>(
+        name: K,
+        options?: {
+            requireActiveOnSubscribe?: boolean;
+            clearOnDeactivate?: boolean;
+        },
+    ): InternalEvent<E["after"][K]> {
         if (!this.after.has(name as string)) {
-            this.after.set(name as string, new InternalEvent(this.context));
+            this.after.set(name as string, new InternalEvent(this.context, options));
         }
         return this.after.get(name as string)!;
     }
 
-    getBefore<K extends keyof E["before"]>(name: K): InternalEvent<E["before"][K]> {
+    getBefore<K extends keyof E["before"]>(
+        name: K,
+        options?: {
+            requireActiveOnSubscribe?: boolean;
+            clearOnDeactivate?: boolean;
+        },
+    ): InternalEvent<E["before"][K]> {
         if (!this.before.has(name as string)) {
-            this.before.set(name as string, new InternalEvent(this.context));
+            this.before.set(name as string, new InternalEvent(this.context, options));
         }
         return this.before.get(name as string)!;
     }
@@ -31,6 +43,19 @@ export class EventRegistry<E extends KairoEventMap> {
     emitBefore<K extends keyof E["before"]>(name: K, payload: E["before"][K]) {
         this.assertActive();
         this.getBefore(name).emit(payload);
+    }
+
+    clearActiveScopedListeners() {
+        for (const event of this.after.values()) {
+            if (event.shouldClearOnDeactivate()) {
+                event.clear();
+            }
+        }
+        for (const event of this.before.values()) {
+            if (event.shouldClearOnDeactivate()) {
+                event.clear();
+            }
+        }
     }
 
     private assertActive() {
