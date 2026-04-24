@@ -182,6 +182,7 @@ declare class KairoRouter {
     getKairoContext(): KairoContext;
     runInterval(callback: () => void, tickInterval?: number): number;
     runTimeout(callback: () => void, tickDelay?: number): number;
+    clearRun(runId: number): void;
     get currentTick(): number;
     private constructor();
 }
