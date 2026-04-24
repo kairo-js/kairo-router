@@ -26,7 +26,8 @@ export class KairoRouter {
     private kairoContextMutator?: KairoContextMutator;
     private runtime?: KairoRuntime<KairoEventMap>;
     private scheduler?: KairoScheduler;
-    private activationStartedTick?: number;
+    private activationCurrentTick = 0;
+    private activationTickIntervalId?: number;
     private readyState = new ReadyState();
     private routerListener?: Disposable;
     private runtimeInjectedEventListener?: Disposable;
@@ -89,10 +90,10 @@ export class KairoRouter {
         if (!this.runtime) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
         }
-        if (this.activationStartedTick === undefined) {
+        if (this.activationTickIntervalId === undefined) {
             return 0;
         }
-        return this.runtime.currentTick() - this.activationStartedTick;
+        return this.activationCurrentTick;
     }
 
     private startRouterListener(): void {
@@ -110,10 +111,12 @@ export class KairoRouter {
             this.eventRegistry,
             {
                 onActivate: () => {
+                    this.startActivationTickCounter();
                     this.attachRuntimeEvents();
                     this.scheduler?.setActive(true);
                 },
                 onDeactivate: () => {
+                    this.stopActivationTickCounter();
                     this.detachRuntimeEvents();
                     this.scheduler?.setActive(false);
                 },
@@ -162,6 +165,29 @@ export class KairoRouter {
     private detachRuntimeEvents() {
         this.runtimeInjectedEventListener?.dispose();
         this.runtimeInjectedEventListener = undefined;
+    }
+
+    private startActivationTickCounter(): void {
+        if (!this.runtime) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
+        }
+
+        this.stopActivationTickCounter();
+        this.activationCurrentTick = 0;
+        this.activationTickIntervalId = this.runtime.scheduler.runInterval(() => {
+            this.activationCurrentTick++;
+        }, 1);
+    }
+
+    private stopActivationTickCounter(): void {
+        if (!this.runtime) return;
+
+        if (this.activationTickIntervalId !== undefined) {
+            this.runtime.scheduler.clearRun(this.activationTickIntervalId);
+            this.activationTickIntervalId = undefined;
+        }
+
+        this.activationCurrentTick = 0;
     }
 
     private assertRunnable(): void {
