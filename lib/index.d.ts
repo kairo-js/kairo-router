@@ -179,7 +179,7 @@ declare class KairoRouter {
     init(properties: AddonProperties, options?: {
         runtime?: RuntimeOption;
     }): void;
-    getKairoContext(): KairoContext;
+    get systemInfo(): KairoContext;
     runInterval(callback: () => void, tickInterval?: number): number;
     runTimeout(callback: () => void, tickDelay?: number): number;
     clearRun(runId: number): void;
