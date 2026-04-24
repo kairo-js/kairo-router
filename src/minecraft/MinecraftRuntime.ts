@@ -5,10 +5,10 @@ import {
     world,
     WorldLoadAfterEvent,
 } from "@minecraft/server";
+import { KairoEventMap } from "../router/events/types/KairoEventMap";
 import { Disposable } from "../router/types/Disposable";
 import { KairoRuntime, RuntimeEvent } from "../router/types/KairoRuntime";
 import { KairoSchedulerRuntime } from "../router/types/KairoSchedulerRuntime";
-import { KairoEventMap } from "../router/types/KairoEventMap";
 import { Random } from "../router/types/Random";
 import { SeedRandom } from "../utils/SeedRandom";
 import { ScoreboardIdRegistry } from "./ScoreboardIdRegistry";
@@ -67,7 +67,11 @@ export class MinecraftRuntime implements KairoRuntime<KairoEventMap> {
         for (const [name, fn] of Object.entries(minecraftEventBinding.after)) {
             disposables.push(
                 fn(world, (payload: any) => {
-                    handler({ phase: "after", name: name as keyof KairoEventMap["after"], payload });
+                    handler({
+                        phase: "after",
+                        name: name as keyof KairoEventMap["after"],
+                        payload,
+                    });
                 }),
             );
         }
@@ -75,7 +79,11 @@ export class MinecraftRuntime implements KairoRuntime<KairoEventMap> {
         for (const [name, fn] of Object.entries(minecraftEventBinding.before)) {
             disposables.push(
                 fn(world, (payload: any) => {
-                    handler({ phase: "before", name: name as keyof KairoEventMap["before"], payload });
+                    handler({
+                        phase: "before",
+                        name: name as keyof KairoEventMap["before"],
+                        payload,
+                    });
                 }),
             );
         }

@@ -1,66 +1,69 @@
 import { KairoRouterError, KairoRouterErrorReason } from "../errors/KairoRouterError";
-import { KairoContext } from "../KairoContext";
-import { InternalEvent } from "../types/InternalEvent";
-import { KairoEventMap } from "../types/KairoEventMap";
+import { InternalEvent } from "./types/InternalEvent";
+import { KairoEventMap } from "./types/KairoEventMap";
 
 export class EventRegistry<E extends KairoEventMap> {
-    private after = new Map<string, InternalEvent<any>>();
-    private before = new Map<string, InternalEvent<any>>();
+    private afterStore = new Map<keyof E["after"], InternalEvent<any>>();
+    private beforeStore = new Map<keyof E["before"], InternalEvent<any>>();
 
-    constructor(private context: KairoContext) {}
+    constructor(private readonly isActive: () => boolean) {}
 
-    getAfter<K extends keyof E["after"]>(
+    private getOrCreateEvent<P extends "after" | "before", K extends keyof E[P]>(
+        phase: P,
         name: K,
-        options?: {
-            requireActiveOnSubscribe?: boolean;
-            clearOnDeactivate?: boolean;
-        },
-    ): InternalEvent<E["after"][K]> {
-        if (!this.after.has(name as string)) {
-            this.after.set(name as string, new InternalEvent(this.context, options));
+    ): InternalEvent<E[P][K]> {
+        const eventName = name as string;
+
+        if (phase === "after") {
+            const store = this.afterStore;
+            const key = name as unknown as keyof E["after"];
+            if (!store.has(key)) {
+                const options =
+                    eventName === "addonActivate"
+                        ? { requireActiveOnSubscribe: false, clearOnDeactivate: false }
+                        : undefined;
+                store.set(key, new InternalEvent(this.isActive, options));
+            }
+            return store.get(key) as InternalEvent<E[P][K]>;
+        } else {
+            const store = this.beforeStore;
+            const key = name as unknown as keyof E["before"];
+            if (!store.has(key)) {
+                const options =
+                    eventName === "addonDeactivate"
+                        ? { requireActiveOnSubscribe: false, clearOnDeactivate: false }
+                        : undefined;
+                store.set(key, new InternalEvent(this.isActive, options));
+            }
+            return store.get(key) as InternalEvent<E[P][K]>;
         }
-        return this.after.get(name as string)!;
     }
 
-    getBefore<K extends keyof E["before"]>(
+    public getAfter<K extends keyof E["after"]>(name: K): InternalEvent<E["after"][K]> {
+        return this.getOrCreateEvent("after", name);
+    }
+
+    public getBefore<K extends keyof E["before"]>(name: K): InternalEvent<E["before"][K]> {
+        return this.getOrCreateEvent("before", name);
+    }
+
+    public emit<P extends "after" | "before", K extends keyof E[P]>(
+        phase: P,
         name: K,
-        options?: {
-            requireActiveOnSubscribe?: boolean;
-            clearOnDeactivate?: boolean;
-        },
-    ): InternalEvent<E["before"][K]> {
-        if (!this.before.has(name as string)) {
-            this.before.set(name as string, new InternalEvent(this.context, options));
-        }
-        return this.before.get(name as string)!;
-    }
-
-    emitAfter<K extends keyof E["after"]>(name: K, payload: E["after"][K]) {
-        this.assertActive();
-        this.getAfter(name).emit(payload);
-    }
-
-    emitBefore<K extends keyof E["before"]>(name: K, payload: E["before"][K]) {
-        this.assertActive();
-        this.getBefore(name).emit(payload);
-    }
-
-    clearActiveScopedListeners() {
-        for (const event of this.after.values()) {
-            if (event.shouldClearOnDeactivate()) {
-                event.clear();
-            }
-        }
-        for (const event of this.before.values()) {
-            if (event.shouldClearOnDeactivate()) {
-                event.clear();
-            }
-        }
-    }
-
-    private assertActive() {
-        if (!this.context.isActive()) {
+        payload: E[P][K],
+    ): void {
+        if (!this.isActive()) {
             throw new KairoRouterError(KairoRouterErrorReason.Inactive);
+        }
+        this.getOrCreateEvent(phase, name).emit(payload);
+    }
+
+    public clearActiveScopedListeners(): void {
+        for (const event of this.afterStore.values()) {
+            if (event.shouldClearOnDeactivate()) event.clear();
+        }
+        for (const event of this.beforeStore.values()) {
+            if (event.shouldClearOnDeactivate()) event.clear();
         }
     }
 }

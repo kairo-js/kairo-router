@@ -60,34 +60,6 @@ interface Disposable {
     dispose(): void;
 }
 
-interface KairoRegistry {
-    kairoId: string;
-    addonId: string;
-    name: string;
-    description: string;
-    version: SemVer;
-    metadata: {
-        authors: string[];
-        url?: string;
-        license?: string;
-    };
-    requiredAddons: {
-        [addonId: string]: string;
-    };
-    tags: SupportedTag[];
-}
-
-declare class KairoContext {
-    private constructor(
-);
-    get addonProperties(): AddonProperties;
-    get kairoId(): string;
-    get kairoRegistry(): KairoRegistry;
-    get activationState(): "active" | "inactive";
-    isActive(): boolean;
-    isRegistered(): boolean;
-}
-
 interface Subscribable<T> {
     subscribe(fn: (arg: T) => void): Disposable;
     unsubscribe(fn: (arg: T) => void): void;
@@ -129,6 +101,33 @@ declare class KairoAfterEvents<E extends KairoEventMap> {
 declare class KairoBeforeEvents<E extends KairoEventMap> {
     readonly addonDeactivate: Subscribable<E["before"]["addonDeactivate"]>;
     private constructor();
+}
+
+interface KairoRegistry {
+    kairoId: string;
+    addonId: string;
+    name: string;
+    description: string;
+    version: SemVer;
+    metadata: {
+        authors: string[];
+        url?: string;
+        license?: string;
+    };
+    requiredAddons: {
+        [addonId: string]: string;
+    };
+    tags: SupportedTag[];
+}
+
+declare class KairoContext {
+    private constructor(
+);
+    get addonProperties(): AddonProperties;
+    get kairoId(): string;
+    get kairoRegistry(): KairoRegistry;
+    isActive(): boolean;
+    isRegistered(): boolean;
 }
 
 interface IdRegistry {
@@ -174,16 +173,16 @@ interface KairoRuntime<E extends KairoEventMap = KairoEventMap> {
 
 type RuntimeOption = KairoRuntime<KairoEventMap> | "minecraft";
 declare class KairoRouter {
-    afterEvents: KairoAfterEvents<KairoEventMap>;
-    beforeEvents: KairoBeforeEvents<KairoEventMap>;
+    readonly afterEvents: KairoAfterEvents<KairoEventMap>;
+    readonly beforeEvents: KairoBeforeEvents<KairoEventMap>;
     init(properties: AddonProperties, options?: {
         runtime?: RuntimeOption;
     }): void;
     get systemInfo(): KairoContext;
+    get currentTick(): number;
     runInterval(callback: () => void, tickInterval?: number): number;
     runTimeout(callback: () => void, tickDelay?: number): number;
     clearRun(runId: number): void;
-    get currentTick(): number;
     private constructor();
 }
 

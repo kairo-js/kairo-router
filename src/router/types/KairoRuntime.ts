@@ -1,6 +1,6 @@
+import { KairoEventMap } from "../events/types/KairoEventMap";
 import { Disposable } from "./Disposable";
 import { IdRegistry } from "./IdRegistry";
-import { KairoEventMap } from "./KairoEventMap";
 import { KairoSchedulerRuntime } from "./KairoSchedulerRuntime";
 import { Random } from "./Random";
 

@@ -1,8 +1,8 @@
 import { AddonActivateAfterEvent } from "../events/classes/AddonActivateAfterEvent";
 import { AddonDeactivateBeforeEvent } from "../events/classes/AddonDeactivateBeforeEvent";
 import { EventRegistry } from "../events/EventRegistry";
+import { KairoEventMap } from "../events/types/KairoEventMap";
 import { KairoContext, KairoContextMutator } from "../KairoContext";
-import { KairoEventMap } from "../types/KairoEventMap";
 import { KairoRuntime } from "../types/KairoRuntime";
 import { ActivationResponder } from "./ActivationResponder";
 import { AddonActivationManager } from "./AddonActivationManager";

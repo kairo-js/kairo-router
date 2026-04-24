@@ -6,6 +6,7 @@ import { KairoRouterError, KairoRouterErrorReason } from "./errors/KairoRouterEr
 import { EventRegistry } from "./events/EventRegistry";
 import { KairoAfterEvents } from "./events/KairoAfterEvents";
 import { KairoBeforeEvents } from "./events/KairoBeforeEvents";
+import { KairoEventMap } from "./events/types/KairoEventMap";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
 import { createKairoContext, KairoContext, KairoContextMutator } from "./KairoContext";
@@ -14,7 +15,6 @@ import { KairoRouterListener } from "./KairoRouterListener";
 import { KairoScheduler } from "./KairoScheduler";
 import { ReadyState } from "./ReadyState";
 import { Disposable } from "./types/Disposable";
-import { KairoEventMap } from "./types/KairoEventMap";
 import { KairoRuntime } from "./types/KairoRuntime";
 import { Random } from "./types/Random";
 
@@ -32,9 +32,12 @@ export class KairoRouter {
     private routerListener?: Disposable;
     private runtimeInjectedEventListener?: Disposable;
 
-    private eventRegistry!: EventRegistry<KairoEventMap>;
-    public afterEvents!: KairoAfterEvents<KairoEventMap>;
-    public beforeEvents!: KairoBeforeEvents<KairoEventMap>;
+    private eventRegistry = new EventRegistry(() => {
+        if (!this.kairoContext) return false;
+        return this.kairoContext.isActive();
+    });
+    public readonly afterEvents = new KairoAfterEvents<KairoEventMap>(this.eventRegistry);
+    public readonly beforeEvents = new KairoBeforeEvents<KairoEventMap>(this.eventRegistry);
 
     init(properties: AddonProperties, options?: { runtime?: RuntimeOption }): void {
         if (this.kairoContext) {
@@ -48,10 +51,6 @@ export class KairoRouter {
         const { context, mutator } = createKairoContext(properties);
         this.kairoContext = context;
         this.kairoContextMutator = mutator;
-
-        this.eventRegistry = new EventRegistry<KairoEventMap>(this.kairoContext);
-        this.afterEvents = new KairoAfterEvents<KairoEventMap>(this.eventRegistry);
-        this.beforeEvents = new KairoBeforeEvents<KairoEventMap>(this.eventRegistry);
 
         if (!this.readyState.isReady()) {
             this.runtime.onReady(() => {
@@ -76,6 +75,16 @@ export class KairoRouter {
         return this.kairoContext!;
     }
 
+    get currentTick(): number {
+        if (!this.runtime) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
+        }
+        if (this.activationTickIntervalId === undefined) {
+            return 0;
+        }
+        return this.activationCurrentTick;
+    }
+
     runInterval(callback: () => void, tickInterval?: number): number {
         this.assertRunnable();
         return this.scheduler!.runInterval(callback, tickInterval);
@@ -89,16 +98,6 @@ export class KairoRouter {
     clearRun(runId: number): void {
         this.assertRunnable();
         this.scheduler!.clearRun(runId);
-    }
-
-    get currentTick(): number {
-        if (!this.runtime) {
-            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
-        }
-        if (this.activationTickIntervalId === undefined) {
-            return 0;
-        }
-        return this.activationCurrentTick;
     }
 
     private startRouterListener(): void {
@@ -122,6 +121,7 @@ export class KairoRouter {
                 },
                 onDeactivate: () => {
                     this.stopActivationTickCounter();
+                    this.eventRegistry.clearActiveScopedListeners();
                     this.detachRuntimeEvents();
                     this.scheduler?.setActive(false);
                 },
@@ -152,18 +152,18 @@ export class KairoRouter {
     }
 
     private attachRuntimeEvents() {
-        if (!this.runtime) throw new Error("not init");
-
+        if (!this.runtime)
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
         if (this.runtimeInjectedEventListener) return;
 
         this.runtimeInjectedEventListener = this.runtime.bindEvents((ev) => {
-            if (!this.kairoContext?.isActive()) return;
-
-            if (ev.phase === "after") {
-                this.eventRegistry.emitAfter(ev.name, ev.payload);
-            } else {
-                this.eventRegistry.emitBefore(ev.name, ev.payload);
-            }
+            try {
+                if (ev.phase === "after") {
+                    this.eventRegistry.emit("after", ev.name, ev.payload);
+                } else if (ev.phase === "before") {
+                    this.eventRegistry.emit("before", ev.name, ev.payload);
+                }
+            } catch {}
         });
     }
 

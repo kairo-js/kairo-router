@@ -1,5 +1,5 @@
+import { InternalEvent } from "../events/types/InternalEvent";
 import { Disposable } from "./Disposable";
-import { InternalEvent } from "./InternalEvent";
 
 export interface Subscribable<T> {
     subscribe(fn: (arg: T) => void): Disposable;

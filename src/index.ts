@@ -1,7 +1,10 @@
+import { world } from "@minecraft/server";
 import { KairoRouter } from "./router/KairoRouter";
 
 // kjs-router-init-Fc (001): create kairo router instance
 export const router = new KairoRouter();
+router.afterEvents.addonActivate.subscribe(() => {});
+world.afterEvents.worldLoad.subscribe(() => {});
 
 export { KairoContext } from "./router/KairoContext";
 export { KairoRouter } from "./router/KairoRouter";

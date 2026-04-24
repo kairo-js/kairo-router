@@ -1,5 +1,5 @@
-import { EventBindingSpec } from "../router/types/EventBindingSpec";
-import { KairoEventMap } from "../router/types/KairoEventMap";
+import { EventBindingSpec } from "../router/events/types/EventBindingSpec";
+import { KairoEventMap } from "../router/events/types/KairoEventMap";
 
 export const minecraftEventBinding: EventBindingSpec<KairoEventMap> = {
     after: {
