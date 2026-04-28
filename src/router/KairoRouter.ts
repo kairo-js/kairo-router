@@ -90,6 +90,19 @@ export class KairoRouter {
         initializer.setup();
     }
 
+    register(
+        targetId: string,
+        eventId: string,
+        returnTypes: string,
+        ...argsTypes: string[]
+    ): void {}
+
+    async request<T = unknown>(
+        targetId: string,
+        eventId: string,
+        ...args: unknown[]
+    ): Promise<void> {}
+
     runInterval(callback: () => void, tickInterval?: number): number {
         this.assertRunnable();
         return this.scheduler!.runInterval(callback, tickInterval);
@@ -99,6 +112,8 @@ export class KairoRouter {
         this.assertRunnable();
         return this.scheduler!.runTimeout(callback, tickDelay);
     }
+
+    send(targetId: string, eventId: string, ...args: unknown[]): void {}
 
     private startRouterListener(): void {
         if (!this.runtime || !this.kairoContext || !this.kairoContextMutator) {
