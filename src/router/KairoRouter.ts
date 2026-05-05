@@ -1,4 +1,3 @@
-import { MinecraftRuntime } from "../minecraft/MinecraftRuntime";
 import { AddonProperties } from "../types/AddonProperties";
 import { SeedRandom } from "../utils/SeedRandom";
 import { ActivationController } from "./activation/ActivationController";
@@ -17,8 +16,6 @@ import { ReadyState } from "./ReadyState";
 import { Disposable } from "./types/Disposable";
 import { KairoRuntime } from "./types/KairoRuntime";
 import { Random } from "./types/Random";
-
-export type RuntimeOption = KairoRuntime<KairoEventMap> | "minecraft";
 
 // kjs-router-ch 0001
 export class KairoRouter {
@@ -59,13 +56,12 @@ export class KairoRouter {
         this.scheduler!.clearRun(runId);
     }
 
-    init(properties: AddonProperties, options?: { runtime?: RuntimeOption }): void {
+    init(properties: AddonProperties): void {
         if (this.kairoContext) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyInitialized);
         }
 
-        const runtimeOption = options?.runtime ?? "minecraft";
-        this.runtime = resolveRuntime(runtimeOption);
+        this.runtime = new KairoRuntime();
         this.scheduler = new KairoScheduler(this.runtime.scheduler);
 
         const { context, mutator } = createKairoContext(properties);
@@ -204,13 +200,6 @@ export class KairoRouter {
             throw new KairoRouterError(KairoRouterErrorReason.Inactive);
         }
     }
-}
-
-function resolveRuntime(option: RuntimeOption): KairoRuntime<KairoEventMap> {
-    if (option === "minecraft") {
-        return new MinecraftRuntime();
-    }
-    return option;
 }
 
 function resolveRandom(runtime: KairoRuntime<KairoEventMap>): Random {

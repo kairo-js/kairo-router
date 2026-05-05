@@ -130,57 +130,13 @@ declare class KairoContext {
     isRegistered(): boolean;
 }
 
-interface IdRegistry {
-    has(id: string): boolean;
-    register(id: string): void;
-}
-
-interface KairoSchedulerRuntime {
-    runInterval(callback: () => void, tickInterval?: number): number;
-    runTimeout(callback: () => void, tickDelay?: number): number;
-    clearRun(runId: number): void;
-}
-
-interface Random {
-    next(): number;
-}
-
-type AfterRuntimeEvent<E extends KairoEventMap> = {
-    [K in keyof E["after"]]: {
-        phase: "after";
-        name: K;
-        payload: E["after"][K];
-    };
-}[keyof E["after"]];
-type BeforeRuntimeEvent<E extends KairoEventMap> = {
-    [K in keyof E["before"]]: {
-        phase: "before";
-        name: K;
-        payload: E["before"][K];
-    };
-}[keyof E["before"]];
-type RuntimeEvent<E extends KairoEventMap = KairoEventMap> = AfterRuntimeEvent<E> | BeforeRuntimeEvent<E>;
-interface KairoRuntime<E extends KairoEventMap = KairoEventMap> {
-    currentTick(): number;
-    send(id: string, message: string): void;
-    receive(handler: (id: string, message: string) => void): Disposable;
-    onReady(handler: () => void): Disposable;
-    createIdRegistry(objectiveId: string): IdRegistry;
-    createRandom?(): Random;
-    bindEvents(handler: (ev: RuntimeEvent<E>) => void): Disposable;
-    scheduler: KairoSchedulerRuntime;
-}
-
-type RuntimeOption = KairoRuntime<KairoEventMap> | "minecraft";
 declare class KairoRouter {
     readonly afterEvents: KairoAfterEvents<KairoEventMap>;
     readonly beforeEvents: KairoBeforeEvents<KairoEventMap>;
     get currentTick(): number;
     get systemInfo(): KairoContext;
     clearRun(runId: number): void;
-    init(properties: AddonProperties, options?: {
-        runtime?: RuntimeOption;
-    }): void;
+    init(properties: AddonProperties): void;
     runInterval(callback: () => void, tickInterval?: number): number;
     runTimeout(callback: () => void, tickDelay?: number): number;
     private constructor();
@@ -188,4 +144,4 @@ declare class KairoRouter {
 
 declare const router: KairoRouter;
 
-export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AddonHeader, type AddonMetadata, type AddonProperties, type EngineVersion, KairoContext, type KairoRegistry, KairoRouter, type KairoRuntime, type ManifestDependency, MinecraftModule, type RequiredAddons, type SemVer, SupportedTag, router };
+export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AddonHeader, type AddonMetadata, type AddonProperties, type EngineVersion, KairoContext, type KairoRegistry, KairoRouter, KairoRuntime, type ManifestDependency, MinecraftModule, type RequiredAddons, type SemVer, SupportedTag, router };
