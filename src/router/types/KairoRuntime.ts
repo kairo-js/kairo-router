@@ -1,8 +1,17 @@
+import {
+    ScriptEventCommandMessageAfterEvent,
+    ScriptEventSource,
+    system,
+    world,
+    WorldLoadAfterEvent,
+} from "@minecraft/server";
 import { KairoEventMap } from "../events/types/KairoEventMap";
+import { EventBindingSpec } from "../events/types/EventBindingSpec";
 import { Disposable } from "./Disposable";
 import { IdRegistry } from "./IdRegistry";
 import { KairoSchedulerRuntime } from "./KairoSchedulerRuntime";
 import { Random } from "./Random";
+import { SeedRandom } from "../../utils/SeedRandom";
 
 type AfterRuntimeEvent<E extends KairoEventMap> = {
     [K in keyof E["after"]]: {
@@ -24,27 +33,104 @@ export type RuntimeEvent<E extends KairoEventMap = KairoEventMap> =
     | AfterRuntimeEvent<E>
     | BeforeRuntimeEvent<E>;
 
-// 環境に依存する機能を抽象化するインターフェース
-export interface KairoRuntime<E extends KairoEventMap = KairoEventMap> {
-    // TimeStamp の検証などに使う
-    currentTick(): number;
+class ScoreboardIdRegistry implements IdRegistry {
+    constructor(private readonly objectiveId: string) {}
 
-    // アドオン間通信のための送受信機能
-    send(id: string, message: string): void;
-    receive(handler: (id: string, message: string) => void): Disposable;
+    private get objective() {
+        const obj = world.scoreboard.getObjective(this.objectiveId);
+        if (!obj) {
+            throw new Error(`Objective not found: ${this.objectiveId}`);
+        }
+        return obj;
+    }
 
-    // 環境の読み込み完了の検知
-    onReady(handler: () => void): Disposable;
+    has(id: string): boolean {
+        return this.objective.hasParticipant(id);
+    }
 
-    // kairoId の生成に使う
-    createIdRegistry(objectiveId: string): IdRegistry;
+    register(id: string): void {
+        this.objective.setScore(id, 0);
+    }
+}
 
-    // kairoId の乱数生成に使う（未実装の場合はデフォルト実装を使う）
-    createRandom?(): Random;
+const minecraftEventBinding: EventBindingSpec<KairoEventMap> = {
+    after: {
+        addonActivate: (_world, _handler) => ({ dispose: () => {} }),
+        playerJoin: (world, handler) => world.afterEvents.playerJoin.subscribe(handler),
+    },
+    before: {
+        addonDeactivate: (_world, _handler) => ({ dispose: () => {} }),
+    },
+};
 
-    // 環境固有のイベント
-    bindEvents(handler: (ev: RuntimeEvent<E>) => void): Disposable;
+export class KairoRuntime<E extends KairoEventMap = KairoEventMap> {
+    constructor(private readonly options: { randomSeed?: string } = {}) {}
 
-    // runInterval, runTimeout の実装
-    scheduler: KairoSchedulerRuntime;
+    currentTick(): number {
+        return system.currentTick;
+    }
+
+    send(id: string, message: string): void {
+        system.sendScriptEvent(id, message);
+    }
+
+    receive(handler: (id: string, message: string) => void): Disposable {
+        const listener = (ev: ScriptEventCommandMessageAfterEvent) => {
+            if (ev.sourceType !== ScriptEventSource.Server) return;
+            handler(ev.id, ev.message);
+        };
+
+        system.afterEvents.scriptEventReceive.subscribe(listener);
+
+        return {
+            dispose: () => system.afterEvents.scriptEventReceive.unsubscribe(listener),
+        };
+    }
+
+    onReady(handler: () => void): Disposable {
+        const listener = (_ev: WorldLoadAfterEvent) => handler();
+        world.afterEvents.worldLoad.subscribe(listener);
+
+        return {
+            dispose: () => world.afterEvents.worldLoad.unsubscribe(listener),
+        };
+    }
+
+    createIdRegistry(objectiveId: string): IdRegistry {
+        return new ScoreboardIdRegistry(objectiveId);
+    }
+
+    createRandom(): Random {
+        return new SeedRandom(this.options.randomSeed);
+    }
+
+    bindEvents(handler: (ev: RuntimeEvent<E>) => void): Disposable {
+        const disposables: Disposable[] = [];
+
+        for (const [name, fn] of Object.entries(minecraftEventBinding.after)) {
+            disposables.push(
+                fn(world, (payload: any) => {
+                    handler({ phase: "after", name: name as keyof E["after"], payload });
+                }),
+            );
+        }
+
+        for (const [name, fn] of Object.entries(minecraftEventBinding.before)) {
+            disposables.push(
+                fn(world, (payload: any) => {
+                    handler({ phase: "before", name: name as keyof E["before"], payload });
+                }),
+            );
+        }
+
+        return {
+            dispose: () => disposables.forEach((d) => d.dispose()),
+        };
+    }
+
+    scheduler: KairoSchedulerRuntime = {
+        runInterval: (cb, tick) => system.runInterval(cb, tick),
+        runTimeout: (cb, tick) => system.runTimeout(cb, tick),
+        clearRun: (id) => system.clearRun(id),
+    };
 }
