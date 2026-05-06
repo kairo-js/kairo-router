@@ -2,7 +2,7 @@ declare enum SupportedTag {
     Official = "official",
     Approved = "approved",
     Stable = "stable",
-    Experimental = "experimental",
+    Experimental = "experimental"
 }
 
 interface AddonProperties {
@@ -50,7 +50,7 @@ declare enum MinecraftModule {
     ServerAdmin = "@minecraft/server-admin",
     DebugUtilities = "@minecraft/debug-utilities",
     Diagnostics = "@minecraft/diagnostics",
-    ServerGraphics = "@minecraft/server-graphics",
+    ServerGraphics = "@minecraft/server-graphics"
 }
 interface RequiredAddons {
     readonly [addonId: string]: string;
@@ -121,7 +121,8 @@ interface KairoRegistry {
 }
 
 declare class KairoContext {
-    private constructor();
+    private constructor(
+);
     get addonProperties(): AddonProperties;
     get kairoId(): string;
     get kairoRegistry(): KairoRegistry;
@@ -136,6 +137,8 @@ declare class KairoRouter {
     get systemInfo(): KairoContext;
     clearRun(runId: number): void;
     init(properties: AddonProperties): void;
+    register(targetId: string, eventId: string, returnTypes: string, ...argsTypes: string[]): void;
+    request<T = unknown>(targetId: string, eventId: string, ...args: unknown[]): Promise<void>;
     runInterval(callback: () => void, tickInterval?: number): number;
     runTimeout(callback: () => void, tickDelay?: number): number;
     send(targetId: string, eventId: string, ...args: unknown[]): void;
@@ -144,21 +147,4 @@ declare class KairoRouter {
 
 declare const router: KairoRouter;
 
-export {
-    AddonActivateAfterEvent,
-    AddonDeactivateBeforeEvent,
-    KairoContext,
-    KairoRouter,
-    KairoRuntime,
-    MinecraftModule,
-    router,
-    SupportedTag,
-    type AddonHeader,
-    type AddonMetadata,
-    type AddonProperties,
-    type EngineVersion,
-    type KairoRegistry,
-    type ManifestDependency,
-    type RequiredAddons,
-    type SemVer,
-};
+export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AddonHeader, type AddonMetadata, type AddonProperties, type EngineVersion, KairoContext, type KairoRegistry, KairoRouter, KairoRuntime, type ManifestDependency, MinecraftModule, type RequiredAddons, type SemVer, SupportedTag, router };

@@ -1,3 +1,4 @@
+import { KairoRuntime } from "../minecraft/KairoRuntime";
 import { AddonProperties } from "../types/AddonProperties";
 import { SeedRandom } from "../utils/SeedRandom";
 import { ActivationController } from "./activation/ActivationController";
@@ -14,7 +15,6 @@ import { KairoRouterListener } from "./KairoRouterListener";
 import { KairoScheduler } from "./KairoScheduler";
 import { ReadyState } from "./ReadyState";
 import { Disposable } from "./types/Disposable";
-import { KairoRuntime } from "./types/KairoRuntime";
 import { Random } from "./types/Random";
 
 // kjs-router-ch 0001
