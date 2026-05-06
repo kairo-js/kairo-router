@@ -1,3 +1,4 @@
+import { KairoRuntime } from "../minecraft/KairoRuntime";
 import { AddonProperties } from "../types/AddonProperties";
 import { SeedRandom } from "../utils/SeedRandom";
 import { ActivationController } from "./activation/ActivationController";
@@ -14,7 +15,6 @@ import { KairoRouterListener } from "./KairoRouterListener";
 import { KairoScheduler } from "./KairoScheduler";
 import { ReadyState } from "./ReadyState";
 import { Disposable } from "./types/Disposable";
-import { KairoRuntime } from "./types/KairoRuntime";
 import { Random } from "./types/Random";
 
 // kjs-router-ch 0001
@@ -86,6 +86,19 @@ export class KairoRouter {
         initializer.setup();
     }
 
+    register(
+        targetId: string,
+        eventId: string,
+        returnTypes: string,
+        ...argsTypes: string[]
+    ): void {}
+
+    async request<T = unknown>(
+        targetId: string,
+        eventId: string,
+        ...args: unknown[]
+    ): Promise<void> {}
+
     runInterval(callback: () => void, tickInterval?: number): number {
         this.assertRunnable();
         return this.scheduler!.runInterval(callback, tickInterval);
@@ -95,6 +108,8 @@ export class KairoRouter {
         this.assertRunnable();
         return this.scheduler!.runTimeout(callback, tickDelay);
     }
+
+    send(targetId: string, eventId: string, ...args: unknown[]): void {}
 
     private startRouterListener(): void {
         if (!this.runtime || !this.kairoContext || !this.kairoContextMutator) {

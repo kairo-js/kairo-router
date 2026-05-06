@@ -6,10 +6,10 @@ export const router = new KairoRouter();
 router.afterEvents.addonActivate.subscribe(() => {});
 world.afterEvents.worldLoad.subscribe(() => {});
 
+export { KairoRuntime } from "./minecraft/KairoRuntime";
 export { KairoContext } from "./router/KairoContext";
 export { KairoRouter } from "./router/KairoRouter";
 export { KairoRegistry } from "./router/types/KairoRegistry";
-export { KairoRuntime } from "./router/types/KairoRuntime";
 
 export type {
     AddonHeader,

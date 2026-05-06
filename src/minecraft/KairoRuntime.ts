@@ -5,13 +5,14 @@ import {
     world,
     WorldLoadAfterEvent,
 } from "@minecraft/server";
-import { KairoEventMap } from "../events/types/KairoEventMap";
-import { EventBindingSpec } from "../events/types/EventBindingSpec";
-import { Disposable } from "./Disposable";
-import { IdRegistry } from "./IdRegistry";
-import { KairoSchedulerRuntime } from "./KairoSchedulerRuntime";
-import { Random } from "./Random";
-import { SeedRandom } from "../../utils/SeedRandom";
+import { KairoEventMap } from "../router/events/types/KairoEventMap";
+import { Disposable } from "../router/types/Disposable";
+import { IdRegistry } from "../router/types/IdRegistry";
+import { KairoSchedulerRuntime } from "../router/types/KairoSchedulerRuntime";
+import { Random } from "../router/types/Random";
+import { SeedRandom } from "../utils/SeedRandom";
+import { ScoreboardIdRegistry } from "./ScoreboardIdRegistry";
+import { minecraftEventBinding } from "./minecraftEventBinding";
 
 type AfterRuntimeEvent<E extends KairoEventMap> = {
     [K in keyof E["after"]]: {
@@ -32,36 +33,6 @@ type BeforeRuntimeEvent<E extends KairoEventMap> = {
 export type RuntimeEvent<E extends KairoEventMap = KairoEventMap> =
     | AfterRuntimeEvent<E>
     | BeforeRuntimeEvent<E>;
-
-class ScoreboardIdRegistry implements IdRegistry {
-    constructor(private readonly objectiveId: string) {}
-
-    private get objective() {
-        const obj = world.scoreboard.getObjective(this.objectiveId);
-        if (!obj) {
-            throw new Error(`Objective not found: ${this.objectiveId}`);
-        }
-        return obj;
-    }
-
-    has(id: string): boolean {
-        return this.objective.hasParticipant(id);
-    }
-
-    register(id: string): void {
-        this.objective.setScore(id, 0);
-    }
-}
-
-const minecraftEventBinding: EventBindingSpec<KairoEventMap> = {
-    after: {
-        addonActivate: (_world, _handler) => ({ dispose: () => {} }),
-        playerJoin: (world, handler) => world.afterEvents.playerJoin.subscribe(handler),
-    },
-    before: {
-        addonDeactivate: (_world, _handler) => ({ dispose: () => {} }),
-    },
-};
 
 export class KairoRuntime<E extends KairoEventMap = KairoEventMap> {
     constructor(private readonly options: { randomSeed?: string } = {}) {}
