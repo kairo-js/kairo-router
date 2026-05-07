@@ -1,3 +1,5 @@
+import { PlayerJoinAfterEvent } from '@minecraft/server';
+
 interface AddonProperties {
     readonly id: string;
     readonly metadata?: AddonMetadata;
@@ -73,19 +75,10 @@ declare class AddonDeactivateBeforeEvent {
     private constructor();
 }
 
-/**
- * Minecraft PlayerJoinAfterEvent
- * https://learn.microsoft.com/ja-jp/minecraft/creator/scriptapi/minecraft/server/playerjoinafterevent?view=minecraft-bedrock-stable
- */
-interface KairoPlayerJoinAfterEvent {
-    readonly playerId: string;
-    readonly playerName: string;
-}
-
 interface KairoEventMap {
     readonly after: {
         readonly addonActivate: AddonActivateAfterEvent;
-        readonly playerJoin: KairoPlayerJoinAfterEvent;
+        readonly playerJoin: PlayerJoinAfterEvent;
     };
     readonly before: {
         readonly addonDeactivate: AddonDeactivateBeforeEvent;

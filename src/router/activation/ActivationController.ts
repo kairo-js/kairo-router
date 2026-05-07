@@ -2,7 +2,7 @@ import { KairoRuntime } from "../../minecraft/KairoRuntime";
 import { AddonActivateAfterEvent } from "../events/classes/AddonActivateAfterEvent";
 import { AddonDeactivateBeforeEvent } from "../events/classes/AddonDeactivateBeforeEvent";
 import { EventRegistry } from "../events/EventRegistry";
-import type { KairoEventMap } from "../events/types/KairoEventMap";
+import type { KairoEventMap } from "../../minecraft/KairoEventMap";
 import { KairoContext, type KairoContextMutator } from "../KairoContext";
 import { ActivationResponder } from "./ActivationResponder";
 import { AddonActivationManager } from "./AddonActivationManager";

@@ -7,7 +7,7 @@ import { KairoRouterError, KairoRouterErrorReason } from "./errors/KairoRouterEr
 import { EventRegistry } from "./events/EventRegistry";
 import { KairoAfterEvents } from "./events/KairoAfterEvents";
 import { KairoBeforeEvents } from "./events/KairoBeforeEvents";
-import type { KairoEventMap } from "./events/types/KairoEventMap";
+import type { KairoEventMap } from "../minecraft/KairoEventMap";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
 import { createKairoContext, KairoContext, type KairoContextMutator } from "./KairoContext";

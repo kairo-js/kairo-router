@@ -1,6 +1,6 @@
 import { asSubscribable } from "../types/Subscribable";
 import { EventRegistry } from "./EventRegistry";
-import type { KairoEventMap } from "./types/KairoEventMap";
+import type { KairoEventMap } from "../../minecraft/KairoEventMap";
 
 export class KairoAfterEvents<E extends KairoEventMap> {
     readonly addonActivate;
