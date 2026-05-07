@@ -5,7 +5,7 @@ import {
     world,
     WorldLoadAfterEvent,
 } from "@minecraft/server";
-import { KairoEventMap } from "../router/events/types/KairoEventMap";
+import type { KairoEventMap } from "./KairoEventMap";
 import { Disposable } from "../router/types/Disposable";
 import { IdRegistry } from "../router/types/IdRegistry";
 import { KairoSchedulerRuntime } from "../router/types/KairoSchedulerRuntime";
