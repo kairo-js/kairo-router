@@ -17,7 +17,7 @@ export class AddonRegistrationManager {
         kairoId: string,
         addonProperties: AddonProperties,
     ): KairoRegistry | undefined {
-        const request = this.parser.parse(message, currentTick);
+        const request = this.parser.parse(message);
         this.validator.validateRequest(request, currentTick);
 
         if (request.rejects.includes(kairoId)) {

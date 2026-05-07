@@ -1,4 +1,4 @@
-import { KairoRuntime } from "../../types/KairoRuntime";
+import { KairoRuntime } from "../../../minecraft/KairoRuntime";
 import { KairoIdProvider } from "../KairoIdProvider";
 import { DiscoveryQueryParser } from "./DiscoveryQueryParser";
 import { DiscoveryQueryValidator } from "./DiscoveryQueryValidator";
@@ -10,7 +10,7 @@ export class AddonDiscoveryManager {
     constructor(private readonly idProvider: KairoIdProvider) {}
 
     resolveKairoId(message: string, runtime: KairoRuntime, addonId: string): string {
-        const query = this.parser.parse(message, runtime.currentTick());
+        const query = this.parser.parse(message);
         this.validator.validateRequest(query, runtime.currentTick());
         const idRegistry = runtime.createIdRegistry(query.idNamespace);
         return this.idProvider.provideId(idRegistry, addonId);

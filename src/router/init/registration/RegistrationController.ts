@@ -1,6 +1,6 @@
+import { KairoRuntime } from "../../../minecraft/KairoRuntime";
 import { KairoContext, KairoContextMutator } from "../../KairoContext";
 import { KairoRegistry } from "../../types/KairoRegistry";
-import { KairoRuntime } from "../../types/KairoRuntime";
 import { KairoRegistryBuilder } from "../KairoRegistryBuilder";
 import { AddonRegistrationManager } from "./AddonRegistrationManager";
 import { RegistrationResponder } from "./RegistrationResponder";

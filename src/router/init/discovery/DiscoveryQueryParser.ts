@@ -6,11 +6,9 @@ import { validateDiscoveryQuery } from "./query/validate";
 
 // kjs-router-ch 0102
 export class DiscoveryQueryParser {
-    private readonly TIMEOUT_TICKS = 10;
-
     constructor() {}
 
-    parse(message: string, currentTick: number): DiscoveryQuery {
+    parse(message: string): DiscoveryQuery {
         const parsed = safeJsonParse(
             message,
             () => new DiscoveryQueryParseError(DiscoveryQueryParseErrorReason.InvalidJSON),

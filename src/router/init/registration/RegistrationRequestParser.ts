@@ -8,9 +8,7 @@ import { RegistrationRequest } from "./request/schema";
 import { validateRegistrationRequest } from "./request/validate";
 
 export class RegistrationRequestParser {
-    private readonly TIMEOUT_TICKS = 10;
-
-    parse(message: string, currentTick: number): RegistrationRequest {
+    parse(message: string): RegistrationRequest {
         const parsed = safeJsonParse(
             message,
             () =>

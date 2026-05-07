@@ -1,8 +1,8 @@
+import { KairoRuntime } from "../../minecraft/KairoRuntime";
 import { SeedRandom } from "../../utils/SeedRandom";
 import { KairoContext, KairoContextMutator } from "../KairoContext";
 import { ReadyState } from "../ReadyState";
 import { Disposable } from "../types/Disposable";
-import { KairoRuntime } from "../types/KairoRuntime";
 import { Random } from "../types/Random";
 import { DiscoveryController } from "./discovery/DiscoveryController";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./errors";
