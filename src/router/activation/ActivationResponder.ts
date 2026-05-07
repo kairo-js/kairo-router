@@ -1,6 +1,6 @@
+import { KairoRuntime } from "../../minecraft/KairoRuntime";
 import { toError } from "../../utils/toError";
 import { KairoEventId } from "../KairoEventId";
-import { KairoRuntime } from "../types/KairoRuntime";
 import { ActivationResponseError, ActivationResponseErrorReason } from "./response/errors";
 import { ActivationResponse } from "./response/schema";
 import { stringifyActivationResponse } from "./response/stringify";
