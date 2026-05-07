@@ -36,7 +36,7 @@ export class ActivationController {
 
         // beforeEvents
         if (next === "inactive") {
-            this.eventRegistry.emitBefore("addonDeactivate", new AddonDeactivateBeforeEvent());
+            this.eventRegistry.emit("before", "addonDeactivate", new AddonDeactivateBeforeEvent());
         }
 
         this.contextMutator.setActivationState(next);
@@ -44,7 +44,7 @@ export class ActivationController {
         // afterEvents
         if (next === "active") {
             this.lifecycle.onActivate();
-            this.eventRegistry.emitAfter("addonActivate", new AddonActivateAfterEvent());
+            this.eventRegistry.emit("after", "addonActivate", new AddonActivateAfterEvent());
         } else {
             this.lifecycle.onDeactivate();
             this.eventRegistry.clearActiveScopedListeners();
