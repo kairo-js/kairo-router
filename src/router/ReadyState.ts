@@ -30,4 +30,14 @@ export class ReadyState {
             },
         };
     }
+
+    wait(): Promise<void> {
+        if (this.ready) {
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            this.onReady(resolve);
+        });
+    }
 }

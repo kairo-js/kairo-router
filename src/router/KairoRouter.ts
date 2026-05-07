@@ -28,6 +28,7 @@ export class KairoRouter {
     private readyState = new ReadyState();
     private routerListener?: Disposable;
     private runtimeInjectedEventListener?: Disposable;
+    private worldLoadListener?: Disposable;
 
     private eventRegistry = new EventRegistry(() => {
         if (!this.kairoContext) return false;
@@ -68,11 +69,7 @@ export class KairoRouter {
         this.kairoContext = context;
         this.kairoContextMutator = mutator;
 
-        if (!this.readyState.isReady()) {
-            this.runtime.onReady(() => {
-                this.readyState.markReady();
-            });
-        }
+        this.startWorldLoadListener(this.runtime);
 
         const initializer = new KairoInitializer(
             this.runtime,
@@ -84,6 +81,11 @@ export class KairoRouter {
         );
 
         initializer.setup();
+    }
+
+    waitForWorldLoad(): Promise<void> {
+        this.startWorldLoadListener(this.runtime ?? new KairoRuntime());
+        return this.readyState.wait();
     }
 
     register(
@@ -110,6 +112,16 @@ export class KairoRouter {
     }
 
     send(targetId: string, eventId: string, ...args: unknown[]): void {}
+
+    private startWorldLoadListener(runtime: KairoRuntime<KairoEventMap>): void {
+        if (this.readyState.isReady() || this.worldLoadListener) return;
+
+        this.worldLoadListener = runtime.onReady(() => {
+            this.worldLoadListener?.dispose();
+            this.worldLoadListener = undefined;
+            this.readyState.markReady();
+        });
+    }
 
     private startRouterListener(): void {
         if (!this.runtime || !this.kairoContext || !this.kairoContextMutator) {

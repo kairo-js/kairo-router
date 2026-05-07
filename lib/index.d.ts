@@ -137,6 +137,7 @@ declare class KairoRouter {
     get systemInfo(): KairoContext;
     clearRun(runId: number): void;
     init(properties: AddonProperties): void;
+    waitForWorldLoad(): Promise<void>;
     register(targetId: string, eventId: string, returnTypes: string, ...argsTypes: string[]): void;
     request<T = unknown>(targetId: string, eventId: string, ...args: unknown[]): Promise<void>;
     runInterval(callback: () => void, tickInterval?: number): number;
