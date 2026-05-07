@@ -1,5 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
-import { SupportedTag } from "../../../../types/tags";
+import { SupportedTag } from "../../../../types/AddonProperties";
 
 const tagValues = Object.values(SupportedTag);
 

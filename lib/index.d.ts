@@ -1,10 +1,3 @@
-declare enum SupportedTag {
-    Official = "official",
-    Approved = "approved",
-    Stable = "stable",
-    Experimental = "experimental"
-}
-
 interface AddonProperties {
     readonly id: string;
     readonly metadata?: AddonMetadata;
@@ -37,9 +30,10 @@ interface EngineVersion {
     readonly patch: number;
 }
 interface ManifestDependency {
-    readonly module_name: MinecraftModule;
+    readonly module_name: MinecraftModuleType;
     readonly version: string;
 }
+type MinecraftModuleType = "@minecraft/server" | "@minecraft/server-ui" | "@minecraft/server-gametest" | "@minecraft/server-editor" | "@minecraft/server-editor-private-bindings" | "@minecraft/server-net" | "@minecraft/server-admin" | "@minecraft/debug-utilities" | "@minecraft/diagnostics" | "@minecraft/server-graphics";
 declare enum MinecraftModule {
     Server = "@minecraft/server",
     ServerUi = "@minecraft/server-ui",
@@ -54,6 +48,12 @@ declare enum MinecraftModule {
 }
 interface RequiredAddons {
     readonly [addonId: string]: string;
+}
+declare enum SupportedTag {
+    Official = "official",
+    Approved = "approved",
+    Stable = "stable",
+    Experimental = "experimental"
 }
 
 interface Disposable {

@@ -1,5 +1,3 @@
-import { SupportedTag } from "./tags";
-
 export interface AddonProperties {
     readonly id: string;
     readonly metadata?: AddonMetadata;
@@ -37,9 +35,21 @@ export interface EngineVersion {
 }
 
 export interface ManifestDependency {
-    readonly module_name: MinecraftModule;
+    readonly module_name: MinecraftModuleType;
     readonly version: string;
 }
+
+type MinecraftModuleType =
+    | "@minecraft/server"
+    | "@minecraft/server-ui"
+    | "@minecraft/server-gametest"
+    | "@minecraft/server-editor"
+    | "@minecraft/server-editor-private-bindings"
+    | "@minecraft/server-net"
+    | "@minecraft/server-admin"
+    | "@minecraft/debug-utilities"
+    | "@minecraft/diagnostics"
+    | "@minecraft/server-graphics";
 
 export enum MinecraftModule {
     Server = "@minecraft/server",
@@ -56,4 +66,13 @@ export enum MinecraftModule {
 
 export interface RequiredAddons {
     readonly [addonId: string]: string;
+}
+
+type SupportedTagType = "official" | "approved" | "stable" | "experimental";
+
+export enum SupportedTag {
+    Official = "official",
+    Approved = "approved",
+    Stable = "stable",
+    Experimental = "experimental",
 }

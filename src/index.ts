@@ -18,8 +18,7 @@ export type {
     SemVer,
 } from "./types/AddonProperties";
 
-export { MinecraftModule } from "./types/AddonProperties";
-export { SupportedTag } from "./types/tags";
+export { MinecraftModule, SupportedTag } from "./types/AddonProperties";
 
 export { AddonActivateAfterEvent } from "./router/events/classes/AddonActivateAfterEvent";
 export { AddonDeactivateBeforeEvent } from "./router/events/classes/AddonDeactivateBeforeEvent";
