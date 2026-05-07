@@ -5,7 +5,7 @@ import { ActivationRequest } from "./request/schema";
 import { validateActivationRequest } from "./request/validate";
 
 export class ActivationRequestParser {
-    parse(message: string, currentTick: number): ActivationRequest {
+    parse(message: string): ActivationRequest {
         const parsed = safeJsonParse(
             message,
             () => new ActivationRequestParseError(ActivationRequestParseErrorReason.InvalidJSON),

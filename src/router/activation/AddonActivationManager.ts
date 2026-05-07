@@ -8,7 +8,7 @@ export class AddonActivationManager {
     private readonly validator = new ActivationRequestValidator();
 
     resolveRequest(message: string, currentTick: number, context: KairoContext): ActivationRequest {
-        const request = this.parser.parse(message, currentTick);
+        const request = this.parser.parse(message);
         this.validator.validateRequest(request, currentTick, context.isActive());
         return request;
     }
