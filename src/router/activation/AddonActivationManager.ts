@@ -1,7 +1,7 @@
 import { KairoContext } from "../KairoContext";
 import { ActivationRequestParser } from "./ActivationRequestParser";
 import { ActivationRequestValidator } from "./ActivationRequestValidator";
-import { ActivationRequest } from "./request/schema";
+import type { ActivationRequest } from "./request/schema";
 
 export class AddonActivationManager {
     private readonly parser = new ActivationRequestParser();

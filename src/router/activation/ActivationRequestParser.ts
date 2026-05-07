@@ -1,7 +1,7 @@
 import { safeJsonParse } from "../../utils/jsonParse";
 import { toError } from "../../utils/toError";
 import { ActivationRequestParseError, ActivationRequestParseErrorReason } from "./request/errors";
-import { ActivationRequest } from "./request/schema";
+import type { ActivationRequest } from "./request/schema";
 import { validateActivationRequest } from "./request/validate";
 
 export class ActivationRequestParser {

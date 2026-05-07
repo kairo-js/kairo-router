@@ -1,4 +1,4 @@
-import { SemVer, SupportedTag } from "../../types/AddonProperties";
+import type { SemVer, SupportedTag } from "../../types/AddonProperties";
 
 export interface KairoRegistry {
     kairoId: string;

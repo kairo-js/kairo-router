@@ -1,6 +1,6 @@
 import { KairoRouterError, KairoRouterErrorReason } from "../../errors/KairoRouterError";
-import { Disposable } from "../../types/Disposable";
-import { Subscribable } from "../../types/Subscribable";
+import type { Disposable } from "../../types/Disposable";
+import type { Subscribable } from "../../types/Subscribable";
 
 export class InternalEvent<T> implements Subscribable<T> {
     private listeners = new Set<(arg: T) => void>();

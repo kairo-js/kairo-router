@@ -2,9 +2,9 @@ import { KairoRuntime } from "../../minecraft/KairoRuntime";
 import { toError } from "../../utils/toError";
 import { KairoEventId } from "../KairoEventId";
 import { ActivationResponseError, ActivationResponseErrorReason } from "./response/errors";
-import { ActivationResponse } from "./response/schema";
+import type { ActivationResponse } from "./response/schema";
 import { stringifyActivationResponse } from "./response/stringify";
-import { ActivationResult } from "./result/schema";
+import type { ActivationResult } from "./result/schema";
 
 // kjs-router-ch 0103
 export class ActivationResponder {

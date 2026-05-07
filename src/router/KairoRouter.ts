@@ -1,21 +1,22 @@
 import { KairoRuntime } from "../minecraft/KairoRuntime";
-import { AddonProperties } from "../types/AddonProperties";
+import type { AddonProperties } from "../types/AddonProperties";
+
 import { SeedRandom } from "../utils/SeedRandom";
 import { ActivationController } from "./activation/ActivationController";
 import { KairoRouterError, KairoRouterErrorReason } from "./errors/KairoRouterError";
 import { EventRegistry } from "./events/EventRegistry";
 import { KairoAfterEvents } from "./events/KairoAfterEvents";
 import { KairoBeforeEvents } from "./events/KairoBeforeEvents";
-import { KairoEventMap } from "./events/types/KairoEventMap";
+import type { KairoEventMap } from "./events/types/KairoEventMap";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
-import { createKairoContext, KairoContext, KairoContextMutator } from "./KairoContext";
+import { createKairoContext, KairoContext, type KairoContextMutator } from "./KairoContext";
 import { KairoEventId } from "./KairoEventId";
 import { KairoRouterListener } from "./KairoRouterListener";
 import { KairoScheduler } from "./KairoScheduler";
 import { ReadyState } from "./ReadyState";
-import { Disposable } from "./types/Disposable";
-import { Random } from "./types/Random";
+import type { Disposable } from "./types/Disposable";
+import type { Random } from "./types/Random";
 
 // kjs-router-ch 0001
 export class KairoRouter {

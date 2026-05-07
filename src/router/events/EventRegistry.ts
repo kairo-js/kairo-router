@@ -1,6 +1,6 @@
 import { KairoRouterError, KairoRouterErrorReason } from "../errors/KairoRouterError";
 import { InternalEvent } from "./types/InternalEvent";
-import { KairoEventMap } from "./types/KairoEventMap";
+import type { KairoEventMap } from "./types/KairoEventMap";
 
 export class EventRegistry<E extends KairoEventMap> {
     private afterStore = new Map<keyof E["after"], InternalEvent<any>>();

@@ -2,12 +2,12 @@ import { KairoRuntime } from "../../minecraft/KairoRuntime";
 import { AddonActivateAfterEvent } from "../events/classes/AddonActivateAfterEvent";
 import { AddonDeactivateBeforeEvent } from "../events/classes/AddonDeactivateBeforeEvent";
 import { EventRegistry } from "../events/EventRegistry";
-import { KairoEventMap } from "../events/types/KairoEventMap";
-import { KairoContext, KairoContextMutator } from "../KairoContext";
+import type { KairoEventMap } from "../events/types/KairoEventMap";
+import { KairoContext, type KairoContextMutator } from "../KairoContext";
 import { ActivationResponder } from "./ActivationResponder";
 import { AddonActivationManager } from "./AddonActivationManager";
-import { ActivationRequest } from "./request/schema";
-import { ActivationResult } from "./result/schema";
+import type { ActivationRequest } from "./request/schema";
+import type { ActivationResult } from "./result/schema";
 
 export class ActivationController {
     private readonly activationManager = new AddonActivationManager();

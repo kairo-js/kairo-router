@@ -1,6 +1,6 @@
-import { AddonProperties } from "../types/AddonProperties";
+import type { AddonProperties } from "../types/AddonProperties";
 import { KairoContextError, KairoContextErrorReason } from "./errors/KairoContextError";
-import { KairoRegistry } from "./types/KairoRegistry";
+import type { KairoRegistry } from "./types/KairoRegistry";
 
 class MutableKairoContextState {
     kairoId?: string;

@@ -14,7 +14,8 @@
 
         "strict": true,
         "skipLibCheck": true,
-        "stripInternal": true
+        "stripInternal": true,
+        "verbatimModuleSyntax": true
     },
     "include": ["src"]
 }
