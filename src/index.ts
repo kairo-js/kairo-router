@@ -3,7 +3,6 @@ import { KairoRouter } from "./router/KairoRouter";
 // kjs-router-init-Fc (001): create kairo router instance
 export const router = new KairoRouter();
 
-export { KairoRuntime } from "./minecraft/KairoRuntime";
 export { KairoContext } from "./router/KairoContext";
 export { KairoRouter } from "./router/KairoRouter";
 export { KairoRegistry } from "./router/types/KairoRegistry";
