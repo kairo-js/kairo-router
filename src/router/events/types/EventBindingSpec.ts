@@ -1,5 +1,5 @@
-import { Disposable } from "../../types/Disposable";
 import type { KairoEventMap } from "../../../minecraft/KairoEventMap";
+import type { Disposable } from "../../types/Disposable";
 
 export type EventBindingSpec<E extends KairoEventMap = KairoEventMap> = {
     after: {
