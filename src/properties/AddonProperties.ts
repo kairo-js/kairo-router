@@ -4,7 +4,7 @@ export interface AddonProperties {
     readonly header: AddonHeader;
     readonly dependencies?: ManifestDependency[];
     readonly requiredAddons?: RequiredAddons;
-    readonly tags?: SupportedTag[];
+    readonly tags?: SupportedTagType[];
 }
 
 export interface AddonMetadata {
