@@ -10,7 +10,8 @@ export type { KairoRegistry } from "./router/types/KairoRegistry";
 export { AddonActivateAfterEvent } from "./router/events/classes/AddonActivateAfterEvent";
 export { AddonDeactivateBeforeEvent } from "./router/events/classes/AddonDeactivateBeforeEvent";
 
-export { type Random } from "./router/types/Random";
+export type { Disposable } from "./router/types/Disposable";
+export type { Random } from "./router/types/Random";
 export { SeedRandom } from "./utils/SeedRandom";
 
 export { compile } from "./utils/ajv-compile";

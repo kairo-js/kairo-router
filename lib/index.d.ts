@@ -93,4 +93,4 @@ declare function validateTimestamp(currentTick: number, timestamp: number, timeo
 
 declare const router: KairoRouter;
 
-export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, KairoContext, type KairoRegistry, KairoRouter, type Random, SeedRandom, compile, router, safeJsonParse, toError, validateTimestamp };
+export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type Disposable, KairoContext, type KairoRegistry, KairoRouter, type Random, SeedRandom, compile, router, safeJsonParse, toError, validateTimestamp };
