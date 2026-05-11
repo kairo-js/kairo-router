@@ -4,7 +4,7 @@ interface AddonProperties {
     readonly header: AddonHeader;
     readonly dependencies?: ManifestDependency[];
     readonly requiredAddons?: RequiredAddons;
-    readonly tags?: SupportedTag[];
+    readonly tags?: SupportedTagType[];
 }
 interface AddonMetadata {
     readonly authors?: string[];
@@ -49,6 +49,7 @@ declare enum MinecraftModule {
 interface RequiredAddons {
     readonly [addonId: string]: string;
 }
+type SupportedTagType = "official" | "approved" | "stable" | "experimental";
 declare enum SupportedTag {
     Official = "official",
     Approved = "approved",
