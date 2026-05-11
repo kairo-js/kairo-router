@@ -1,15 +1,24 @@
-import { SyntaxKind } from "ts-morph";
+import { Node } from "ts-morph";
 
 export function pruneUnused(source, rootNames) {
-    const roots = new Set(rootNames);
     const declarations = [
         ...source.getClasses(),
         ...source.getInterfaces(),
         ...source.getTypeAliases(),
     ];
-    const declarationNames = new Set(
-        declarations.map((declaration) => declaration.getName()).filter(Boolean),
-    );
+
+    const declarationMap = new Map();
+
+    for (const declaration of declarations) {
+        const name = declaration.getName();
+
+        if (name) {
+            declarationMap.set(name, declaration);
+        }
+    }
+
+    const declarationNames = new Set(declarationMap.keys());
+
     const typeRefsMap = new Map();
 
     for (const declaration of declarations) {
@@ -19,12 +28,11 @@ export function pruneUnused(source, rootNames) {
         const refs = new Set();
 
         declaration.forEachDescendant((node) => {
-            if (node.getKind() !== SyntaxKind.TypeReference) return;
+            if (!Node.isTypeReference(node)) return;
 
-            const typeNameNode = node.getFirstChildByKind(SyntaxKind.Identifier);
-            const ref = typeNameNode?.getText();
+            const ref = node.getTypeName().getText();
 
-            if (ref && declarationNames.has(ref) && ref !== name) {
+            if (declarationNames.has(ref) && ref !== name) {
                 refs.add(ref);
             }
         });
@@ -32,14 +40,25 @@ export function pruneUnused(source, rootNames) {
         typeRefsMap.set(name, refs);
     }
 
-    const reachable = new Set([...roots]);
+    const reachable = new Set(rootNames);
+
+    for (const declaration of declarations) {
+        if (declaration.isExported()) {
+            const name = declaration.getName();
+
+            if (name) {
+                reachable.add(name);
+            }
+        }
+    }
+
     let changed = true;
 
     while (changed) {
         changed = false;
 
-        for (const [cls, refs] of typeRefsMap.entries()) {
-            if (!reachable.has(cls)) continue;
+        for (const [name, refs] of typeRefsMap.entries()) {
+            if (!reachable.has(name)) continue;
 
             for (const ref of refs) {
                 if (!reachable.has(ref)) {
@@ -50,26 +69,13 @@ export function pruneUnused(source, rootNames) {
         }
     }
 
-    for (const cls of source.getClasses()) {
-        const name = cls.getName();
+    for (const declaration of declarations) {
+        const name = declaration.getName();
+
         if (!name) continue;
 
         if (!reachable.has(name)) {
-            cls.remove();
-        }
-    }
-
-    for (const iface of source.getInterfaces()) {
-        const name = iface.getName();
-        if (!reachable.has(name)) {
-            iface.remove();
-        }
-    }
-
-    for (const typeAlias of source.getTypeAliases()) {
-        const name = typeAlias.getName();
-        if (!reachable.has(name)) {
-            typeAlias.remove();
+            declaration.remove();
         }
     }
 }

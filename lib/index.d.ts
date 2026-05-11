@@ -83,6 +83,16 @@ declare class KairoRouter {
     private constructor();
 }
 
+interface Random {
+    next(): number;
+}
+
+declare class SeedRandom implements Random {
+    private readonly rng;
+    constructor(seed?: string);
+    next(): number;
+}
+
 declare function compile<T>(schema: object): ValidateFunction<T>;
 
 declare function safeJsonParse(message: string, error: () => Error): unknown;
