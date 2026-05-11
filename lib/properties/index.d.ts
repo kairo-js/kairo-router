@@ -1,1 +1,0 @@
-export { b as AddonHeader, c as AddonMetadata, A as AddonProperties, E as EngineVersion, M as ManifestDependency, d as MinecraftModule, R as RequiredAddons, S as SemVer, e as SupportedTag } from '../index-C8SvgUOz.js';

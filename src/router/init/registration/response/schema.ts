@@ -20,14 +20,7 @@ export const RegistrationResponseSchema = Type.Object(
                 license: Type.Optional(Type.String()),
             }),
             requiredAddons: Type.Record(Type.String(), Type.String()),
-            tags: Type.Array(
-                Type.Union([
-                    Type.Literal("official"),
-                    Type.Literal("approved"),
-                    Type.Literal("stable"),
-                    Type.Literal("experimental"),
-                ]),
-            ),
+            tags: Type.Array(Type.String()),
         }),
         timestamp: Type.Integer({ minimum: 0 }),
     },

@@ -8,9 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@kairo-js/router':
-        specifier: 0.2.0-beta.6
-        version: 0.2.0-beta.6(@minecraft/server-ui@2.0.0(@minecraft/vanilla-data@1.26.2))(@minecraft/server@2.5.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.26.2))
+      '@kairo-js/properties':
+        specifier: 1.0.1
+        version: 1.0.1
       '@sinclair/typebox':
         specifier: ^0.34.49
         version: 0.34.49
@@ -223,11 +223,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@kairo-js/router@0.2.0-beta.6':
-    resolution: {integrity: sha512-2/OPZP9IQKVk5MmLIxjs2+xPDq6CImMDZQdbHh49jUCeowiYjVjkLGChn3q78c0ULzpeCjkEldgIhD9F99xRZA==}
-    peerDependencies:
-      '@minecraft/server': ^2.5.0
-      '@minecraft/server-ui': ^2.0.0
+  '@kairo-js/properties@1.0.1':
+    resolution: {integrity: sha512-d0hmONG765g2AJEkYmV2qBseK/SaeQnZ3PlDfMEqay2DJW/PLypCt6aItQFr7xyCl2vzPfXbagaKa1Zgzgl9FQ==}
 
   '@microsoft/api-extractor-model@7.33.6':
     resolution: {integrity: sha512-E9iI4yGEVVusbTAqSLetVFxDuBVCVqCigcoQwdJuOjsLq5Hry3MkBgUQhSZNzLCu17pgjk58MI80GRDJLht/1A==}
@@ -988,14 +985,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kairo-js/router@0.2.0-beta.6(@minecraft/server-ui@2.0.0(@minecraft/vanilla-data@1.26.2))(@minecraft/server@2.5.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.26.2))':
-    dependencies:
-      '@minecraft/server': 2.5.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.26.2)
-      '@minecraft/server-ui': 2.0.0(@minecraft/vanilla-data@1.26.2)
-      '@sinclair/typebox': 0.34.49
-      ajv: 8.18.0
-      fast-json-stringify: 6.3.0
-      seedrandom: 3.0.5
+  '@kairo-js/properties@1.0.1': {}
 
   '@microsoft/api-extractor-model@7.33.6':
     dependencies:

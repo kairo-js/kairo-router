@@ -1,6 +1,6 @@
 import { KairoRuntime } from "../minecraft/KairoRuntime";
-import type { AddonProperties } from "../properties/AddonProperties";
 
+import type { AddonProperties } from "@kairo-js/properties";
 import type { KairoEventMap } from "../minecraft/KairoEventMap";
 import { SeedRandom } from "../utils/SeedRandom";
 import { ActivationController } from "./activation/ActivationController";

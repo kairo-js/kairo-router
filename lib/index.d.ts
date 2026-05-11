@@ -1,4 +1,4 @@
-import { S as SemVer, a as SupportedTagType, A as AddonProperties } from './index-C8SvgUOz.js';
+import { SemVer, AddonProperties } from '@kairo-js/properties';
 import { PlayerJoinAfterEvent } from '@minecraft/server';
 
 declare class AddonActivateAfterEvent {
@@ -53,7 +53,7 @@ interface KairoRegistry {
     requiredAddons: {
         [addonId: string]: string;
     };
-    tags: SupportedTagType[];
+    tags: string[];
 }
 
 declare class KairoContext {
