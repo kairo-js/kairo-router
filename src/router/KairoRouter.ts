@@ -120,7 +120,10 @@ export class KairoRouter {
         this.worldLoadListener = runtime.onReady(() => {
             this.worldLoadListener?.dispose();
             this.worldLoadListener = undefined;
-            this.readyState.markReady();
+
+            runtime.scheduler.runTimeout(() => {
+                this.readyState.markReady();
+            }, 1);
         });
     }
 
