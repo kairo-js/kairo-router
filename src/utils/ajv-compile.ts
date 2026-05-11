@@ -1,12 +1,30 @@
-import Ajv, { ValidateFunction } from "ajv";
+import Ajv, { type ValidateFunction } from "ajv";
 
-const ajv = new Ajv({
+const ajvOptions = {
     allErrors: true,
     strict: true,
     removeAdditional: false,
     coerceTypes: false,
-});
+};
+
+let ajv: Ajv | undefined;
+
+function getAjv(): Ajv {
+    ajv ??= new Ajv(ajvOptions);
+    return ajv;
+}
 
 export function compile<T>(schema: object): ValidateFunction<T> {
-    return ajv.compile<T>(schema);
+    let validate: ValidateFunction<T> | undefined;
+
+    const lazyValidate = ((data: unknown) => {
+        validate ??= getAjv().compile<T>(schema);
+        const valid = validate(data);
+        lazyValidate.errors = validate.errors;
+        return valid;
+    }) as ValidateFunction<T>;
+
+    lazyValidate.errors = null;
+
+    return lazyValidate;
 }

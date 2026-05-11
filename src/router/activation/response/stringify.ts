@@ -1,5 +1,9 @@
 import fastJson from "fast-json-stringify";
-import { ActivationResponse, ActivationResponseSchema } from "./schema";
+import { type ActivationResponse, ActivationResponseSchema } from "./schema";
 
-export const stringifyActivationResponse: (response: ActivationResponse) => string =
-    fastJson(ActivationResponseSchema);
+let stringify: ((response: ActivationResponse) => string) | undefined;
+
+export const stringifyActivationResponse = (response: ActivationResponse): string => {
+    stringify ??= fastJson(ActivationResponseSchema);
+    return stringify(response);
+};
