@@ -1,10 +1,14 @@
 import Ajv, { type ValidateFunction } from "ajv";
 
 const ajvOptions = {
-    allErrors: true,
-    strict: true,
+    allErrors: false,
+    inlineRefs: false,
+    strict: false,
     removeAdditional: false,
     coerceTypes: false,
+    code: {
+        optimize: false,
+    },
 };
 
 let ajv: Ajv | undefined;
