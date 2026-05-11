@@ -1,4 +1,4 @@
-import { KairoSchedulerRuntime } from "./types/KairoSchedulerRuntime";
+import type { KairoSchedulerRuntime } from "./types/KairoSchedulerRuntime";
 
 export class KairoScheduler {
     private active = false;

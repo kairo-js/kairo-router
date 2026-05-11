@@ -1,6 +1,6 @@
 import { validateTimestamp } from "../../../utils/validateTimestamp";
 import { RegistrationRequestError, RegistrationRequestErrorReason } from "./errors";
-import { RegistrationRequest } from "./request/schema";
+import type { RegistrationRequest } from "./request/schema";
 
 export class RegistrationRequestValidator {
     private readonly TIMEOUT_TICKS = 10;

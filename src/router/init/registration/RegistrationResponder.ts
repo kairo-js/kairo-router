@@ -1,9 +1,9 @@
 import { KairoRuntime } from "../../../minecraft/KairoRuntime";
 import { toError } from "../../../utils/toError";
-import { KairoRegistry } from "../../types/KairoRegistry";
+import type { KairoRegistry } from "../../types/KairoRegistry";
 import { KairoInitEventId } from "../KairoInitEventId";
 import { RegistrationResponseError, RegistrationResponseErrorReason } from "./response/errors";
-import { RegistrationResponse } from "./response/schema";
+import type { RegistrationResponse } from "./response/schema";
 import { stringifyRegistrationResponse } from "./response/stringify";
 
 // kjs-router-ch 0203

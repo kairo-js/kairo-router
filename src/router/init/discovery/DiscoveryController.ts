@@ -1,5 +1,5 @@
 import { KairoRuntime } from "../../../minecraft/KairoRuntime";
-import { KairoContext, KairoContextMutator } from "../../KairoContext";
+import { KairoContext, type KairoContextMutator } from "../../KairoContext";
 import { KairoIdProvider } from "../KairoIdProvider";
 import { AddonDiscoveryManager } from "./AddonDiscoveryManager";
 import { DiscoveryResponder } from "./DiscoveryResponder";

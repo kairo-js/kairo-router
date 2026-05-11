@@ -1,4 +1,4 @@
-import { Disposable } from "./types/Disposable";
+import type { Disposable } from "./types/Disposable";
 
 export class ReadyState {
     private ready = false;

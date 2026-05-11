@@ -4,7 +4,7 @@ import {
     RegistrationRequestParseError,
     RegistrationRequestParseErrorReason,
 } from "./request/errors";
-import { RegistrationRequest } from "./request/schema";
+import type { RegistrationRequest } from "./request/schema";
 import { validateRegistrationRequest } from "./request/validate";
 
 export class RegistrationRequestParser {

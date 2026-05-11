@@ -1,7 +1,7 @@
 import { safeJsonParse } from "../../../utils/jsonParse";
 import { toError } from "../../../utils/toError";
 import { DiscoveryQueryParseError, DiscoveryQueryParseErrorReason } from "./query/errors";
-import { DiscoveryQuery } from "./query/schema";
+import type { DiscoveryQuery } from "./query/schema";
 import { validateDiscoveryQuery } from "./query/validate";
 
 // kjs-router-ch 0102

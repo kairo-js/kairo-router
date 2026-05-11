@@ -1,5 +1,5 @@
 import seedRandom from "seedrandom";
-import { Random } from "../router/types/Random";
+import type { Random } from "../router/types/Random";
 
 export class SeedRandom implements Random {
     private readonly rng: () => number;

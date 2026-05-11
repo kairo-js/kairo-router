@@ -2,7 +2,7 @@ import { KairoRuntime } from "../../../minecraft/KairoRuntime";
 import { toError } from "../../../utils/toError";
 import { KairoInitEventId } from "../KairoInitEventId";
 import { DiscoveryResponseError, DiscoveryResponseErrorReason } from "./response/errors";
-import { DiscoveryResponse } from "./response/schema";
+import type { DiscoveryResponse } from "./response/schema";
 import { stringifyDiscoveryResponse } from "./response/stringify";
 
 // kjs-router-ch 0103

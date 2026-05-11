@@ -1,5 +1,5 @@
-import { AddonProperties } from "../../../types/AddonProperties";
-import { KairoRegistry } from "../../types/KairoRegistry";
+import type { AddonProperties } from "../../../types/AddonProperties";
+import type { KairoRegistry } from "../../types/KairoRegistry";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "../errors";
 import { KairoRegistryBuilder } from "../KairoRegistryBuilder";
 import { RegistrationRequestParser } from "./RegistrationRequestParser";

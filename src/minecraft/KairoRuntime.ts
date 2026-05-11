@@ -5,12 +5,12 @@ import {
     world,
     WorldLoadAfterEvent,
 } from "@minecraft/server";
-import type { KairoEventMap } from "./KairoEventMap";
-import { Disposable } from "../router/types/Disposable";
-import { IdRegistry } from "../router/types/IdRegistry";
-import { KairoSchedulerRuntime } from "../router/types/KairoSchedulerRuntime";
-import { Random } from "../router/types/Random";
+import type { Disposable } from "../router/types/Disposable";
+import type { IdRegistry } from "../router/types/IdRegistry";
+import type { KairoSchedulerRuntime } from "../router/types/KairoSchedulerRuntime";
+import type { Random } from "../router/types/Random";
 import { SeedRandom } from "../utils/SeedRandom";
+import type { KairoEventMap } from "./KairoEventMap";
 import { ScoreboardIdRegistry } from "./ScoreboardIdRegistry";
 import { minecraftEventBinding } from "./minecraftEventBinding";
 

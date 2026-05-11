@@ -1,6 +1,6 @@
 import { validateTimestamp } from "../../../utils/validateTimestamp";
 import { DiscoveryQueryError, DiscoveryQueryErrorReason } from "./errors";
-import { DiscoveryQuery } from "./query/schema";
+import type { DiscoveryQuery } from "./query/schema";
 
 export class DiscoveryQueryValidator {
     private readonly TIMEOUT_TICKS = 10;
