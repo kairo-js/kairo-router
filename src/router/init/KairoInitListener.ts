@@ -1,5 +1,5 @@
+import { ReadyBufferedListener } from "../ReadyBufferedListener";
 import { ReadyState } from "../ReadyState";
-import { ReadyBufferedListener } from "../types/ReadyBufferedListener";
 import { KairoInitEventId } from "./KairoInitEventId";
 
 type Handler = (message: string) => void;

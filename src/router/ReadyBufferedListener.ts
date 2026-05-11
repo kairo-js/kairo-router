@@ -1,7 +1,7 @@
-import { KairoRuntime } from "../../minecraft/KairoRuntime";
-import { KairoListenerError, KairoListenerErrorReason } from "../errors/KairoListenerError";
-import { ReadyState } from "../ReadyState";
-import type { Disposable } from "./Disposable";
+import type { KairoRuntime } from "../minecraft/KairoRuntime";
+import { KairoListenerError, KairoListenerErrorReason } from "./errors/KairoListenerError";
+import type { ReadyState } from "./ReadyState";
+import type { Disposable } from "./types/Disposable";
 
 export abstract class ReadyBufferedListener<TId extends string> {
     private readonly MAX_PENDING = 1000;

@@ -1,4 +1,4 @@
-import type { AddonProperties } from "../../../properties/AddonProperties";
+import type { AddonProperties } from "@kairo-js/properties";
 import type { KairoRegistry } from "../../types/KairoRegistry";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "../errors";
 import { KairoRegistryBuilder } from "../KairoRegistryBuilder";
