@@ -12,10 +12,6 @@
         ".": {
             "import": "./lib/index.js",
             "types": "./lib/index.d.ts"
-        },
-        "./properties": {
-            "import": "./lib/properties/index.js",
-            "types": "./lib/properties/index.d.ts"
         }
     },
     "files": [
@@ -45,7 +41,8 @@
         "typescript": "^5.9.3"
     },
     "dependencies": {
-        "@kairo-js/properties": "1.0.1",
+        "@kairo-js/properties": "1.0.2",
+        "@kairo-js/utils": "^1.0.1",
         "@sinclair/typebox": "^0.34.49",
         "ajv": "^8.18.0",
         "fast-json-stringify": "^6.3.0",

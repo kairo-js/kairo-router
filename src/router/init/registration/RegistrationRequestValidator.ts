@@ -1,4 +1,4 @@
-import { validateTimestamp } from "../../../utils/validateTimestamp";
+import { validateTimestamp } from "@kairo-js/utils";
 import { RegistrationRequestError, RegistrationRequestErrorReason } from "./errors";
 import type { RegistrationRequest } from "./request/schema";
 

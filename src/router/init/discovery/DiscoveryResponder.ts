@@ -1,5 +1,5 @@
+import { toError } from "@kairo-js/utils";
 import { KairoRuntime } from "../../../minecraft/KairoRuntime";
-import { toError } from "../../../utils/toError";
 import { KairoInitEventId } from "../KairoInitEventId";
 import { DiscoveryResponseError, DiscoveryResponseErrorReason } from "./response/errors";
 import type { DiscoveryResponse } from "./response/schema";

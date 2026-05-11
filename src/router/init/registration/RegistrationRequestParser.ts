@@ -1,5 +1,4 @@
-import { safeJsonParse } from "../../../utils/jsonParse";
-import { toError } from "../../../utils/toError";
+import { safeJsonParse, toError } from "@kairo-js/utils";
 import {
     RegistrationRequestParseError,
     RegistrationRequestParseErrorReason,

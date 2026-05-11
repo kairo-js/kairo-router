@@ -1,5 +1,4 @@
-import { safeJsonParse } from "../../utils/jsonParse";
-import { toError } from "../../utils/toError";
+import { safeJsonParse, toError } from "@kairo-js/utils";
 import { ActivationRequestParseError, ActivationRequestParseErrorReason } from "./request/errors";
 import type { ActivationRequest } from "./request/schema";
 import { validateActivationRequest } from "./request/validate";

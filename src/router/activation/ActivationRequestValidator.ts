@@ -1,6 +1,6 @@
-import { validateTimestamp } from "../../utils/validateTimestamp";
+import { validateTimestamp } from "@kairo-js/utils";
 import { ActivationRequestError, ActivationRequestErrorReason } from "./errors";
-import { ActivationRequest } from "./request/schema";
+import type { ActivationRequest } from "./request/schema";
 
 export class ActivationRequestValidator {
     private readonly TIMEOUT_TICKS = 10;
