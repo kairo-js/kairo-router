@@ -9,11 +9,4 @@ export default defineConfig({
     splitting: false,
     minify: false,
     external: ["@minecraft/server", "@minecraft/server-ui"],
-    noExternal: [
-        "@kairo-js/properties",
-        "@sinclair/typebox",
-        "ajv",
-        "fast-json-stringify",
-        "seedrandom",
-    ],
 });
