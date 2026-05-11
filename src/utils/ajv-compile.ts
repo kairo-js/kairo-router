@@ -1,6 +1,7 @@
 import Ajv, { type ValidateFunction } from "ajv";
 
-const ajvOptions = {
+const ajv = new Ajv({
+    validateSchema: false,
     allErrors: false,
     inlineRefs: false,
     strict: false,
@@ -9,26 +10,8 @@ const ajvOptions = {
     code: {
         optimize: false,
     },
-};
-
-let ajv: Ajv | undefined;
-
-function getAjv(): Ajv {
-    ajv ??= new Ajv(ajvOptions);
-    return ajv;
-}
+});
 
 export function compile<T>(schema: object): ValidateFunction<T> {
-    let validate: ValidateFunction<T> | undefined;
-
-    const lazyValidate = ((data: unknown) => {
-        validate ??= getAjv().compile<T>(schema);
-        const valid = validate(data);
-        lazyValidate.errors = validate.errors;
-        return valid;
-    }) as ValidateFunction<T>;
-
-    lazyValidate.errors = null;
-
-    return lazyValidate;
+    return ajv.compile<T>(schema);
 }

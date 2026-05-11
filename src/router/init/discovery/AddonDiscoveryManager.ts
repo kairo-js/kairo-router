@@ -12,7 +12,7 @@ export class AddonDiscoveryManager {
     resolveKairoId(message: string, runtime: KairoRuntime, addonId: string): string {
         const query = this.parser.parse(message);
         this.validator.validateRequest(query, runtime.currentTick());
-        const idRegistry = runtime.createIdRegistry(query.idNamespace);
+        const idRegistry = runtime.createIdRegistry(query.registryId);
         return this.idProvider.provideId(idRegistry, addonId);
     }
 }
