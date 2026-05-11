@@ -1,5 +1,6 @@
 import { SemVer, AddonProperties } from '@kairo-js/properties';
 import { PlayerJoinAfterEvent } from '@minecraft/server';
+import { ValidateFunction } from 'ajv';
 
 declare class AddonActivateAfterEvent {
     private constructor();
@@ -82,6 +83,14 @@ declare class KairoRouter {
     private constructor();
 }
 
+declare function compile<T>(schema: object): ValidateFunction<T>;
+
+declare function safeJsonParse(message: string, error: () => Error): unknown;
+
+declare function toError(e: unknown): Error;
+
+declare function validateTimestamp(currentTick: number, timestamp: number, timeout: number, onTimeout: () => Error, onFuture: () => Error): void;
+
 declare const router: KairoRouter;
 
-export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, KairoContext, type KairoRegistry, KairoRouter, router };
+export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, KairoContext, type KairoRegistry, KairoRouter, type Random, SeedRandom, compile, router, safeJsonParse, toError, validateTimestamp };

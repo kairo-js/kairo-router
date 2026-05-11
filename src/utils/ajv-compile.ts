@@ -2,11 +2,12 @@ import Ajv, { type ValidateFunction } from "ajv";
 
 const ajv = new Ajv({
     validateSchema: false,
+    strict: true,
     allErrors: false,
     inlineRefs: false,
-    strict: false,
     removeAdditional: false,
     coerceTypes: false,
+    useDefaults: false,
     code: {
         optimize: false,
     },
