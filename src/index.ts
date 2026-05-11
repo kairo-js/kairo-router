@@ -7,17 +7,5 @@ export { KairoContext } from "./router/KairoContext";
 export { KairoRouter } from "./router/KairoRouter";
 export type { KairoRegistry } from "./router/types/KairoRegistry";
 
-export type {
-    AddonHeader,
-    AddonMetadata,
-    AddonProperties,
-    EngineVersion,
-    ManifestDependency,
-    RequiredAddons,
-    SemVer,
-} from "./types/AddonProperties";
-
-export { MinecraftModule, SupportedTag } from "./types/AddonProperties";
-
 export { AddonActivateAfterEvent } from "./router/events/classes/AddonActivateAfterEvent";
 export { AddonDeactivateBeforeEvent } from "./router/events/classes/AddonDeactivateBeforeEvent";

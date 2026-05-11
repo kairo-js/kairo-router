@@ -1,13 +1,13 @@
 import { KairoRuntime } from "../minecraft/KairoRuntime";
-import type { AddonProperties } from "../types/AddonProperties";
+import type { AddonProperties } from "../properties/AddonProperties";
 
+import type { KairoEventMap } from "../minecraft/KairoEventMap";
 import { SeedRandom } from "../utils/SeedRandom";
 import { ActivationController } from "./activation/ActivationController";
 import { KairoRouterError, KairoRouterErrorReason } from "./errors/KairoRouterError";
 import { EventRegistry } from "./events/EventRegistry";
 import { KairoAfterEvents } from "./events/KairoAfterEvents";
 import { KairoBeforeEvents } from "./events/KairoBeforeEvents";
-import type { KairoEventMap } from "../minecraft/KairoEventMap";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
 import { createKairoContext, KairoContext, type KairoContextMutator } from "./KairoContext";

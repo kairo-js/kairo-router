@@ -1,4 +1,4 @@
-import type { AddonProperties } from "../../types/AddonProperties";
+import type { AddonProperties } from "../../properties/AddonProperties";
 import type { KairoRegistry } from "../types/KairoRegistry";
 
 export class KairoRegistryBuilder {
