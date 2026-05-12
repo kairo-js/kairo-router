@@ -1,5 +1,5 @@
 import { validateTimestamp } from "@kairo-js/utils";
-import { RegistrationRequestError, RegistrationRequestErrorReason } from "./errors";
+import { RegistrationRequestError, RegistrationRequestErrorReason } from "./request/errors";
 import type { RegistrationRequest } from "./request/schema";
 
 export class RegistrationRequestValidator {

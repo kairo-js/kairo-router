@@ -32,4 +32,8 @@ export class RegistrationController {
 
         return registry;
     };
+
+    handleRegistrationResult = (message: string, deps: { runtime: KairoRuntime }): boolean => {
+        return this.registrationManager.resolveResult(message, deps.runtime.currentTick());
+    };
 }

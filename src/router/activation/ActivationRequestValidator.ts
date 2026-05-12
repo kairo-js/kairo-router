@@ -1,5 +1,5 @@
 import { validateTimestamp } from "@kairo-js/utils";
-import { ActivationRequestError, ActivationRequestErrorReason } from "./errors";
+import { ActivationRequestError, ActivationRequestErrorReason } from "./request/errors";
 import type { ActivationRequest } from "./request/schema";
 
 export class ActivationRequestValidator {

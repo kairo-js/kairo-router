@@ -1,5 +1,5 @@
 import { validateTimestamp } from "@kairo-js/utils";
-import { DiscoveryQueryError, DiscoveryQueryErrorReason } from "./errors";
+import { DiscoveryQueryError, DiscoveryQueryErrorReason } from "./query/errors";
 import type { DiscoveryQuery } from "./query/schema";
 
 export class DiscoveryQueryValidator {

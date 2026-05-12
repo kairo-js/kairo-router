@@ -49,6 +49,7 @@ export class KairoInitializer implements Disposable {
         this.initListener = new KairoInitListener(this.readyState, {
             [KairoInitEventId.DiscoveryQuery]: this.handleDiscoveryQuery,
             [KairoInitEventId.RegistrationRequest]: this.handleRegistrationRequest,
+            [KairoInitEventId.RegistrationResult]: this.handleRegistrationResult,
         });
     }
 
@@ -101,6 +102,19 @@ export class KairoInitializer implements Disposable {
                 this.dispose();
                 return;
             }
+        } catch (error) {
+            this.dispose();
+            throw error;
+        }
+    };
+
+    private handleRegistrationResult = (message: string): void => {
+        this.assertPhase(InitPhase.Registration);
+
+        try {
+            const isSuccess = this.registrationController.handleRegistrationResult(message, {
+                runtime: this.runtime,
+            });
 
             this.phase = InitPhase.Completed;
             this.dispose();

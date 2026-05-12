@@ -4,11 +4,17 @@ import { KairoRouterInitError, KairoRouterInitErrorReason } from "../errors";
 import { KairoRegistryBuilder } from "../KairoRegistryBuilder";
 import { RegistrationRequestParser } from "./RegistrationRequestParser";
 import { RegistrationRequestValidator } from "./RegistrationRequestValidator";
+import { RegistrationResultParser } from "./RegistrationResultParser";
+import { RegistrationResultValidator } from "./RegistrationResultValidator";
 
 // kjs-router-ch 0200
 export class AddonRegistrationManager {
-    private readonly parser = new RegistrationRequestParser();
-    private readonly validator = new RegistrationRequestValidator();
+    private readonly requestParser = new RegistrationRequestParser();
+    private readonly requestValidator = new RegistrationRequestValidator();
+
+    private readonly resultParser = new RegistrationResultParser();
+    private readonly resultValidator = new RegistrationResultValidator();
+
     constructor(private readonly registryBuilder: KairoRegistryBuilder) {}
 
     resolveRegistry(
@@ -17,8 +23,8 @@ export class AddonRegistrationManager {
         kairoId: string,
         addonProperties: AddonProperties,
     ): KairoRegistry | undefined {
-        const request = this.parser.parse(message);
-        this.validator.validateRequest(request, currentTick);
+        const request = this.requestParser.parse(message);
+        this.requestValidator.validateRequest(request, currentTick);
 
         if (request.rejects.includes(kairoId)) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.RegistrationRejected);
@@ -30,5 +36,12 @@ export class AddonRegistrationManager {
 
         const registry: KairoRegistry = this.registryBuilder.build(kairoId, addonProperties);
         return registry;
+    }
+
+    resolveResult(message: string, currentTick: number): boolean {
+        const result = this.resultParser.parse(message);
+        this.resultValidator.validateRequest(result, currentTick);
+
+        return result.success;
     }
 }
