@@ -39,21 +39,23 @@ declare class KairoBeforeEvents<E extends KairoEventMap> {
     private constructor();
 }
 
+type VersionRange = string;
+type DependencyMap = Readonly<Record<string, VersionRange>>;
 interface KairoRegistry {
-    kairoId: string;
-    addonId: string;
-    name: string;
-    description: string;
-    version: SemVer;
-    metadata: {
-        authors: string[];
-        url?: string;
-        license?: string;
+    readonly kairoId: string;
+    readonly addonId: string;
+    readonly version: SemVer;
+    readonly name: string;
+    readonly description: string;
+    readonly metadata: {
+        readonly authors: string[];
+        readonly url?: string;
+        readonly license?: string;
     };
-    requiredAddons: {
-        [addonId: string]: string;
-    };
-    tags: string[];
+    readonly dependencies: DependencyMap;
+    readonly optionalDependencies: DependencyMap;
+    readonly peerDependencies: DependencyMap;
+    readonly tags: string[];
 }
 
 declare class KairoContext {

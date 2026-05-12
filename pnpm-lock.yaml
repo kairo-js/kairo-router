@@ -12,8 +12,8 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       '@kairo-js/utils':
-        specifier: ^1.1.2
-        version: 1.1.2
+        specifier: 1.2.0
+        version: 1.2.0
       '@sinclair/typebox':
         specifier: ^0.34.49
         version: 0.34.49
@@ -226,8 +226,8 @@ packages:
   '@kairo-js/properties@1.0.2':
     resolution: {integrity: sha512-5gLkGPjOulIZL3WNKrM0CXHtMBA/gtqM1xXZCPWAB1jekGv3aOKoCo6nFgzyVnz1LuORS6LhrUErO+q3FDAs0A==}
 
-  '@kairo-js/utils@1.1.2':
-    resolution: {integrity: sha512-WTBQtbkixeJpmwyYBboMDdHZNx9F+KCMo3nktO9Ql4LuYZ+ng5uJb+VrQh9ne/O+Kn0CxG1N+XyxILS86fF2zw==}
+  '@kairo-js/utils@1.2.0':
+    resolution: {integrity: sha512-5upj6IBcrdvilKzVGJDL4sya/grzfiqdiLFMtmQkDINFcSZc6LjzEV1fcXHheWUWUuJxiefpYMiF6F3qfP43ag==}
 
   '@microsoft/api-extractor-model@7.33.6':
     resolution: {integrity: sha512-E9iI4yGEVVusbTAqSLetVFxDuBVCVqCigcoQwdJuOjsLq5Hry3MkBgUQhSZNzLCu17pgjk58MI80GRDJLht/1A==}
@@ -439,6 +439,9 @@ packages:
 
   '@types/seedrandom@3.0.8':
     resolution: {integrity: sha512-TY1eezMU2zH2ozQoAFAQFOPpvP15g+ZgSfTZt31AUUH/Rxtnz3H+A/Sv1Snw2/amp//omibc+AEkTaA8KUeOLQ==}
+
+  '@types/semver@7.7.1':
+    resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
 
   acorn@8.16.0:
     resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
@@ -792,6 +795,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  semver@7.8.0:
+    resolution: {integrity: sha512-AcM7dV/5ul4EekoQ29Agm5vri8JNqRyj39o0qpX6vDF2GZrtutZl5RwgD1XnZjiTAfncsJhMI48QQH3sN87YNA==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   source-map@0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
@@ -990,10 +998,13 @@ snapshots:
 
   '@kairo-js/properties@1.0.2': {}
 
-  '@kairo-js/utils@1.1.2':
+  '@kairo-js/utils@1.2.0':
     dependencies:
+      '@kairo-js/properties': 1.0.2
       '@sinclair/typebox': 0.34.49
+      '@types/semver': 7.7.1
       seedrandom: 3.0.5
+      semver: 7.8.0
 
   '@microsoft/api-extractor-model@7.33.6':
     dependencies:
@@ -1178,6 +1189,8 @@ snapshots:
   '@types/estree@1.0.8': {}
 
   '@types/seedrandom@3.0.8': {}
+
+  '@types/semver@7.7.1': {}
 
   acorn@8.16.0: {}
 
@@ -1537,6 +1550,8 @@ snapshots:
     dependencies:
       lru-cache: 6.0.0
     optional: true
+
+  semver@7.8.0: {}
 
   source-map@0.6.1:
     optional: true
