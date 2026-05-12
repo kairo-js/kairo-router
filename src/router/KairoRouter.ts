@@ -29,6 +29,8 @@ export class KairoRouter {
     private routerListener?: Disposable;
     private runtimeInjectedEventListener?: Disposable;
     private worldLoadListener?: Disposable;
+    private initializer?: Disposable;
+    private disposed = false;
 
     private eventRegistry = new EventRegistry(() => {
         if (!this.kairoContext) return false;
@@ -38,6 +40,8 @@ export class KairoRouter {
     public readonly beforeEvents = new KairoBeforeEvents<KairoEventMap>(this.eventRegistry);
 
     get currentTick(): number {
+        this.assertNotDisposed();
+
         if (!this.runtime) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
         }
@@ -58,6 +62,8 @@ export class KairoRouter {
     }
 
     init(properties: AddonProperties): void {
+        this.assertNotDisposed();
+
         if (this.kairoContext) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyInitialized);
         }
@@ -77,13 +83,22 @@ export class KairoRouter {
             mutator,
             new SeedRandom(),
             this.readyState,
-            () => this.startRouterListener(),
+            () => {
+                this.initializer = undefined;
+                this.startRouterListener();
+            },
+            () => {
+                this.initializer = undefined;
+                this.dispose();
+            },
         );
 
+        this.initializer = initializer;
         initializer.setup();
     }
 
     waitForWorldLoad(): Promise<void> {
+        this.assertNotDisposed();
         this.startWorldLoadListener(this.runtime ?? new KairoRuntime());
         return this.readyState.wait();
     }
@@ -112,6 +127,33 @@ export class KairoRouter {
     }
 
     send(targetId: string, eventId: string, ...args: unknown[]): void {}
+
+    private dispose(): void {
+        if (this.disposed) return;
+
+        this.disposed = true;
+
+        this.initializer?.dispose();
+        this.initializer = undefined;
+
+        this.stopActivationTickCounter();
+        this.detachRuntimeEvents();
+
+        this.routerListener?.dispose();
+        this.routerListener = undefined;
+
+        this.worldLoadListener?.dispose();
+        this.worldLoadListener = undefined;
+
+        this.eventRegistry.clearActiveScopedListeners();
+        this.kairoContextMutator?.setActivationState("inactive");
+        this.scheduler?.setActive(false);
+
+        this.kairoContext = undefined;
+        this.kairoContextMutator = undefined;
+        this.scheduler = undefined;
+        this.runtime = undefined;
+    }
 
     private startWorldLoadListener(runtime: KairoRuntime<KairoEventMap>): void {
         if (this.readyState.isReady() || this.worldLoadListener) return;
@@ -222,12 +264,20 @@ export class KairoRouter {
     }
 
     private assertRunnable(): void {
+        this.assertNotDisposed();
+
         if (!this.kairoContext || !this.runtime || !this.scheduler) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
         }
 
         if (!this.kairoContext.isActive()) {
             throw new KairoRouterError(KairoRouterErrorReason.Inactive);
+        }
+    }
+
+    private assertNotDisposed(): void {
+        if (this.disposed) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyDisposed);
         }
     }
 }

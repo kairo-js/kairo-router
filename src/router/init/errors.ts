@@ -23,7 +23,7 @@ const DEFAULT_MESSAGES: Record<KairoRouterInitErrorReason, string> = {
     [KairoRouterInitErrorReason.NotInitialized]:
         "Kairo router is not initialized. Call init() first.",
     [KairoRouterInitErrorReason.AlreadyInitialized]: "Kairo router has already been initialized.",
-    [KairoRouterInitErrorReason.AlreadyDisposed]: "Initializer is already disposed.",
+    [KairoRouterInitErrorReason.AlreadyDisposed]: "Kairo router is already disposed.",
     [KairoRouterInitErrorReason.InvalidPhase]: "Invalid phase for the requested operation.",
     [KairoRouterInitErrorReason.RegistrationRejected]: "Addon registration was rejected.",
     [KairoRouterInitErrorReason.RegistrationRequestNotFound]: "Registration request not found.",

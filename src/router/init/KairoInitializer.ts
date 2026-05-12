@@ -60,15 +60,27 @@ export class KairoInitializer implements Disposable {
 
     dispose(): void {
         if (this.phase === InitPhase.Disposed) return;
+        if (this.phase === InitPhase.Completed) {
+            this.disposeSubscription();
+            return;
+        }
 
         this.phase = InitPhase.Disposed;
+        this.disposeSubscription();
 
+        this.onDisposed?.();
+    }
+
+    private complete(): void {
+        this.phase = InitPhase.Completed;
+        this.disposeSubscription();
+
+        this.onCompleted?.();
+    }
+
+    private disposeSubscription(): void {
         this.subscription?.dispose();
         this.subscription = undefined;
-
-        try {
-            this.onDisposed?.();
-        } catch {}
     }
 
     private handleDiscoveryQuery = (message: string): void => {
@@ -116,9 +128,12 @@ export class KairoInitializer implements Disposable {
                 runtime: this.runtime,
             });
 
-            this.phase = InitPhase.Completed;
-            this.dispose();
-            this.onCompleted?.();
+            if (!isSuccess) {
+                this.dispose();
+                return;
+            }
+
+            this.complete();
         } catch (error) {
             this.dispose();
             throw error;
