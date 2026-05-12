@@ -1,4 +1,4 @@
 import { compile } from "@kairo-js/utils";
-import { type ActivationRequest, ActivationRequestSchema } from "./schema";
+import { ActivationRequestSchema } from "./schema";
 
-export const validateActivationRequest = compile<ActivationRequest>(ActivationRequestSchema);
+export const validateActivationRequest = compile(ActivationRequestSchema);
