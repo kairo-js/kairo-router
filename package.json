@@ -42,7 +42,7 @@
     },
     "dependencies": {
         "@kairo-js/properties": "1.0.2",
-        "@kairo-js/utils": "^1.1.1",
+        "@kairo-js/utils": "^1.1.2",
         "@sinclair/typebox": "^0.34.49",
         "fast-json-stringify": "^6.3.0",
         "seedrandom": "^3.0.5"

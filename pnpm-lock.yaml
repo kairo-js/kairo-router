@@ -12,8 +12,8 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       '@kairo-js/utils':
-        specifier: ^1.1.1
-        version: 1.1.1
+        specifier: ^1.1.2
+        version: 1.1.2
       '@sinclair/typebox':
         specifier: ^0.34.49
         version: 0.34.49
@@ -226,8 +226,8 @@ packages:
   '@kairo-js/properties@1.0.2':
     resolution: {integrity: sha512-5gLkGPjOulIZL3WNKrM0CXHtMBA/gtqM1xXZCPWAB1jekGv3aOKoCo6nFgzyVnz1LuORS6LhrUErO+q3FDAs0A==}
 
-  '@kairo-js/utils@1.1.1':
-    resolution: {integrity: sha512-z0Ri3vKa7fL+BwOMoYMtPwLPtRE/Ooqlu81CxoSfpfd1RYJQEP2WwnnsYRZwODifUMfAcaenSHyBZrUHCCTFIg==}
+  '@kairo-js/utils@1.1.2':
+    resolution: {integrity: sha512-WTBQtbkixeJpmwyYBboMDdHZNx9F+KCMo3nktO9Ql4LuYZ+ng5uJb+VrQh9ne/O+Kn0CxG1N+XyxILS86fF2zw==}
 
   '@microsoft/api-extractor-model@7.33.6':
     resolution: {integrity: sha512-E9iI4yGEVVusbTAqSLetVFxDuBVCVqCigcoQwdJuOjsLq5Hry3MkBgUQhSZNzLCu17pgjk58MI80GRDJLht/1A==}
@@ -990,7 +990,7 @@ snapshots:
 
   '@kairo-js/properties@1.0.2': {}
 
-  '@kairo-js/utils@1.1.1':
+  '@kairo-js/utils@1.1.2':
     dependencies:
       '@sinclair/typebox': 0.34.49
       seedrandom: 3.0.5

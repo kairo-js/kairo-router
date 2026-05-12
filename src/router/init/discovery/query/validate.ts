@@ -1,4 +1,4 @@
 import { compile } from "@kairo-js/utils";
-import { type DiscoveryQuery, DiscoveryQuerySchema } from "./schema";
+import { DiscoveryQuerySchema } from "./schema";
 
-export const validateDiscoveryQuery = compile<DiscoveryQuery>(DiscoveryQuerySchema);
+export const validateDiscoveryQuery = compile(DiscoveryQuerySchema);
