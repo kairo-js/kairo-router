@@ -11,6 +11,3 @@ export { AddonActivateAfterEvent } from "./router/events/classes/AddonActivateAf
 export { AddonDeactivateBeforeEvent } from "./router/events/classes/AddonDeactivateBeforeEvent";
 
 export type { Disposable } from "./router/types/Disposable";
-
-export { ReadyBufferedListener } from "./router/ReadyBufferedListener";
-export { ReadyState } from "./router/ReadyState";

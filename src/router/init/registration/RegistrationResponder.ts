@@ -1,7 +1,7 @@
 import { toError } from "@kairo-js/utils";
 import { KairoRuntime } from "../../../minecraft/KairoRuntime";
 import type { KairoRegistry } from "../../types/KairoRegistry";
-import { KairoInitEventId } from "../KairoInitEventId";
+import { KairoInitEventId } from "../constants/KairoInitEventId";
 import { RegistrationResponseError, RegistrationResponseErrorReason } from "./response/errors";
 import type { RegistrationResponse } from "./response/schema";
 import { stringifyRegistrationResponse } from "./response/stringify";

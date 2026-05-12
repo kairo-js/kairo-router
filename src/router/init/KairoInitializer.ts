@@ -1,12 +1,12 @@
-import { SeedRandom, type Random } from "@kairo-js/utils";
+import { type Random } from "@kairo-js/utils";
 import { KairoRuntime } from "../../minecraft/KairoRuntime";
 import type { KairoContext, KairoContextMutator } from "../KairoContext";
 import { ReadyState } from "../ReadyState";
 import type { Disposable } from "../types/Disposable";
+import { KairoInitEventId } from "./constants/KairoInitEventId";
 import { DiscoveryController } from "./discovery/DiscoveryController";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./errors";
 import { KairoIdProvider } from "./KairoIdProvider";
-import { KairoInitEventId } from "./KairoInitEventId";
 import { KairoInitListener } from "./KairoInitListener";
 import { KairoRegistryBuilder } from "./KairoRegistryBuilder";
 import { RegistrationController } from "./registration/RegistrationController";
@@ -34,7 +34,7 @@ export class KairoInitializer implements Disposable {
         private readonly runtime: KairoRuntime,
         private readonly context: KairoContext,
         private readonly contextMutator: KairoContextMutator,
-        private readonly random: Random = new SeedRandom(),
+        private readonly random: Random,
         private readonly readyState: ReadyState,
         private readonly onCompleted?: () => void,
         private readonly onDisposed?: () => void,

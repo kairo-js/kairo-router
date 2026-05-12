@@ -1,6 +1,6 @@
 import { ReadyBufferedListener } from "../ReadyBufferedListener";
 import { ReadyState } from "../ReadyState";
-import { KairoInitEventId } from "./KairoInitEventId";
+import { KairoInitEventId } from "./constants/KairoInitEventId";
 
 type Handler = (message: string) => void;
 const KAIRO_INIT_EVENT_ID_SET = new Set<KairoInitEventId>(Object.values(KairoInitEventId));

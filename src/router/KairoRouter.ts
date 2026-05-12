@@ -1,7 +1,7 @@
 import { KairoRuntime } from "../minecraft/KairoRuntime";
 
 import type { AddonProperties } from "@kairo-js/properties";
-import { SeedRandom, type Random } from "@kairo-js/utils";
+import { SeedRandom } from "@kairo-js/utils";
 import type { KairoEventMap } from "../minecraft/KairoEventMap";
 import { ActivationController } from "./activation/ActivationController";
 import { KairoRouterError, KairoRouterErrorReason } from "./errors/KairoRouterError";
@@ -75,7 +75,7 @@ export class KairoRouter {
             this.runtime,
             context,
             mutator,
-            resolveRandom(this.runtime),
+            new SeedRandom(),
             this.readyState,
             () => this.startRouterListener(),
         );
@@ -230,11 +230,4 @@ export class KairoRouter {
             throw new KairoRouterError(KairoRouterErrorReason.Inactive);
         }
     }
-}
-
-function resolveRandom(runtime: KairoRuntime<KairoEventMap>): Random {
-    if ("createRandom" in runtime && typeof runtime.createRandom === "function") {
-        return runtime.createRandom();
-    }
-    return new SeedRandom();
 }
