@@ -12,8 +12,8 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       '@kairo-js/utils':
-        specifier: 1.2.0
-        version: 1.2.0
+        specifier: 1.2.1
+        version: 1.2.1
       '@sinclair/typebox':
         specifier: ^0.34.49
         version: 0.34.49
@@ -226,8 +226,8 @@ packages:
   '@kairo-js/properties@1.0.2':
     resolution: {integrity: sha512-5gLkGPjOulIZL3WNKrM0CXHtMBA/gtqM1xXZCPWAB1jekGv3aOKoCo6nFgzyVnz1LuORS6LhrUErO+q3FDAs0A==}
 
-  '@kairo-js/utils@1.2.0':
-    resolution: {integrity: sha512-5upj6IBcrdvilKzVGJDL4sya/grzfiqdiLFMtmQkDINFcSZc6LjzEV1fcXHheWUWUuJxiefpYMiF6F3qfP43ag==}
+  '@kairo-js/utils@1.2.1':
+    resolution: {integrity: sha512-L5lksOPDRhNiwl3qwNzF0HpGI1FcVciBXl/eCWbcYaP6q8PHtFWfDse1o87Y7QzT9BR93open11R3zLxBi6zUw==}
 
   '@microsoft/api-extractor-model@7.33.6':
     resolution: {integrity: sha512-E9iI4yGEVVusbTAqSLetVFxDuBVCVqCigcoQwdJuOjsLq5Hry3MkBgUQhSZNzLCu17pgjk58MI80GRDJLht/1A==}
@@ -998,7 +998,7 @@ snapshots:
 
   '@kairo-js/properties@1.0.2': {}
 
-  '@kairo-js/utils@1.2.0':
+  '@kairo-js/utils@1.2.1':
     dependencies:
       '@kairo-js/properties': 1.0.2
       '@sinclair/typebox': 0.34.49
