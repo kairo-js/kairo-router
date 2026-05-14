@@ -1,10 +1,10 @@
-import { ReadyBufferedListener } from "./ReadyBufferedListener";
-import { ReadyState } from "./ReadyState";
+import { ReadyBufferedListener } from "../ReadyBufferedListener";
+import type { ReadyState } from "../ReadyState";
 
 type Handler = (message: string) => void;
 type HandlerMap = Partial<Record<string, Handler>>;
 
-export class KairoRouterListener extends ReadyBufferedListener<string> {
+export class ActivationRequestListener extends ReadyBufferedListener<string> {
     constructor(
         readyState: ReadyState,
         private readonly handlers: HandlerMap,

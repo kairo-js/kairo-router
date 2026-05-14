@@ -11,8 +11,6 @@ import { KairoBeforeEvents } from "./events/KairoBeforeEvents";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
 import { createKairoContext, KairoContext, type KairoContextMutator } from "./KairoContext";
-import { KairoEventId } from "./KairoEventId";
-import { KairoRouterListener } from "./KairoRouterListener";
 import { KairoScheduler } from "./KairoScheduler";
 import { ReadyState } from "./ReadyState";
 import type { Disposable } from "./types/Disposable";
@@ -178,8 +176,10 @@ export class KairoRouter {
         }
 
         const activationController = new ActivationController(
+            this.runtime,
             this.kairoContext,
             this.kairoContextMutator,
+            this.readyState,
             this.eventRegistry,
             {
                 onActivate: () => {
@@ -195,29 +195,7 @@ export class KairoRouter {
                 },
             },
         );
-
-        const handlers = this.buildHandlers(activationController);
-        const listener = new KairoRouterListener(this.readyState, handlers);
-
-        this.routerListener = listener.setup(this.runtime);
-    }
-
-    private buildHandlers(controller: ActivationController) {
-        return {
-            [this.kairoContext?.kairoId + ":" + KairoEventId.ActivationRequest]: (
-                message: string,
-            ) => this.handleActivationRequest(controller, message),
-        };
-    }
-
-    private handleActivationRequest(controller: ActivationController, message: string): void {
-        if (!this.runtime) {
-            throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
-        }
-
-        controller.handleActivationRequest(message, {
-            runtime: this.runtime,
-        });
+        activationController.setup();
     }
 
     private attachRuntimeEvents() {

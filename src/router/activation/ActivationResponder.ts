@@ -1,6 +1,6 @@
 import { toError } from "@kairo-js/utils";
 import { KairoRuntime } from "../../minecraft/KairoRuntime";
-import { KairoEventId } from "../KairoEventId";
+import { ActivationEventId } from "./constants/ActivationEventId";
 import { ActivationResponseError, ActivationResponseErrorReason } from "./response/errors";
 import type { ActivationResponse } from "./response/schema";
 import { stringifyActivationResponse } from "./response/stringify";
@@ -22,7 +22,7 @@ export class ActivationResponder {
         try {
             const responseStr = stringifyActivationResponse(response);
 
-            runtime.send(KairoEventId.ActivationResponse, responseStr);
+            runtime.send(ActivationEventId.ActivationResponse, responseStr);
         } catch (e: unknown) {
             throw new ActivationResponseError(ActivationResponseErrorReason.StringifyFailed, {
                 cause: toError(e),

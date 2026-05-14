@@ -4,31 +4,45 @@ import { AddonActivateAfterEvent } from "../events/classes/AddonActivateAfterEve
 import { AddonDeactivateBeforeEvent } from "../events/classes/AddonDeactivateBeforeEvent";
 import { EventRegistry } from "../events/EventRegistry";
 import { KairoContext, type KairoContextMutator } from "../KairoContext";
+import type { ReadyState } from "../ReadyState";
+import { ActivationRequestListener } from "./ActivationRequestListener";
 import { ActivationResponder } from "./ActivationResponder";
 import { AddonActivationManager } from "./AddonActivationManager";
+import { ActivationEventId } from "./constants/ActivationEventId";
 import type { ActivationRequest } from "./request/schema";
 import type { ActivationResult } from "./result/schema";
 
 export class ActivationController {
     private readonly activationManager = new AddonActivationManager();
+    private readonly activationRequestListener: ActivationRequestListener;
     private readonly activationResponder = new ActivationResponder();
 
     constructor(
+        private readonly runtime: KairoRuntime,
         private readonly context: KairoContext,
         private readonly contextMutator: KairoContextMutator,
+        private readonly readyState: ReadyState,
         private readonly eventRegistry: EventRegistry<KairoEventMap>,
         private readonly lifecycle: {
             onActivate: () => void;
             onDeactivate: () => void;
         },
-    ) {}
+    ) {
+        this.activationRequestListener = new ActivationRequestListener(readyState, {
+            [ActivationEventId.ActivationRequest]: this.handleActivationRequest,
+        });
+    }
 
-    handleActivationRequest = (message: string, deps: { runtime: KairoRuntime }): void => {
-        const currentTick = deps.runtime.currentTick();
+    setup(): void {
+        this.activationRequestListener.setup(this.runtime);
+    }
+
+    handleActivationRequest = (message: string): void => {
+        const currentTick = this.runtime.currentTick();
         const request = this.activationManager.resolveRequest(message, currentTick, this.context);
         const result = this.apply(request);
 
-        this.activationResponder.respond(result, deps.runtime);
+        this.activationResponder.respond(result, this.runtime);
     };
 
     private apply(request: ActivationRequest): ActivationResult {
