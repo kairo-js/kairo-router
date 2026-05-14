@@ -1,4 +1,4 @@
 export enum KairoEventId {
-    ActivationRequest = "kairo:activation_request",
+    ActivationRequest = "activation_request", // <kairoId>:activation_request
     ActivationResponse = "kairo:activetion_response",
 }

@@ -1,8 +1,8 @@
+import type { KairoEventMap } from "../../minecraft/KairoEventMap";
 import { KairoRuntime } from "../../minecraft/KairoRuntime";
 import { AddonActivateAfterEvent } from "../events/classes/AddonActivateAfterEvent";
 import { AddonDeactivateBeforeEvent } from "../events/classes/AddonDeactivateBeforeEvent";
 import { EventRegistry } from "../events/EventRegistry";
-import type { KairoEventMap } from "../../minecraft/KairoEventMap";
 import { KairoContext, type KairoContextMutator } from "../KairoContext";
 import { ActivationResponder } from "./ActivationResponder";
 import { AddonActivationManager } from "./AddonActivationManager";
@@ -32,7 +32,7 @@ export class ActivationController {
     };
 
     private apply(request: ActivationRequest): ActivationResult {
-        const next = request.type === "activate" ? "active" : "inactive";
+        const next = request.action === "activate" ? "active" : "inactive";
 
         // beforeEvents
         if (next === "inactive") {
@@ -51,8 +51,9 @@ export class ActivationController {
         }
 
         return {
-            success: true,
-            action: request.type,
+            kairoId: this.context.kairoId,
+            status: "success",
+            action: request.action,
         };
     }
 }

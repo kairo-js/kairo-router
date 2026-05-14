@@ -1,10 +1,10 @@
 {
     "name": "@kairo-js/router",
-    "version": "0.2.0-beta.23",
+    "version": "0.2.0-beta.24",
     "description": "Router module for Kairo.js",
     "type": "module",
     "license": "MIT",
-    "packageManager": "pnpm@10.31.0",
+    "packageManager": "pnpm@11.1.1",
     "sideEffects": false,
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -34,14 +34,13 @@
         "@minecraft/server": "^2.5.0",
         "@minecraft/server-ui": "^2.0.0",
         "@types/seedrandom": "^3.0.8",
-        "ajv-cli": "^5.0.0",
         "prettier": "^3.8.1",
         "ts-morph": "^28.0.0",
         "tsup": "^8.5.1",
         "typescript": "^5.9.3"
     },
     "dependencies": {
-        "@kairo-js/properties": "1.0.2",
+        "@kairo-js/properties": "1.2.1",
         "@kairo-js/utils": "1.2.1",
         "@sinclair/typebox": "^0.34.49",
         "fast-json-stringify": "^6.3.0",

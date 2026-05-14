@@ -21,7 +21,7 @@ export class ActivationRequestValidator {
     }
 
     private validateState(request: ActivationRequest, isActive: boolean): void {
-        if (request.type === "activate") {
+        if (request.action === "activate") {
             if (isActive) {
                 throw new ActivationRequestError(ActivationRequestErrorReason.AlreadyActivated);
             }

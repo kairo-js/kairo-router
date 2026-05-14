@@ -1,4 +1,4 @@
-import type { AddonProperties } from "../../properties/AddonProperties";
+import type { AddonProperties } from "@kairo-js/properties";
 import type { KairoRegistry } from "../types/KairoRegistry";
 
 export class KairoRegistryBuilder {
@@ -14,7 +14,9 @@ export class KairoRegistryBuilder {
                 url: properties.metadata?.url,
                 license: properties.metadata?.license,
             },
-            requiredAddons: properties.requiredAddons ?? {},
+            dependencies: properties.dependencies ?? {},
+            optionalDependencies: properties.optionalDependencies ?? {},
+            peerDependencies: properties.peerDependencies ?? {},
             tags: properties.tags ?? [],
         };
     }

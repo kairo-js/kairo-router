@@ -12,9 +12,11 @@ export class ActivationResponder {
 
     respond(result: ActivationResult, runtime: KairoRuntime): void {
         const response: ActivationResponse = {
-            timestamp: runtime.currentTick(),
-            success: result.success,
+            kairoId: result.kairoId,
+            status: result.status,
             action: result.action,
+            reason: result.reason,
+            timestamp: runtime.currentTick(),
         };
 
         try {

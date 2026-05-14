@@ -1,5 +1,5 @@
+import type { Random } from "@kairo-js/utils";
 import type { IdRegistry } from "../types/IdRegistry";
-import type { Random } from "../types/Random";
 import { ProvideKairoIdError, ProvideKairoIdErrorReason } from "./discovery/idProvider/errors";
 
 // kjs-router-ch 0104

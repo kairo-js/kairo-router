@@ -204,8 +204,9 @@ export class KairoRouter {
 
     private buildHandlers(controller: ActivationController) {
         return {
-            [KairoEventId.ActivationRequest]: (message: string) =>
-                this.handleActivationRequest(controller, message),
+            [this.kairoContext?.kairoId + ":" + KairoEventId.ActivationRequest]: (
+                message: string,
+            ) => this.handleActivationRequest(controller, message),
         };
     }
 
