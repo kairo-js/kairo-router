@@ -1,23 +1,22 @@
-import { KairoEventId } from "./KairoEventId";
 import { ReadyBufferedListener } from "./ReadyBufferedListener";
 import { ReadyState } from "./ReadyState";
 
 type Handler = (message: string) => void;
-const KAIRO_EVENT_ID_SET = new Set<KairoEventId>(Object.values(KairoEventId));
+type HandlerMap = Partial<Record<string, Handler>>;
 
-export class KairoRouterListener extends ReadyBufferedListener<KairoEventId> {
+export class KairoRouterListener extends ReadyBufferedListener<string> {
     constructor(
         readyState: ReadyState,
-        private readonly handlers: Partial<Record<KairoEventId, Handler>>,
+        private readonly handlers: HandlerMap,
     ) {
         super(readyState);
     }
 
-    protected filter(id: string): id is KairoEventId {
-        return KAIRO_EVENT_ID_SET.has(id as KairoEventId);
+    protected filter(id: string): id is string {
+        return Object.hasOwn(this.handlers, id);
     }
 
-    protected handle(id: KairoEventId, message: string): void {
+    protected handle(id: string, message: string): void {
         this.handlers?.[id]?.(message);
     }
 }
