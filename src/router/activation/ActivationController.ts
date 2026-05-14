@@ -29,7 +29,8 @@ export class ActivationController {
         },
     ) {
         this.activationRequestListener = new ActivationRequestListener(readyState, {
-            [ActivationEventId.ActivationRequest]: this.handleActivationRequest,
+            [this.context.kairoId + ":" + ActivationEventId.ActivationRequest]:
+                this.handleActivationRequest,
         });
     }
 
