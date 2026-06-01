@@ -34,7 +34,7 @@ export class KairoRouter {
     private disposed = false;
     private startupSubscription?: Disposable;
 
-    readonly apiRegistry = new KairoApiRegistry();
+    private readonly apiRegistry = new KairoApiRegistry();
 
     private readonly startupEvent = new InternalEvent<KairoStartupBeforeEvent>(
         () => this.kairoContext?.isActive() ?? false,
