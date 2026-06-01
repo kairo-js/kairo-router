@@ -1,5 +1,5 @@
 import { SemVer, AddonProperties } from '@kairo-js/properties';
-import { PlayerJoinAfterEvent } from '@minecraft/server';
+import { BlockExplodeAfterEvent, ButtonPushAfterEvent, DataDrivenEntityTriggerAfterEvent, EffectAddAfterEvent, EntityDieAfterEvent, EntityHealAfterEvent, EntityHealthChangedAfterEvent, EntityHitBlockAfterEvent, EntityHitEntityAfterEvent, EntityHurtAfterEvent, EntityItemDropAfterEvent, EntityItemPickupAfterEvent, EntityLoadAfterEvent, EntityRemoveAfterEvent, EntitySpawnAfterEvent, ExplosionAfterEvent, GameRuleChangeAfterEvent, ItemCompleteUseAfterEvent, ItemReleaseUseAfterEvent, ItemStartUseAfterEvent, ItemStartUseOnAfterEvent, ItemStopUseAfterEvent, ItemStopUseOnAfterEvent, ItemUseAfterEvent, LeverActionAfterEvent, PistonActivateAfterEvent, PlayerBreakBlockAfterEvent, PlayerButtonInputAfterEvent, PlayerDimensionChangeAfterEvent, PlayerEmoteAfterEvent, PlayerGameModeChangeAfterEvent, PlayerHotbarSelectedSlotChangeAfterEvent, PlayerInputModeChangeAfterEvent, PlayerInputPermissionCategoryChangeAfterEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithEntityAfterEvent, PlayerInventoryItemChangeAfterEvent, PlayerJoinAfterEvent, PlayerLeaveAfterEvent, PlayerPlaceBlockAfterEvent, PlayerSpawnAfterEvent, PlayerSwingStartAfterEvent, PressurePlatePopAfterEvent, PressurePlatePushAfterEvent, ProjectileHitBlockAfterEvent, ProjectileHitEntityAfterEvent, ScriptEventCommandMessageAfterEvent, TargetBlockHitAfterEvent, TripWireTripAfterEvent, WeatherChangeAfterEvent, EffectAddBeforeEvent, EntityHealBeforeEvent, EntityItemPickupBeforeEvent, EntityRemoveBeforeEvent, ExplosionBeforeEvent, ItemUseBeforeEvent, PlayerBreakBlockBeforeEvent, PlayerGameModeChangeBeforeEvent, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, PlayerLeaveBeforeEvent, ShutdownEvent, WeatherChangeBeforeEvent, CustomCommandRegistry, CustomCommand, CustomCommandOrigin, CustomCommandResult, StartupEvent } from '@minecraft/server';
 
 declare class AddonActivateAfterEvent {
     private constructor();
@@ -12,15 +12,122 @@ declare class AddonDeactivateBeforeEvent {
 interface KairoEventMap {
     readonly after: {
         readonly addonActivate: AddonActivateAfterEvent;
+        readonly blockExplode: BlockExplodeAfterEvent;
+        readonly buttonPush: ButtonPushAfterEvent;
+        readonly dataDrivenEntityTrigger: DataDrivenEntityTriggerAfterEvent;
+        readonly effectAdd: EffectAddAfterEvent;
+        readonly entityDie: EntityDieAfterEvent;
+        readonly entityHeal: EntityHealAfterEvent;
+        readonly entityHealthChanged: EntityHealthChangedAfterEvent;
+        readonly entityHitBlock: EntityHitBlockAfterEvent;
+        readonly entityHitEntity: EntityHitEntityAfterEvent;
+        readonly entityHurt: EntityHurtAfterEvent;
+        readonly entityItemDrop: EntityItemDropAfterEvent;
+        readonly entityItemPickup: EntityItemPickupAfterEvent;
+        readonly entityLoad: EntityLoadAfterEvent;
+        readonly entityRemove: EntityRemoveAfterEvent;
+        readonly entitySpawn: EntitySpawnAfterEvent;
+        readonly explosion: ExplosionAfterEvent;
+        readonly gameRuleChange: GameRuleChangeAfterEvent;
+        readonly itemCompleteUse: ItemCompleteUseAfterEvent;
+        readonly itemReleaseUse: ItemReleaseUseAfterEvent;
+        readonly itemStartUse: ItemStartUseAfterEvent;
+        readonly itemStartUseOn: ItemStartUseOnAfterEvent;
+        readonly itemStopUse: ItemStopUseAfterEvent;
+        readonly itemStopUseOn: ItemStopUseOnAfterEvent;
+        readonly itemUse: ItemUseAfterEvent;
+        readonly leverAction: LeverActionAfterEvent;
+        readonly pistonActivate: PistonActivateAfterEvent;
+        readonly playerBreakBlock: PlayerBreakBlockAfterEvent;
+        readonly playerButtonInput: PlayerButtonInputAfterEvent;
+        readonly playerDimensionChange: PlayerDimensionChangeAfterEvent;
+        readonly playerEmote: PlayerEmoteAfterEvent;
+        readonly playerGameModeChange: PlayerGameModeChangeAfterEvent;
+        readonly playerHotbarSelectedSlotChange: PlayerHotbarSelectedSlotChangeAfterEvent;
+        readonly playerInputModeChange: PlayerInputModeChangeAfterEvent;
+        readonly playerInputPermissionCategoryChange: PlayerInputPermissionCategoryChangeAfterEvent;
+        readonly playerInteractWithBlock: PlayerInteractWithBlockAfterEvent;
+        readonly playerInteractWithEntity: PlayerInteractWithEntityAfterEvent;
+        readonly playerInventoryItemChange: PlayerInventoryItemChangeAfterEvent;
         readonly playerJoin: PlayerJoinAfterEvent;
+        readonly playerLeave: PlayerLeaveAfterEvent;
+        readonly playerPlaceBlock: PlayerPlaceBlockAfterEvent;
+        readonly playerSpawn: PlayerSpawnAfterEvent;
+        readonly playerSwingStart: PlayerSwingStartAfterEvent;
+        readonly pressurePlatePop: PressurePlatePopAfterEvent;
+        readonly pressurePlatePush: PressurePlatePushAfterEvent;
+        readonly projectileHitBlock: ProjectileHitBlockAfterEvent;
+        readonly projectileHitEntity: ProjectileHitEntityAfterEvent;
+        readonly scriptEventReceive: ScriptEventCommandMessageAfterEvent;
+        readonly targetBlockHit: TargetBlockHitAfterEvent;
+        readonly tripWireTrip: TripWireTripAfterEvent;
+        readonly weatherChange: WeatherChangeAfterEvent;
     };
     readonly before: {
         readonly addonDeactivate: AddonDeactivateBeforeEvent;
+        readonly effectAdd: EffectAddBeforeEvent;
+        readonly entityHeal: EntityHealBeforeEvent;
+        readonly entityItemPickup: EntityItemPickupBeforeEvent;
+        readonly entityRemove: EntityRemoveBeforeEvent;
+        readonly explosion: ExplosionBeforeEvent;
+        readonly itemUse: ItemUseBeforeEvent;
+        readonly playerBreakBlock: PlayerBreakBlockBeforeEvent;
+        readonly playerGameModeChange: PlayerGameModeChangeBeforeEvent;
+        readonly playerInteractWithBlock: PlayerInteractWithBlockBeforeEvent;
+        readonly playerInteractWithEntity: PlayerInteractWithEntityBeforeEvent;
+        readonly playerLeave: PlayerLeaveBeforeEvent;
+        readonly shutdown: ShutdownEvent;
+        readonly weatherChange: WeatherChangeBeforeEvent;
     };
 }
 
 interface Disposable {
     dispose(): void;
+}
+
+type BeforeHookContext<TArgs, TReturn> = {
+    args: TArgs;
+    result: TReturn | undefined;
+    readonly callerAddonId: string;
+    cancel(): void;
+};
+type AfterHookContext<TArgs, TReturn> = {
+    readonly args: Readonly<TArgs>;
+    result: TReturn;
+    readonly callerAddonId: string;
+};
+type HookRollbackContext<TArgs> = {
+    readonly args: Readonly<TArgs>;
+    readonly callerAddonId: string;
+};
+type HookOptions<TArgs, TReturn> = {
+    priority?: number;
+    version?: string;
+    before?: (ctx: BeforeHookContext<TArgs, TReturn>) => Promise<void>;
+    after?: (ctx: AfterHookContext<TArgs, TReturn>) => Promise<void>;
+    rollback?: (ctx: HookRollbackContext<TArgs>) => Promise<void>;
+};
+type ApiHandler = (args: any) => any;
+type InternalHookDeclaration = {
+    readonly targetAddonId: string;
+    readonly apiName: string;
+    readonly priority: number;
+    readonly version?: string;
+    readonly before?: (ctx: BeforeHookContext<any, any>) => Promise<void>;
+    readonly after?: (ctx: AfterHookContext<any, any>) => Promise<void>;
+    readonly rollback?: (ctx: HookRollbackContext<any>) => Promise<void>;
+};
+declare class KairoApiRegistry implements Disposable {
+    private sealed;
+    private readonly apiHandlers;
+    private readonly hookDeclarations;
+    register<TArgs, TReturn>(apiName: string, handler: (args: TArgs) => TReturn | Promise<TReturn>): void;
+    hook<TArgs, TReturn>(targetAddonId: string, apiName: string, options: HookOptions<TArgs, TReturn>): void;
+    seal(): void;
+    getApiHandlers(): ReadonlyMap<string, ApiHandler>;
+    getHookDeclarations(): readonly InternalHookDeclaration[];
+    dispose(): void;
+    private assertNotSealed;
 }
 
 interface Subscribable<T> {
@@ -30,12 +137,90 @@ interface Subscribable<T> {
 
 declare class KairoAfterEvents<E extends KairoEventMap> {
     readonly addonActivate: Subscribable<E["after"]["addonActivate"]>;
+    readonly blockExplode: Subscribable<E["after"]["blockExplode"]>;
+    readonly buttonPush: Subscribable<E["after"]["buttonPush"]>;
+    readonly dataDrivenEntityTrigger: Subscribable<E["after"]["dataDrivenEntityTrigger"]>;
+    readonly effectAdd: Subscribable<E["after"]["effectAdd"]>;
+    readonly entityDie: Subscribable<E["after"]["entityDie"]>;
+    readonly entityHeal: Subscribable<E["after"]["entityHeal"]>;
+    readonly entityHealthChanged: Subscribable<E["after"]["entityHealthChanged"]>;
+    readonly entityHitBlock: Subscribable<E["after"]["entityHitBlock"]>;
+    readonly entityHitEntity: Subscribable<E["after"]["entityHitEntity"]>;
+    readonly entityHurt: Subscribable<E["after"]["entityHurt"]>;
+    readonly entityItemDrop: Subscribable<E["after"]["entityItemDrop"]>;
+    readonly entityItemPickup: Subscribable<E["after"]["entityItemPickup"]>;
+    readonly entityLoad: Subscribable<E["after"]["entityLoad"]>;
+    readonly entityRemove: Subscribable<E["after"]["entityRemove"]>;
+    readonly entitySpawn: Subscribable<E["after"]["entitySpawn"]>;
+    readonly explosion: Subscribable<E["after"]["explosion"]>;
+    readonly gameRuleChange: Subscribable<E["after"]["gameRuleChange"]>;
+    readonly itemCompleteUse: Subscribable<E["after"]["itemCompleteUse"]>;
+    readonly itemReleaseUse: Subscribable<E["after"]["itemReleaseUse"]>;
+    readonly itemStartUse: Subscribable<E["after"]["itemStartUse"]>;
+    readonly itemStartUseOn: Subscribable<E["after"]["itemStartUseOn"]>;
+    readonly itemStopUse: Subscribable<E["after"]["itemStopUse"]>;
+    readonly itemStopUseOn: Subscribable<E["after"]["itemStopUseOn"]>;
+    readonly itemUse: Subscribable<E["after"]["itemUse"]>;
+    readonly leverAction: Subscribable<E["after"]["leverAction"]>;
+    readonly pistonActivate: Subscribable<E["after"]["pistonActivate"]>;
+    readonly playerBreakBlock: Subscribable<E["after"]["playerBreakBlock"]>;
+    readonly playerButtonInput: Subscribable<E["after"]["playerButtonInput"]>;
+    readonly playerDimensionChange: Subscribable<E["after"]["playerDimensionChange"]>;
+    readonly playerEmote: Subscribable<E["after"]["playerEmote"]>;
+    readonly playerGameModeChange: Subscribable<E["after"]["playerGameModeChange"]>;
+    readonly playerHotbarSelectedSlotChange: Subscribable<E["after"]["playerHotbarSelectedSlotChange"]>;
+    readonly playerInputModeChange: Subscribable<E["after"]["playerInputModeChange"]>;
+    readonly playerInputPermissionCategoryChange: Subscribable<E["after"]["playerInputPermissionCategoryChange"]>;
+    readonly playerInteractWithBlock: Subscribable<E["after"]["playerInteractWithBlock"]>;
+    readonly playerInteractWithEntity: Subscribable<E["after"]["playerInteractWithEntity"]>;
+    readonly playerInventoryItemChange: Subscribable<E["after"]["playerInventoryItemChange"]>;
     readonly playerJoin: Subscribable<E["after"]["playerJoin"]>;
+    readonly playerLeave: Subscribable<E["after"]["playerLeave"]>;
+    readonly playerPlaceBlock: Subscribable<E["after"]["playerPlaceBlock"]>;
+    readonly playerSpawn: Subscribable<E["after"]["playerSpawn"]>;
+    readonly playerSwingStart: Subscribable<E["after"]["playerSwingStart"]>;
+    readonly pressurePlatePop: Subscribable<E["after"]["pressurePlatePop"]>;
+    readonly pressurePlatePush: Subscribable<E["after"]["pressurePlatePush"]>;
+    readonly projectileHitBlock: Subscribable<E["after"]["projectileHitBlock"]>;
+    readonly projectileHitEntity: Subscribable<E["after"]["projectileHitEntity"]>;
+    readonly scriptEventReceive: Subscribable<E["after"]["scriptEventReceive"]>;
+    readonly targetBlockHit: Subscribable<E["after"]["targetBlockHit"]>;
+    readonly tripWireTrip: Subscribable<E["after"]["tripWireTrip"]>;
+    readonly weatherChange: Subscribable<E["after"]["weatherChange"]>;
     private constructor();
 }
 
+declare class KairoCustomCommandRegistry {
+    private readonly registry;
+    private readonly isActive;
+    private readonly getAddonName?;
+    constructor(registry: CustomCommandRegistry, isActive: () => boolean, getAddonName?: (() => string | undefined) | undefined);
+    registerCommand(customCommand: CustomCommand, callback: (origin: CustomCommandOrigin, ...args: any[]) => CustomCommandResult | undefined): void;
+    registerEnum(name: string, values: string[]): void;
+}
+
+declare class KairoStartupBeforeEvent {
+    readonly customCommandRegistry: KairoCustomCommandRegistry;
+    readonly api: KairoApiRegistry;
+    constructor(ev: StartupEvent, isActive: () => boolean, apiRegistry: KairoApiRegistry, getAddonName?: () => string | undefined);
+}
+
 declare class KairoBeforeEvents<E extends KairoEventMap> {
+    readonly startup: Subscribable<KairoStartupBeforeEvent>;
     readonly addonDeactivate: Subscribable<E["before"]["addonDeactivate"]>;
+    readonly effectAdd: Subscribable<E["before"]["effectAdd"]>;
+    readonly entityHeal: Subscribable<E["before"]["entityHeal"]>;
+    readonly entityItemPickup: Subscribable<E["before"]["entityItemPickup"]>;
+    readonly entityRemove: Subscribable<E["before"]["entityRemove"]>;
+    readonly explosion: Subscribable<E["before"]["explosion"]>;
+    readonly itemUse: Subscribable<E["before"]["itemUse"]>;
+    readonly playerBreakBlock: Subscribable<E["before"]["playerBreakBlock"]>;
+    readonly playerGameModeChange: Subscribable<E["before"]["playerGameModeChange"]>;
+    readonly playerInteractWithBlock: Subscribable<E["before"]["playerInteractWithBlock"]>;
+    readonly playerInteractWithEntity: Subscribable<E["before"]["playerInteractWithEntity"]>;
+    readonly playerLeave: Subscribable<E["before"]["playerLeave"]>;
+    readonly shutdown: Subscribable<E["before"]["shutdown"]>;
+    readonly weatherChange: Subscribable<E["before"]["weatherChange"]>;
     private constructor();
 }
 
@@ -54,7 +239,6 @@ interface KairoRegistry {
     };
     readonly dependencies: DependencyMap;
     readonly optionalDependencies: DependencyMap;
-    readonly peerDependencies: DependencyMap;
     readonly tags: string[];
 }
 
@@ -69,21 +253,19 @@ declare class KairoContext {
 }
 
 declare class KairoRouter {
+    readonly apiRegistry: KairoApiRegistry;
     readonly afterEvents: KairoAfterEvents<KairoEventMap>;
     readonly beforeEvents: KairoBeforeEvents<KairoEventMap>;
+    private constructor();
     get currentTick(): number;
     get systemInfo(): KairoContext;
     clearRun(runId: number): void;
     init(properties: AddonProperties): void;
     waitForWorldLoad(): Promise<void>;
-    register(targetId: string, eventId: string, returnTypes: string, ...argsTypes: string[]): void;
-    request<T = unknown>(targetId: string, eventId: string, ...args: unknown[]): Promise<void>;
     runInterval(callback: () => void, tickInterval?: number): number;
     runTimeout(callback: () => void, tickDelay?: number): number;
-    send(targetId: string, eventId: string, ...args: unknown[]): void;
-    private constructor();
 }
 
 declare const router: KairoRouter;
 
-export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type Disposable, KairoContext, type KairoRegistry, KairoRouter, router };
+export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AfterHookContext, type BeforeHookContext, type Disposable, type HookOptions, type HookRollbackContext, KairoContext, KairoCustomCommandRegistry, type KairoRegistry, KairoRouter, KairoStartupBeforeEvent, router };

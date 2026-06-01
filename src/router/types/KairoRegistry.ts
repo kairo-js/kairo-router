@@ -16,6 +16,5 @@ export interface KairoRegistry {
     };
     readonly dependencies: DependencyMap;
     readonly optionalDependencies: DependencyMap;
-    readonly peerDependencies: DependencyMap;
     readonly tags: string[];
 }
