@@ -1,6 +1,6 @@
 {
     "name": "@kairo-js/router",
-    "version": "0.2.0-beta.26",
+    "version": "0.2.0-beta.27",
     "description": "Router module for Kairo.js",
     "type": "module",
     "license": "MIT",
@@ -24,14 +24,15 @@
     "scripts": {
         "clean": "tsup --clean",
         "build": "tsup",
-        "postbuild": "node .build/postprocess-dts.js"
+        "postbuild": "node .build/postprocess-dts.js",
+        "release": "pnpm run build && npm publish --tag beta"
     },
     "peerDependencies": {
-        "@minecraft/server": "^2.5.0",
+        "@minecraft/server": "^2.7.0",
         "@minecraft/server-ui": "^2.0.0"
     },
     "devDependencies": {
-        "@minecraft/server": "^2.5.0",
+        "@minecraft/server": "^2.7.0",
         "@minecraft/server-ui": "^2.0.0",
         "@types/seedrandom": "^3.0.8",
         "prettier": "^3.8.1",

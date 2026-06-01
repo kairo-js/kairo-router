@@ -25,8 +25,8 @@ importers:
         version: 3.0.5
     devDependencies:
       '@minecraft/server':
-        specifier: ^2.5.0
-        version: 2.5.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.26.2)
+        specifier: ^2.7.0
+        version: 2.7.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.26.2)
       '@minecraft/server-ui':
         specifier: ^2.0.0
         version: 2.0.0(@minecraft/vanilla-data@1.26.2)
@@ -235,8 +235,14 @@ packages:
   '@minecraft/server-ui@2.0.0':
     resolution: {integrity: sha512-K1xFK1OEJSNfIgyRElaoxDTW/nbEqjBp1YnUdyPCs4kGDglwoXNyFz3wzMOkvT04CJXSifZGcTJeWda4C6OkXw==}
 
-  '@minecraft/server@2.5.0':
-    resolution: {integrity: sha512-fh+1lByNo5tav75Xz0StOjBLUnWEQabg4K+RV7B7acGjdO5YkPnpXa2vw1ABuppgLuiBb2+E5letoCAj89bUBQ==}
+  '@minecraft/server@2.6.0':
+    resolution: {integrity: sha512-/l1gbUHcTl/3gb3cB7Ilb8pfW1QytoAc+iMXUPSzvv8cxGluf6M635jl29P8Bid3iVmUB9hWyCUZtRUVVlk5ew==}
+    peerDependencies:
+      '@minecraft/common': ^1.2.0
+      '@minecraft/vanilla-data': '>=1.20.70'
+
+  '@minecraft/server@2.7.0':
+    resolution: {integrity: sha512-2gI80wxSBQ/U6JvGVYVDlbbSOywU8WPy6b5lvfetkWCKU+c//7UdY6dDAU2DkKmR/DzxmPqyy7YAKXwGJduRWQ==}
     peerDependencies:
       '@minecraft/common': ^1.2.0
       '@minecraft/vanilla-data': '>=1.20.70'
@@ -783,11 +789,16 @@ snapshots:
   '@minecraft/server-ui@2.0.0(@minecraft/vanilla-data@1.26.2)':
     dependencies:
       '@minecraft/common': 1.2.0
-      '@minecraft/server': 2.5.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.26.2)
+      '@minecraft/server': 2.6.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.26.2)
     transitivePeerDependencies:
       - '@minecraft/vanilla-data'
 
-  '@minecraft/server@2.5.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.26.2)':
+  '@minecraft/server@2.6.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.26.2)':
+    dependencies:
+      '@minecraft/common': 1.2.0
+      '@minecraft/vanilla-data': 1.26.2
+
+  '@minecraft/server@2.7.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.26.2)':
     dependencies:
       '@minecraft/common': 1.2.0
       '@minecraft/vanilla-data': 1.26.2

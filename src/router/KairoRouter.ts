@@ -3,11 +3,14 @@ import { KairoRuntime } from "../minecraft/KairoRuntime";
 import type { AddonProperties } from "@kairo-js/properties";
 import { SeedRandom } from "@kairo-js/utils";
 import type { KairoEventMap } from "../minecraft/KairoEventMap";
+import { KairoApiRegistry } from "./api/KairoApiRegistry";
 import { ActivationController } from "./activation/ActivationController";
 import { KairoRouterError, KairoRouterErrorReason } from "./errors/KairoRouterError";
 import { EventRegistry } from "./events/EventRegistry";
 import { KairoAfterEvents } from "./events/KairoAfterEvents";
 import { KairoBeforeEvents } from "./events/KairoBeforeEvents";
+import { KairoStartupBeforeEvent } from "./events/classes/KairoStartupBeforeEvent";
+import { InternalEvent } from "./events/types/InternalEvent";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
 import { createKairoContext, KairoContext, type KairoContextMutator } from "./KairoContext";
@@ -29,13 +32,32 @@ export class KairoRouter {
     private worldLoadListener?: Disposable;
     private initializer?: Disposable;
     private disposed = false;
+    private startupSubscription?: Disposable;
+
+    readonly apiRegistry = new KairoApiRegistry();
+
+    private readonly startupEvent = new InternalEvent<KairoStartupBeforeEvent>(
+        () => this.kairoContext?.isActive() ?? false,
+        { requireActiveOnSubscribe: false, clearOnDeactivate: false },
+    );
 
     private eventRegistry = new EventRegistry(() => {
         if (!this.kairoContext) return false;
         return this.kairoContext.isActive();
     });
     public readonly afterEvents = new KairoAfterEvents<KairoEventMap>(this.eventRegistry);
-    public readonly beforeEvents = new KairoBeforeEvents<KairoEventMap>(this.eventRegistry);
+    public readonly beforeEvents = new KairoBeforeEvents<KairoEventMap>(this.eventRegistry, this.startupEvent);
+
+    constructor() {
+        this.startupSubscription = KairoRuntime.onStartup((ev) => {
+            const isActive = () => this.kairoContext?.isActive() ?? false;
+            const getAddonName = () => this.kairoContext?.isRegistered()
+                ? this.kairoContext.kairoRegistry.name
+                : undefined;
+            this.startupEvent.emit(new KairoStartupBeforeEvent(ev, isActive, this.apiRegistry, getAddonName));
+            this.apiRegistry.seal();
+        });
+    }
 
     get currentTick(): number {
         this.assertNotDisposed();
@@ -101,19 +123,6 @@ export class KairoRouter {
         return this.readyState.wait();
     }
 
-    register(
-        targetId: string,
-        eventId: string,
-        returnTypes: string,
-        ...argsTypes: string[]
-    ): void {}
-
-    async request<T = unknown>(
-        targetId: string,
-        eventId: string,
-        ...args: unknown[]
-    ): Promise<void> {}
-
     runInterval(callback: () => void, tickInterval?: number): number {
         this.assertRunnable();
         return this.scheduler!.runInterval(callback, tickInterval);
@@ -124,12 +133,15 @@ export class KairoRouter {
         return this.scheduler!.runTimeout(callback, tickDelay);
     }
 
-    send(targetId: string, eventId: string, ...args: unknown[]): void {}
-
     private dispose(): void {
         if (this.disposed) return;
 
         this.disposed = true;
+
+        this.startupSubscription?.dispose();
+        this.startupSubscription = undefined;
+
+        this.apiRegistry.dispose();
 
         this.initializer?.dispose();
         this.initializer = undefined;

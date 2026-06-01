@@ -2,6 +2,7 @@ import { SeedRandom, type Random } from "@kairo-js/utils";
 import {
     ScriptEventCommandMessageAfterEvent,
     ScriptEventSource,
+    StartupEvent,
     system,
     world,
     WorldLoadAfterEvent,
@@ -34,6 +35,11 @@ export type RuntimeEvent<E extends KairoEventMap = KairoEventMap> =
     | BeforeRuntimeEvent<E>;
 
 export class KairoRuntime<E extends KairoEventMap = KairoEventMap> {
+    static onStartup(handler: (ev: StartupEvent) => void): Disposable {
+        const sub = system.beforeEvents.startup.subscribe(handler);
+        return { dispose: () => system.beforeEvents.startup.unsubscribe(sub) };
+    }
+
     constructor(private readonly options: { randomSeed?: string } = {}) {}
 
     currentTick(): number {

@@ -16,7 +16,6 @@ export class KairoRegistryBuilder {
             },
             dependencies: properties.dependencies ?? {},
             optionalDependencies: properties.optionalDependencies ?? {},
-            peerDependencies: properties.peerDependencies ?? {},
             tags: properties.tags ?? [],
         };
     }

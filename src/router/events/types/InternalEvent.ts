@@ -36,7 +36,7 @@ export class InternalEvent<T> implements Subscribable<T> {
             try {
                 fn(arg);
             } catch (e) {
-                // Listener で起こったエラーを吐くけど、実装は考え中
+                console.warn("[kairo-router] event listener threw an error:", e);
             }
         }
     }
