@@ -1,5 +1,6 @@
 import { type Random } from "@kairo-js/utils";
 import { KairoRuntime } from "../../minecraft/KairoRuntime";
+import type { KairoApiRegistry } from "../api/KairoApiRegistry";
 import type { KairoContext, KairoContextMutator } from "../KairoContext";
 import { ReadyState } from "../ReadyState";
 import type { Disposable } from "../types/Disposable";
@@ -36,6 +37,7 @@ export class KairoInitializer implements Disposable {
         private readonly contextMutator: KairoContextMutator,
         private readonly random: Random,
         private readonly readyState: ReadyState,
+        private readonly apiRegistry: KairoApiRegistry,
         private readonly onCompleted?: () => void,
         private readonly onDisposed?: () => void,
     ) {
@@ -44,7 +46,7 @@ export class KairoInitializer implements Disposable {
 
         this.discoveryController = new DiscoveryController(this.idProvider);
 
-        this.registrationController = new RegistrationController(this.registryBuilder);
+        this.registrationController = new RegistrationController(this.registryBuilder, this.apiRegistry);
 
         this.initListener = new KairoInitListener(this.readyState, {
             [KairoInitEventId.DiscoveryQuery]: this.handleDiscoveryQuery,

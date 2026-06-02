@@ -27,6 +27,19 @@ export const RegistrationResponseSchema = Type.Object(
             optionalDependencies: Type.Readonly(Type.Record(Type.String(), Type.String())),
             tags: Type.Readonly(Type.Array(Type.String())),
         }),
+        apiManifest: Type.Object({
+            apis: Type.Array(Type.Object({ name: Type.String() })),
+            hooks: Type.Array(
+                Type.Object({
+                    targetAddonId: Type.String(),
+                    apiName: Type.String(),
+                    priority: Type.Integer({ minimum: -2147483648, maximum: 2147483647 }),
+                    phases: Type.Array(
+                        Type.Union([Type.Literal("before"), Type.Literal("after")]),
+                    ),
+                }),
+            ),
+        }),
         timestamp: Type.Integer({ minimum: 0 }),
     },
     {
