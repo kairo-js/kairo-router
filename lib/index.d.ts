@@ -1,5 +1,65 @@
 import { SemVer, AddonProperties } from '@kairo-js/properties';
 import { BlockExplodeAfterEvent, ButtonPushAfterEvent, DataDrivenEntityTriggerAfterEvent, EffectAddAfterEvent, EntityDieAfterEvent, EntityHealAfterEvent, EntityHealthChangedAfterEvent, EntityHitBlockAfterEvent, EntityHitEntityAfterEvent, EntityHurtAfterEvent, EntityItemDropAfterEvent, EntityItemPickupAfterEvent, EntityLoadAfterEvent, EntityRemoveAfterEvent, EntitySpawnAfterEvent, ExplosionAfterEvent, GameRuleChangeAfterEvent, ItemCompleteUseAfterEvent, ItemReleaseUseAfterEvent, ItemStartUseAfterEvent, ItemStartUseOnAfterEvent, ItemStopUseAfterEvent, ItemStopUseOnAfterEvent, ItemUseAfterEvent, LeverActionAfterEvent, PistonActivateAfterEvent, PlayerBreakBlockAfterEvent, PlayerButtonInputAfterEvent, PlayerDimensionChangeAfterEvent, PlayerEmoteAfterEvent, PlayerGameModeChangeAfterEvent, PlayerHotbarSelectedSlotChangeAfterEvent, PlayerInputModeChangeAfterEvent, PlayerInputPermissionCategoryChangeAfterEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithEntityAfterEvent, PlayerInventoryItemChangeAfterEvent, PlayerJoinAfterEvent, PlayerLeaveAfterEvent, PlayerPlaceBlockAfterEvent, PlayerSpawnAfterEvent, PlayerSwingStartAfterEvent, PressurePlatePopAfterEvent, PressurePlatePushAfterEvent, ProjectileHitBlockAfterEvent, ProjectileHitEntityAfterEvent, ScriptEventCommandMessageAfterEvent, TargetBlockHitAfterEvent, TripWireTripAfterEvent, WeatherChangeAfterEvent, EffectAddBeforeEvent, EntityHealBeforeEvent, EntityItemPickupBeforeEvent, EntityRemoveBeforeEvent, ExplosionBeforeEvent, ItemUseBeforeEvent, PlayerBreakBlockBeforeEvent, PlayerGameModeChangeBeforeEvent, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, PlayerLeaveBeforeEvent, ShutdownEvent, WeatherChangeBeforeEvent, CustomCommandRegistry, CustomCommand, CustomCommandOrigin, CustomCommandResult, StartupEvent } from '@minecraft/server';
+import * as _sinclair_typebox from '@sinclair/typebox';
+import { Static } from '@sinclair/typebox';
+
+interface Disposable {
+    dispose(): void;
+}
+
+type DeepReadonly<T> = T extends readonly (infer U)[] ? ReadonlyArray<DeepReadonly<U>> : T extends object ? {
+    readonly [K in keyof T]: DeepReadonly<T[K]>;
+} : T;
+type BeforeHookContext<TArgs, TReturn> = {
+    args: TArgs;
+    readonly callerAddonId: string;
+    cancel(result?: TReturn): never;
+    setRollbackData(data: unknown): void;
+};
+type AfterHookContext<TArgs, TReturn> = {
+    readonly args: TArgs;
+    result: TReturn;
+    readonly callerAddonId: string;
+};
+type HookRollbackContext<TArgs> = {
+    readonly rollbackData: unknown;
+    readonly currentArgsSnapshot: DeepReadonly<TArgs>;
+    readonly callerAddonId: string;
+};
+type HookOptions<TArgs, TReturn> = {
+    priority?: number;
+    modes?: ReadonlyArray<"send" | "request">;
+    before?: (ctx: BeforeHookContext<TArgs, TReturn>) => Promise<void>;
+    after?: (ctx: AfterHookContext<TArgs, TReturn>) => Promise<void>;
+    rollback?: (ctx: HookRollbackContext<TArgs>) => Promise<TArgs | void>;
+};
+type ApiHandler = (args: any) => any;
+type InternalHookDeclaration = {
+    readonly targetAddonId: string;
+    readonly apiName: string;
+    readonly priority: number;
+    readonly modes: ReadonlyArray<"send" | "request">;
+    readonly sequence: number;
+    declaringAddonId?: string;
+    readonly before?: (ctx: BeforeHookContext<any, any>) => Promise<void>;
+    readonly after?: (ctx: AfterHookContext<any, any>) => Promise<void>;
+    readonly rollback?: (ctx: HookRollbackContext<any>) => Promise<any | void>;
+};
+declare class KairoApiRegistry implements Disposable {
+    private sealed;
+    private readonly apiHandlers;
+    private readonly hookDeclarations;
+    private sequenceCounter;
+    register<TArgs, TReturn>(apiName: string, handler: (args: TArgs) => TReturn | Promise<TReturn>): void;
+    hook<TArgs, TReturn>(targetAddonId: string, apiName: string, options: HookOptions<TArgs, TReturn>): void;
+    seal(): void;
+    setDeclaringAddonId(addonId: string): void;
+    getApiHandler(apiName: string): ApiHandler | undefined;
+    getApiNames(): ReadonlyArray<string>;
+    getHookDeclarations(): readonly InternalHookDeclaration[];
+    dispose(): void;
+    private assertNotSealed;
+}
 
 declare class AddonActivateAfterEvent {
     private constructor();
@@ -81,54 +141,32 @@ interface KairoEventMap {
     };
 }
 
-interface Disposable {
-    dispose(): void;
+declare class ApiNotFoundError extends Error {
+    constructor(apiName?: string);
 }
-
-type BeforeHookContext<TArgs, TReturn> = {
-    args: TArgs;
-    result: TReturn | undefined;
-    readonly callerAddonId: string;
-    cancel(): void;
-};
-type AfterHookContext<TArgs, TReturn> = {
-    readonly args: Readonly<TArgs>;
-    result: TReturn;
-    readonly callerAddonId: string;
-};
-type HookRollbackContext<TArgs> = {
-    readonly args: Readonly<TArgs>;
-    readonly callerAddonId: string;
-};
-type HookOptions<TArgs, TReturn> = {
-    priority?: number;
-    version?: string;
-    before?: (ctx: BeforeHookContext<TArgs, TReturn>) => Promise<void>;
-    after?: (ctx: AfterHookContext<TArgs, TReturn>) => Promise<void>;
-    rollback?: (ctx: HookRollbackContext<TArgs>) => Promise<void>;
-};
-type ApiHandler = (args: any) => any;
-type InternalHookDeclaration = {
-    readonly targetAddonId: string;
-    readonly apiName: string;
-    readonly priority: number;
-    readonly version?: string;
-    readonly before?: (ctx: BeforeHookContext<any, any>) => Promise<void>;
-    readonly after?: (ctx: AfterHookContext<any, any>) => Promise<void>;
-    readonly rollback?: (ctx: HookRollbackContext<any>) => Promise<void>;
-};
-declare class KairoApiRegistry implements Disposable {
-    private sealed;
-    private readonly apiHandlers;
-    private readonly hookDeclarations;
-    register<TArgs, TReturn>(apiName: string, handler: (args: TArgs) => TReturn | Promise<TReturn>): void;
-    hook<TArgs, TReturn>(targetAddonId: string, apiName: string, options: HookOptions<TArgs, TReturn>): void;
-    seal(): void;
-    getApiHandlers(): ReadonlyMap<string, ApiHandler>;
-    getHookDeclarations(): readonly InternalHookDeclaration[];
-    dispose(): void;
-    private assertNotSealed;
+declare class RequestTimeoutError extends Error {
+    constructor();
 }
+declare class BeforeHookExecutionError extends Error {
+    constructor(cause?: unknown);
+}
+declare class AfterHookExecutionError extends Error {
+    constructor(cause?: unknown);
+}
+declare class HandlerExecutionError extends Error {
+    constructor(cause?: unknown);
+}
+type ProtocolStage = "ApiCall" | "ApiInvoke" | "ApiResult" | "ApiHandlerResponse";
+declare class ProtocolError extends Error {
+    readonly source: "local_parse" | "remote";
+    readonly protocolStage?: ProtocolStage | undefined;
+    readonly correlationId?: string | undefined;
+    constructor(message: string, source: "local_parse" | "remote", protocolStage?: ProtocolStage | undefined, correlationId?: string | undefined);
+}
+type CancelledResult = {
+    readonly cancelled: true;
+    readonly reason: "ADDON_NOT_FOUND" | "ADDON_INACTIVE" | "ADDON_UNRESOLVED" | "CANCELLED_BY_HOOK";
+};
 
 interface Subscribable<T> {
     subscribe(fn: (arg: T) => void): Disposable;
@@ -253,19 +291,37 @@ declare class KairoContext {
 }
 
 declare class KairoRouter {
-    readonly apiRegistry: KairoApiRegistry;
     readonly afterEvents: KairoAfterEvents<KairoEventMap>;
     readonly beforeEvents: KairoBeforeEvents<KairoEventMap>;
     private constructor();
     get currentTick(): number;
     get systemInfo(): KairoContext;
     clearRun(runId: number): void;
+    getAddonId(): string | undefined;
+    getHookDeclarations(): readonly InternalHookDeclaration[];
+    send(targetAddonId: string, apiName: string, args?: unknown): void;
+    request<TReturn>(targetAddonId: string, apiName: string, args?: unknown, options?: {
+        timeout?: number;
+    }): Promise<TReturn | CancelledResult>;
     init(properties: AddonProperties): void;
     waitForWorldLoad(): Promise<void>;
     runInterval(callback: () => void, tickInterval?: number): number;
     runTimeout(callback: () => void, tickDelay?: number): number;
 }
 
+declare const ApiManifestSchema: _sinclair_typebox.TObject<{
+    apis: _sinclair_typebox.TArray<_sinclair_typebox.TObject<{
+        name: _sinclair_typebox.TString;
+    }>>;
+    hooks: _sinclair_typebox.TArray<_sinclair_typebox.TObject<{
+        targetAddonId: _sinclair_typebox.TString;
+        apiName: _sinclair_typebox.TString;
+        priority: _sinclair_typebox.TInteger;
+        phases: _sinclair_typebox.TArray<_sinclair_typebox.TUnion<[_sinclair_typebox.TLiteral<"before">, _sinclair_typebox.TLiteral<"after">]>>;
+    }>>;
+}>;
+type ApiManifest = Static<typeof ApiManifestSchema>;
+
 declare const router: KairoRouter;
 
-export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AfterHookContext, type BeforeHookContext, type Disposable, type HookOptions, type HookRollbackContext, KairoContext, KairoCustomCommandRegistry, type KairoRegistry, KairoRouter, KairoStartupBeforeEvent, router };
+export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AfterHookContext, AfterHookExecutionError, type ApiManifest, ApiNotFoundError, type BeforeHookContext, BeforeHookExecutionError, type CancelledResult, type DeepReadonly, type Disposable, HandlerExecutionError, type HookOptions, type HookRollbackContext, type InternalHookDeclaration, KairoContext, KairoCustomCommandRegistry, type KairoRegistry, KairoRouter, KairoStartupBeforeEvent, ProtocolError, type ProtocolStage, RequestTimeoutError, router };

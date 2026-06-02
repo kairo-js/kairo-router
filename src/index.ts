@@ -12,6 +12,25 @@ export { AddonDeactivateBeforeEvent } from "./router/events/classes/AddonDeactiv
 export { KairoCustomCommandRegistry } from "./router/events/classes/KairoCustomCommandRegistry";
 export { KairoStartupBeforeEvent } from "./router/events/classes/KairoStartupBeforeEvent";
 
-export type { BeforeHookContext, AfterHookContext, HookRollbackContext, HookOptions } from "./router/api/KairoApiRegistry";
+export type {
+    BeforeHookContext,
+    AfterHookContext,
+    HookRollbackContext,
+    HookOptions,
+    DeepReadonly,
+    InternalHookDeclaration,
+} from "./router/api/KairoApiRegistry";
+
+export {
+    ApiNotFoundError,
+    RequestTimeoutError,
+    BeforeHookExecutionError,
+    AfterHookExecutionError,
+    HandlerExecutionError,
+    ProtocolError,
+} from "./router/api/errors";
+export type { CancelledResult, ProtocolStage } from "./router/api/errors";
+
+export type { ApiManifest } from "./router/api/protocol/schema";
 
 export type { Disposable } from "./router/types/Disposable";

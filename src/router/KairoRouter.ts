@@ -3,7 +3,10 @@ import { KairoRuntime } from "../minecraft/KairoRuntime";
 import type { AddonProperties } from "@kairo-js/properties";
 import { SeedRandom } from "@kairo-js/utils";
 import type { KairoEventMap } from "../minecraft/KairoEventMap";
+import { ApiCallSender } from "./api/ApiCallSender";
 import { KairoApiRegistry } from "./api/KairoApiRegistry";
+import { InvokeHandler } from "./api/InvokeHandler";
+import type { CancelledResult } from "./api/errors";
 import { ActivationController } from "./activation/ActivationController";
 import { KairoRouterError, KairoRouterErrorReason } from "./errors/KairoRouterError";
 import { EventRegistry } from "./events/EventRegistry";
@@ -34,7 +37,10 @@ export class KairoRouter {
     private disposed = false;
     private startupSubscription?: Disposable;
 
-    readonly apiRegistry = new KairoApiRegistry();
+    private apiCallSender?: ApiCallSender;
+    private invokeHandler?: InvokeHandler;
+
+    private readonly apiRegistry = new KairoApiRegistry();
 
     private readonly startupEvent = new InternalEvent<KairoStartupBeforeEvent>(
         () => this.kairoContext?.isActive() ?? false,
@@ -81,6 +87,29 @@ export class KairoRouter {
         this.scheduler!.clearRun(runId);
     }
 
+    getAddonId(): string | undefined {
+        return this.kairoContext?.addonProperties.id;
+    }
+
+    getHookDeclarations(): readonly import("./api/KairoApiRegistry").InternalHookDeclaration[] {
+        return this.apiRegistry.getHookDeclarations();
+    }
+
+    send(targetAddonId: string, apiName: string, args?: unknown): void {
+        this.assertRunnable();
+        this.apiCallSender!.send(targetAddonId, apiName, args);
+    }
+
+    request<TReturn>(
+        targetAddonId: string,
+        apiName: string,
+        args?: unknown,
+        options?: { timeout?: number },
+    ): Promise<TReturn | CancelledResult> {
+        this.assertRunnable();
+        return this.apiCallSender!.request<TReturn>(targetAddonId, apiName, args, options);
+    }
+
     init(properties: AddonProperties): void {
         this.assertNotDisposed();
 
@@ -103,6 +132,7 @@ export class KairoRouter {
             mutator,
             new SeedRandom(),
             this.readyState,
+            this.apiRegistry,
             () => {
                 this.initializer = undefined;
                 this.startRouterListener();
@@ -155,6 +185,12 @@ export class KairoRouter {
         this.worldLoadListener?.dispose();
         this.worldLoadListener = undefined;
 
+        this.apiCallSender?.dispose();
+        this.apiCallSender = undefined;
+
+        this.invokeHandler?.dispose();
+        this.invokeHandler = undefined;
+
         this.eventRegistry.clearActiveScopedListeners();
         this.kairoContextMutator?.setActivationState("inactive");
         this.scheduler?.setActive(false);
@@ -187,6 +223,19 @@ export class KairoRouter {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyInitialized);
         }
 
+        const runtime = this.runtime;
+        const context = this.kairoContext;
+
+        this.apiCallSender = new ApiCallSender(runtime, () => context.kairoId);
+        this.apiCallSender.setup();
+
+        this.invokeHandler = new InvokeHandler(
+            runtime,
+            this.apiRegistry,
+            () => "kairo",
+            () => context.kairoId,
+        );
+
         const activationController = new ActivationController(
             this.runtime,
             this.kairoContext,
@@ -198,12 +247,20 @@ export class KairoRouter {
                     this.startActivationTickCounter();
                     this.attachRuntimeEvents();
                     this.scheduler?.setActive(true);
+                    this.invokeHandler!.setup();
                 },
                 onDeactivate: () => {
                     this.stopActivationTickCounter();
                     this.eventRegistry.clearActiveScopedListeners();
                     this.detachRuntimeEvents();
                     this.scheduler?.setActive(false);
+                    this.invokeHandler?.dispose();
+                    this.invokeHandler = new InvokeHandler(
+                        runtime,
+                        this.apiRegistry,
+                        () => "kairo",
+                        () => context.kairoId,
+                    );
                 },
             },
         );

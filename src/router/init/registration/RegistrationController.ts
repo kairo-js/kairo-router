@@ -1,4 +1,5 @@
 import { KairoRuntime } from "../../../minecraft/KairoRuntime";
+import type { KairoApiRegistry } from "../../api/KairoApiRegistry";
 import { KairoContext, type KairoContextMutator } from "../../KairoContext";
 import type { KairoRegistry } from "../../types/KairoRegistry";
 import { KairoRegistryBuilder } from "../KairoRegistryBuilder";
@@ -9,7 +10,10 @@ export class RegistrationController {
     private readonly registrationManager: AddonRegistrationManager;
     private readonly registrationResponder: RegistrationResponder;
 
-    constructor(private readonly registryBuilder: KairoRegistryBuilder) {
+    constructor(
+        private readonly registryBuilder: KairoRegistryBuilder,
+        private readonly apiRegistry: KairoApiRegistry,
+    ) {
         this.registrationManager = new AddonRegistrationManager(this.registryBuilder);
         this.registrationResponder = new RegistrationResponder();
     }
@@ -27,8 +31,10 @@ export class RegistrationController {
 
         if (!registry) return;
 
-        this.registrationResponder.respond(deps.runtime, registry);
+        this.registrationResponder.respond(deps.runtime, registry, this.apiRegistry);
         deps.contextMutator.setKairoRegistry(registry);
+
+        this.apiRegistry.setDeclaringAddonId(registry.addonId);
 
         return registry;
     };
