@@ -31,7 +31,7 @@ export class RegistrationController {
 
         if (!registry) return;
 
-        this.registrationResponder.respond(deps.runtime, registry, this.apiRegistry);
+        this.registrationResponder.respond(deps.runtime, registry);
         deps.contextMutator.setKairoRegistry(registry);
 
         this.apiRegistry.setDeclaringAddonId(registry.addonId);

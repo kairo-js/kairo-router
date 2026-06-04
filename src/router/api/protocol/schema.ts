@@ -5,6 +5,7 @@ export const ApiCallSchema = Type.Object(
         type: Type.Union([Type.Literal("send"), Type.Literal("request")]),
         correlationId: Type.String(),
         targetAddonId: Type.String(),
+        callerAddonId: Type.Optional(Type.String()),
         apiName: Type.String(),
         args: Type.String(),
         timeout: Type.Optional(Type.Integer({ minimum: 1 })),
@@ -41,7 +42,7 @@ export const ApiResultSchema = Type.Object(
         correlationId: Type.String(),
         success: Type.Boolean(),
         result: Type.Optional(Type.String()),
-        cancelled: Type.Optional(Type.Literal(true)),
+        canceled: Type.Optional(Type.Literal(true)),
         reason: Type.Optional(Type.String()),
         errorType: Type.Optional(
             Type.Union([
@@ -51,6 +52,7 @@ export const ApiResultSchema = Type.Object(
                 Type.Literal("HANDLER_EXECUTION"),
                 Type.Literal("TIMEOUT"),
                 Type.Literal("PROTOCOL_ERROR"),
+                Type.Literal("HOST_SWITCHING"),
             ]),
         ),
         error: Type.Optional(Type.String()),
@@ -75,7 +77,17 @@ export const ApiManifestSchema = Type.Object(
                 phases: Type.Array(
                     Type.Union([Type.Literal("before"), Type.Literal("after")]),
                 ),
+                declarationSequence: Type.Integer({ minimum: 0 }),
+                hasRollback: Type.Boolean(),
             }),
+        ),
+        eventSubscriptions: Type.Optional(
+            Type.Array(
+                Type.Object({
+                    emitterAddonId: Type.String(),
+                    eventName: Type.String(),
+                }),
+            ),
         ),
     },
     { additionalProperties: false },

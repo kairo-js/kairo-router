@@ -35,8 +35,8 @@ export class InternalEvent<T> implements Subscribable<T> {
         for (const fn of this.listeners) {
             try {
                 fn(arg);
-            } catch (e) {
-                console.warn("[kairo-router] event listener threw an error:", e);
+            } catch {
+                // listener errors are silently swallowed
             }
         }
     }

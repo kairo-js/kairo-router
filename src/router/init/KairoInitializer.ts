@@ -1,6 +1,8 @@
 import { type Random } from "@kairo-js/utils";
 import { KairoRuntime } from "../../minecraft/KairoRuntime";
+import type { AddonEventRegistry } from "../event/AddonEventRegistry";
 import type { KairoApiRegistry } from "../api/KairoApiRegistry";
+import { ApiManifestBuilder } from "../api/ApiManifestBuilder";
 import type { KairoContext, KairoContextMutator } from "../KairoContext";
 import { ReadyState } from "../ReadyState";
 import type { Disposable } from "../types/Disposable";
@@ -38,6 +40,7 @@ export class KairoInitializer implements Disposable {
         private readonly random: Random,
         private readonly readyState: ReadyState,
         private readonly apiRegistry: KairoApiRegistry,
+        private readonly eventRegistry: AddonEventRegistry,
         private readonly onCompleted?: () => void,
         private readonly onDisposed?: () => void,
     ) {
@@ -135,12 +138,29 @@ export class KairoInitializer implements Disposable {
                 return;
             }
 
+            this.sendApiManifest();
             this.complete();
         } catch (error) {
             this.dispose();
             throw error;
         }
     };
+
+    private sendApiManifest(): void {
+        const manifest = new ApiManifestBuilder().build(this.apiRegistry, this.eventRegistry);
+
+        const message = {
+            kairoId: this.context.kairoId,
+            apis: manifest.apis,
+            hooks: manifest.hooks,
+            eventSubscriptions: manifest.eventSubscriptions ?? [],
+            timestamp: this.runtime.currentTick(),
+        };
+
+        const messageStr = JSON.stringify(message);
+
+        this.runtime.sendDeferred(KairoInitEventId.ApiManifest, messageStr);
+    }
 
     private assertNotDisposed(): void {
         if (this.phase === InitPhase.Disposed) {

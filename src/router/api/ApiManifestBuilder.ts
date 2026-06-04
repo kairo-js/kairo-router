@@ -1,11 +1,12 @@
+import type { AddonEventRegistry } from "../event/AddonEventRegistry";
 import type { KairoApiRegistry } from "./KairoApiRegistry";
 import type { ApiManifest } from "./protocol/schema";
 
 export class ApiManifestBuilder {
-    build(registry: KairoApiRegistry): ApiManifest {
-        const apis = registry.getApiNames().map((name) => ({ name }));
+    build(apiRegistry: KairoApiRegistry, eventRegistry: AddonEventRegistry): ApiManifest {
+        const apis = apiRegistry.getApiNames().map((name) => ({ name }));
 
-        const hooks = registry.getHookDeclarations().map((decl) => {
+        const hooks = apiRegistry.getHookDeclarations().map((decl) => {
             const phases: ("before" | "after")[] = [];
             if (decl.before) phases.push("before");
             if (decl.after) phases.push("after");
@@ -14,9 +15,13 @@ export class ApiManifestBuilder {
                 apiName: decl.apiName,
                 priority: decl.priority,
                 phases,
+                declarationSequence: decl.sequence,
+                hasRollback: !!decl.rollback,
             };
         });
 
-        return { apis, hooks };
+        const eventSubscriptions = eventRegistry.getSubscriptions();
+
+        return { apis, hooks, eventSubscriptions };
     }
 }

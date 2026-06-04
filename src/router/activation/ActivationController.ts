@@ -38,6 +38,12 @@ export class ActivationController {
         this.activationRequestListener.setup(this.runtime);
     }
 
+    standaloneActivate(): void {
+        this.contextMutator.setActivationState("active");
+        this.lifecycle.onActivate();
+        this.eventRegistry.emit("after", "addonActivate", new AddonActivateAfterEvent());
+    }
+
     handleActivationRequest = (message: string): void => {
         const currentTick = this.runtime.currentTick();
         const request = this.activationManager.resolveRequest(message, currentTick, this.context);

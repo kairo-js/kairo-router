@@ -5,8 +5,9 @@ import {
     AfterHookExecutionError,
     ApiNotFoundError,
     BeforeHookExecutionError,
-    type CancelledResult,
+    type CanceledResult,
     HandlerExecutionError,
+    HostSwitchingError,
     ProtocolError,
     RequestTimeoutError,
 } from "./errors";
@@ -31,6 +32,7 @@ export class ApiCallSender implements Disposable {
     constructor(
         private readonly runtime: KairoRuntime,
         private readonly getCallerKairoId: () => string,
+        private readonly getCallerAddonId: () => string,
     ) {
         this.sessionId = Math.random().toString(36).slice(2, 8);
     }
@@ -49,6 +51,7 @@ export class ApiCallSender implements Disposable {
             type: "send",
             correlationId: "",
             targetAddonId,
+            callerAddonId: this.getCallerAddonId(),
             apiName,
             args: JSON.stringify(args ?? null),
             timestamp: this.runtime.currentTick(),
@@ -65,7 +68,7 @@ export class ApiCallSender implements Disposable {
         apiName: string,
         args?: unknown,
         options?: { timeout?: number },
-    ): Promise<TReturn | CancelledResult> {
+    ): Promise<TReturn | CanceledResult> {
         const correlationId = `kjs-${this.sessionId}-${this.counter++}`;
         const timeoutTicks = options?.timeout ?? DEFAULT_TIMEOUT_TICKS;
 
@@ -73,13 +76,14 @@ export class ApiCallSender implements Disposable {
             type: "request",
             correlationId,
             targetAddonId,
+            callerAddonId: this.getCallerAddonId(),
             apiName,
             args: JSON.stringify(args ?? null),
             timeout: timeoutTicks,
             timestamp: this.runtime.currentTick(),
         };
 
-        return new Promise<TReturn | CancelledResult>((resolve, reject) => {
+        return new Promise<TReturn | CanceledResult>((resolve, reject) => {
             const safetyTimeoutMs = (timeoutTicks + SAFETY_MARGIN_TICKS) * 50;
             const safetyCleanupId = this.runtime.scheduler.runTimeout(() => {
                 const pending = this.pendingRequests.get(correlationId);
@@ -159,10 +163,10 @@ export class ApiCallSender implements Disposable {
             return;
         }
 
-        if (result.cancelled) {
+        if (result.canceled) {
             pending.resolve({
-                cancelled: true as const,
-                reason: result.reason as CancelledResult["reason"],
+                canceled: true as const,
+                reason: result.reason as CanceledResult["reason"],
             });
             return;
         }
@@ -182,6 +186,9 @@ export class ApiCallSender implements Disposable {
                 break;
             case "TIMEOUT":
                 pending.reject(new RequestTimeoutError());
+                break;
+            case "HOST_SWITCHING":
+                pending.reject(new HostSwitchingError());
                 break;
             case "PROTOCOL_ERROR":
                 pending.reject(new ProtocolError(result.error ?? "Remote protocol error", "remote", "ApiResult", correlationId));

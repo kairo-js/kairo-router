@@ -4,4 +4,5 @@ export enum KairoInitEventId {
     RegistrationRequest = "kairo:registration_request",
     RegistrationResponse = "kairo:registration_response",
     RegistrationResult = "kairo:registration_result",
+    ApiManifest = "kairo:api_manifest",
 }

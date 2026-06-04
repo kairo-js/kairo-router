@@ -19,7 +19,16 @@ const ROOT_CLASSES = [
     "KairoBeforeEvents",
     "AddonActivateAfterEvent",
     "AddonDeactivateBeforeEvent",
+    "KairoStartupBeforeEvent",
+    "KairoCustomCommandRegistry",
+    "ApiNotFoundError",
+    "RequestTimeoutError",
+    "BeforeHookExecutionError",
+    "AfterHookExecutionError",
+    "HandlerExecutionError",
+    "ProtocolError",
 ];
+
 patchClasses(source, ROOT_CLASSES);
 pruneUnused(source, ROOT_CLASSES);
 

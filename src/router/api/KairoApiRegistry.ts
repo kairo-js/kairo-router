@@ -6,39 +6,43 @@ export type DeepReadonly<T> = T extends readonly (infer U)[]
     ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
     : T;
 
-export type BeforeHookContext<TArgs, TReturn> = {
+export interface BeforeHookContext<TArgs, TReturn> {
     args: TArgs;
     readonly callerAddonId: string;
     cancel(result?: TReturn): never;
     setRollbackData(data: unknown): void;
-};
+}
 
-export type AfterHookContext<TArgs, TReturn> = {
+export interface AfterHookContext<TArgs, TReturn> {
     readonly args: TArgs;
     result: TReturn;
     readonly callerAddonId: string;
-};
+}
 
-export type HookRollbackContext<TArgs> = {
+export interface HookRollbackContext<TArgs> {
     readonly rollbackData: unknown;
     readonly currentArgsSnapshot: DeepReadonly<TArgs>;
     readonly callerAddonId: string;
-};
+}
 
-export type HookOptions<TArgs, TReturn> = {
+export interface HookOptions<TArgs, TReturn> {
     priority?: number;
     modes?: ReadonlyArray<"send" | "request">;
     before?: (ctx: BeforeHookContext<TArgs, TReturn>) => Promise<void>;
     after?: (ctx: AfterHookContext<TArgs, TReturn>) => Promise<void>;
     rollback?: (ctx: HookRollbackContext<TArgs>) => Promise<TArgs | void>;
-};
+}
+
+export interface ApiHandlerContext {
+    readonly callerAddonId: string;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ApiHandler = (args: any) => any;
+export type ApiHandler = (args: any, ctx: ApiHandlerContext) => any;
 
 export type HookPhase = "before" | "after";
 
-export type InternalHookDeclaration = {
+export interface HookDeclaration {
     readonly targetAddonId: string;
     readonly apiName: string;
     readonly priority: number;
@@ -51,17 +55,29 @@ export type InternalHookDeclaration = {
     readonly after?: (ctx: AfterHookContext<any, any>) => Promise<void>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     readonly rollback?: (ctx: HookRollbackContext<any>) => Promise<any | void>;
-};
+}
+
+export interface ApiRegistration {
+    register<TArgs, TReturn>(
+        apiName: string,
+        handler: (args: TArgs, ctx: ApiHandlerContext) => TReturn | Promise<TReturn>,
+    ): void;
+    hook<TArgs, TReturn>(
+        targetAddonId: string,
+        apiName: string,
+        options: HookOptions<TArgs, TReturn>,
+    ): void;
+}
 
 export class KairoApiRegistry implements Disposable {
     private sealed = false;
     private readonly apiHandlers = new Map<string, ApiHandler>();
-    private readonly hookDeclarations: InternalHookDeclaration[] = [];
+    private readonly hookDeclarations: HookDeclaration[] = [];
     private sequenceCounter = 0;
 
     register<TArgs, TReturn>(
         apiName: string,
-        handler: (args: TArgs) => TReturn | Promise<TReturn>,
+        handler: (args: TArgs, ctx: ApiHandlerContext) => TReturn | Promise<TReturn>,
     ): void {
         this.assertNotSealed();
         if (this.apiHandlers.has(apiName)) {
@@ -89,9 +105,9 @@ export class KairoApiRegistry implements Disposable {
             priority: options.priority ?? 0,
             modes,
             sequence: this.sequenceCounter++,
-            before: options.before as InternalHookDeclaration["before"],
-            after: options.after as InternalHookDeclaration["after"],
-            rollback: options.rollback as InternalHookDeclaration["rollback"],
+            before: options.before as HookDeclaration["before"],
+            after: options.after as HookDeclaration["after"],
+            rollback: options.rollback as HookDeclaration["rollback"],
         });
     }
 
@@ -115,7 +131,7 @@ export class KairoApiRegistry implements Disposable {
         return [...this.apiHandlers.keys()];
     }
 
-    getHookDeclarations(): readonly InternalHookDeclaration[] {
+    getHookDeclarations(): readonly HookDeclaration[] {
         return this.hookDeclarations;
     }
 

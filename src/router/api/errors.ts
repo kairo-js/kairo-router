@@ -50,7 +50,14 @@ export class ProtocolError extends Error {
     }
 }
 
-export type CancelledResult = {
-    readonly cancelled: true;
-    readonly reason: "ADDON_NOT_FOUND" | "ADDON_INACTIVE" | "ADDON_UNRESOLVED" | "CANCELLED_BY_HOOK";
-};
+export interface CanceledResult {
+    readonly canceled: true;
+    readonly reason: "ADDON_NOT_FOUND" | "ADDON_INACTIVE" | "ADDON_UNRESOLVED" | "CANCELED_BY_HOOK";
+}
+
+export class HostSwitchingError extends Error {
+    constructor() {
+        super("Kairo host is switching versions");
+        this.name = "HostSwitchingError";
+    }
+}

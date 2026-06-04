@@ -35,12 +35,10 @@ export class InvokeHandler implements Disposable {
         try {
             const parsed = safeJsonParse(message, () => new Error("parse failed"));
             if (!validateApiInvoke(parsed)) {
-                console.warn("[kairo-router] InvokeHandler: invalid ApiInvoke schema");
                 return;
             }
             invoke = parsed as ApiInvoke;
         } catch {
-            console.warn("[kairo-router] InvokeHandler: failed to parse ApiInvoke");
             return;
         }
 
@@ -72,13 +70,11 @@ export class InvokeHandler implements Disposable {
 
         let result: unknown;
         try {
-            result = await handler(args);
+            result = await handler(args, { callerAddonId: invoke.callerAddonId });
         } catch (e) {
             if (sendResponse) {
                 const message = e instanceof Error ? e.message : String(e);
                 this.sendHandlerResponse(invoke.correlationId, false, undefined, message);
-            } else {
-                console.warn("[kairo-router] InvokeHandler: handler threw (send mode):", e);
             }
             return;
         }
@@ -112,8 +108,8 @@ export class InvokeHandler implements Disposable {
         };
         try {
             this.runtime.send("kairo:api-response", JSON.stringify(response));
-        } catch (e) {
-            console.warn("[kairo-router] InvokeHandler: failed to send ApiHandlerResponse:", e);
+        } catch {
+            // send failure is silently ignored
         }
     }
 }

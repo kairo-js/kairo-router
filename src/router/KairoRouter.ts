@@ -1,12 +1,17 @@
 import { KairoRuntime } from "../minecraft/KairoRuntime";
 
 import type { AddonProperties } from "@kairo-js/properties";
+import { KairoRegistryBuilder } from "./init/KairoRegistryBuilder";
 import { SeedRandom } from "@kairo-js/utils";
 import type { KairoEventMap } from "../minecraft/KairoEventMap";
 import { ApiCallSender } from "./api/ApiCallSender";
 import { KairoApiRegistry } from "./api/KairoApiRegistry";
 import { InvokeHandler } from "./api/InvokeHandler";
-import type { CancelledResult } from "./api/errors";
+import type { CanceledResult } from "./api/errors";
+import { AddonEventRegistry } from "./event/AddonEventRegistry";
+import { AddonEventEmitter } from "./event/AddonEventEmitter";
+import { AddonEventDeliveryHandler } from "./event/AddonEventDeliveryHandler";
+import { CrossAddonHookHandler } from "./hook/CrossAddonHookHandler";
 import { ActivationController } from "./activation/ActivationController";
 import { KairoRouterError, KairoRouterErrorReason } from "./errors/KairoRouterError";
 import { EventRegistry } from "./events/EventRegistry";
@@ -20,6 +25,24 @@ import { createKairoContext, KairoContext, type KairoContextMutator } from "./Ka
 import { KairoScheduler } from "./KairoScheduler";
 import { ReadyState } from "./ReadyState";
 import type { Disposable } from "./types/Disposable";
+
+const STANDALONE_DETECTION_TICKS = 20;
+const INFRA_DEPS = new Set(["kairo", "kairo-database"]);
+
+export interface RouterInitOptions {
+    /**
+     * `true`  — always attempt standalone (even with cross-addon dependencies)
+     * `false` — never attempt standalone
+     * `undefined` (default) — standalone only when required dependencies are limited to kairo / kairo-database
+     */
+    standalone?: boolean;
+}
+
+function shouldAttemptStandalone(properties: AddonProperties, option: boolean | undefined): boolean {
+    if (option !== true) return false;
+    const requiredDeps = Object.keys(properties.dependencies ?? {});
+    return requiredDeps.every(dep => INFRA_DEPS.has(dep));
+}
 
 // kjs-router-ch 0001
 export class KairoRouter {
@@ -35,12 +58,18 @@ export class KairoRouter {
     private worldLoadListener?: Disposable;
     private initializer?: Disposable;
     private disposed = false;
+    private standaloneMode = false;
     private startupSubscription?: Disposable;
 
     private apiCallSender?: ApiCallSender;
     private invokeHandler?: InvokeHandler;
+    private _registeredCallback?: (kairoId: string) => void;
+    private addonEventEmitter?: AddonEventEmitter;
+    private addonEventDeliveryHandler?: AddonEventDeliveryHandler;
+    private crossAddonHookHandler?: CrossAddonHookHandler;
 
     private readonly apiRegistry = new KairoApiRegistry();
+    private readonly addonEventRegistry = new AddonEventRegistry();
 
     private readonly startupEvent = new InternalEvent<KairoStartupBeforeEvent>(
         () => this.kairoContext?.isActive() ?? false,
@@ -60,7 +89,7 @@ export class KairoRouter {
             const getAddonName = () => this.kairoContext?.isRegistered()
                 ? this.kairoContext.kairoRegistry.name
                 : undefined;
-            this.startupEvent.emit(new KairoStartupBeforeEvent(ev, isActive, this.apiRegistry, getAddonName));
+            this.startupEvent.emit(new KairoStartupBeforeEvent(ev, isActive, this.apiRegistry, this.addonEventRegistry, getAddonName));
             this.apiRegistry.seal();
         });
     }
@@ -91,8 +120,18 @@ export class KairoRouter {
         return this.kairoContext?.addonProperties.id;
     }
 
-    getHookDeclarations(): readonly import("./api/KairoApiRegistry").InternalHookDeclaration[] {
-        return this.apiRegistry.getHookDeclarations();
+    getKairoId(): string | undefined {
+        if (!this.kairoContext?.isRegistered()) return undefined;
+        return this.kairoContext.kairoId;
+    }
+
+    onceRegistered(callback: (kairoId: string) => void): void {
+        const kairoId = this.getKairoId();
+        if (kairoId !== undefined) {
+            callback(kairoId);
+            return;
+        }
+        this._registeredCallback = callback;
     }
 
     send(targetAddonId: string, apiName: string, args?: unknown): void {
@@ -105,16 +144,59 @@ export class KairoRouter {
         apiName: string,
         args?: unknown,
         options?: { timeout?: number },
-    ): Promise<TReturn | CancelledResult> {
+    ): Promise<TReturn | CanceledResult> {
         this.assertRunnable();
         return this.apiCallSender!.request<TReturn>(targetAddonId, apiName, args, options);
     }
 
-    init(properties: AddonProperties): void {
+    emit(eventName: string, payload?: unknown): void {
+        this.assertRunnable();
+        this.addonEventEmitter!.emit(eventName, payload);
+    }
+
+    async save(key: string, value: unknown): Promise<void> {
+        this.assertDatabaseDependency();
+        this.assertRunnable();
+        if (this.standaloneMode) return;
+        const result = await this.apiCallSender!.request<void>("kairo-database", "save", { key, value });
+        this.assertDatabaseAvailable(result);
+    }
+
+    async load<T = unknown>(key: string, options?: { addonId?: string }): Promise<T | undefined> {
+        this.assertDatabaseDependency();
+        this.assertRunnable();
+        if (this.standaloneMode) return undefined;
+        const result = await this.apiCallSender!.request<T | undefined>("kairo-database", "load", { key, addonId: options?.addonId });
+        this.assertDatabaseAvailable(result);
+        return result as T | undefined;
+    }
+
+    async delete(key: string): Promise<void> {
+        this.assertDatabaseDependency();
+        this.assertRunnable();
+        if (this.standaloneMode) return;
+        const result = await this.apiCallSender!.request<void>("kairo-database", "delete", { key });
+        this.assertDatabaseAvailable(result);
+    }
+
+    async has(key: string, options?: { addonId?: string }): Promise<boolean> {
+        this.assertDatabaseDependency();
+        this.assertRunnable();
+        if (this.standaloneMode) return false;
+        const result = await this.apiCallSender!.request<boolean>("kairo-database", "has", { key, addonId: options?.addonId });
+        this.assertDatabaseAvailable(result);
+        return result as boolean;
+    }
+
+    init(properties: AddonProperties, options?: RouterInitOptions): void {
         this.assertNotDisposed();
 
         if (this.kairoContext) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyInitialized);
+        }
+
+        if (properties.id !== "kairo" && !("kairo" in (properties.dependencies ?? {}))) {
+            throw new KairoRouterInitError(KairoRouterInitErrorReason.KairoDependencyMissing);
         }
 
         this.runtime = new KairoRuntime();
@@ -133,6 +215,7 @@ export class KairoRouter {
             new SeedRandom(),
             this.readyState,
             this.apiRegistry,
+            this.addonEventRegistry,
             () => {
                 this.initializer = undefined;
                 this.startRouterListener();
@@ -145,6 +228,19 @@ export class KairoRouter {
 
         this.initializer = initializer;
         initializer.setup();
+
+        if (shouldAttemptStandalone(properties, options?.standalone)) {
+            this.readyState.wait().then(() => {
+                this.runtime!.scheduler.runTimeout(() => {
+                    if (this.initializer) {
+                        this.initializer.dispose();
+                        this.initializer = undefined;
+                        this.standaloneMode = true;
+                        this.activateStandalone();
+                    }
+                }, STANDALONE_DETECTION_TICKS);
+            });
+        }
     }
 
     waitForWorldLoad(): Promise<void> {
@@ -191,6 +287,12 @@ export class KairoRouter {
         this.invokeHandler?.dispose();
         this.invokeHandler = undefined;
 
+        this.addonEventDeliveryHandler?.dispose();
+        this.addonEventDeliveryHandler = undefined;
+        this.addonEventEmitter = undefined;
+        this.crossAddonHookHandler?.dispose();
+        this.crossAddonHookHandler = undefined;
+
         this.eventRegistry.clearActiveScopedListeners();
         this.kairoContextMutator?.setActivationState("inactive");
         this.scheduler?.setActive(false);
@@ -214,7 +316,19 @@ export class KairoRouter {
         });
     }
 
-    private startRouterListener(): void {
+    private activateStandalone(): void {
+        if (!this.runtime || !this.kairoContext || !this.kairoContextMutator) return;
+
+        const addonId = this.kairoContext.addonProperties.id;
+        const registry = new KairoRegistryBuilder().build(addonId, this.kairoContext.addonProperties);
+
+        this.kairoContextMutator.setKairoId(addonId);
+        this.kairoContextMutator.setKairoRegistry(registry);
+
+        this.startRouterListener(true);
+    }
+
+    private startRouterListener(standalone = false): void {
         if (!this.runtime || !this.kairoContext || !this.kairoContextMutator) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.NotInitialized);
         }
@@ -226,8 +340,19 @@ export class KairoRouter {
         const runtime = this.runtime;
         const context = this.kairoContext;
 
-        this.apiCallSender = new ApiCallSender(runtime, () => context.kairoId);
+        if (this._registeredCallback) {
+            const cb = this._registeredCallback;
+            this._registeredCallback = undefined;
+            cb(context.kairoId);
+        }
+
+        this.apiCallSender = new ApiCallSender(runtime, () => context.kairoId, () => context.addonProperties.id);
         this.apiCallSender.setup();
+
+        this.addonEventEmitter = new AddonEventEmitter(
+            runtime,
+            () => context.addonProperties.id,
+        );
 
         this.invokeHandler = new InvokeHandler(
             runtime,
@@ -248,6 +373,18 @@ export class KairoRouter {
                     this.attachRuntimeEvents();
                     this.scheduler?.setActive(true);
                     this.invokeHandler!.setup();
+                    this.addonEventDeliveryHandler = new AddonEventDeliveryHandler(
+                        runtime,
+                        this.addonEventRegistry,
+                        () => context.kairoId,
+                    );
+                    this.addonEventDeliveryHandler.setup();
+                    this.crossAddonHookHandler = new CrossAddonHookHandler(
+                        runtime,
+                        this.apiRegistry,
+                        () => context.kairoId,
+                    );
+                    this.crossAddonHookHandler.setup();
                 },
                 onDeactivate: () => {
                     this.stopActivationTickCounter();
@@ -261,10 +398,18 @@ export class KairoRouter {
                         () => "kairo",
                         () => context.kairoId,
                     );
+                    this.addonEventDeliveryHandler?.dispose();
+                    this.addonEventDeliveryHandler = undefined;
+                    this.crossAddonHookHandler?.dispose();
+                    this.crossAddonHookHandler = undefined;
                 },
             },
         );
-        activationController.setup();
+        if (standalone) {
+            activationController.standaloneActivate();
+        } else {
+            activationController.setup();
+        }
     }
 
     private attachRuntimeEvents() {
@@ -326,6 +471,21 @@ export class KairoRouter {
     private assertNotDisposed(): void {
         if (this.disposed) {
             throw new KairoRouterInitError(KairoRouterInitErrorReason.AlreadyDisposed);
+        }
+    }
+
+    private assertDatabaseDependency(): void {
+        const deps = this.kairoContext?.addonProperties.dependencies ?? {};
+        const optDeps = this.kairoContext?.addonProperties.optionalDependencies ?? {};
+        if (!("kairo-database" in deps) && !("kairo-database" in optDeps)) {
+            throw new Error('[kairo-router] router.save/load/delete/has requires "kairo-database" in dependencies');
+        }
+    }
+
+    private assertDatabaseAvailable(result: unknown): void {
+        if (result !== null && typeof result === "object" && "canceled" in result) {
+            const reason = (result as CanceledResult).reason;
+            throw new Error(`[kairo-router] kairo-database is unavailable (${reason}). Ensure it is installed and active.`);
         }
     }
 }

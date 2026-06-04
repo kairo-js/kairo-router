@@ -50,6 +50,10 @@ export class KairoRuntime<E extends KairoEventMap = KairoEventMap> {
         system.sendScriptEvent(id, message);
     }
 
+    sendDeferred(id: string, message: string): void {
+        system.runTimeout(() => system.sendScriptEvent(id, message), 0);
+    }
+
     receive(handler: (id: string, message: string) => void): Disposable {
         const listener = (ev: ScriptEventCommandMessageAfterEvent) => {
             if (ev.sourceType !== ScriptEventSource.Server) return;

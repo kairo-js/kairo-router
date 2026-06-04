@@ -17,6 +17,7 @@ export enum KairoRouterInitErrorReason {
     InvalidPhase = "InvalidPhase",
     RegistrationRejected = "RegistrationRejected",
     RegistrationRequestNotFound = "RegistrationRequestNotFound",
+    KairoDependencyMissing = "KairoDependencyMissing",
 }
 
 const DEFAULT_MESSAGES: Record<KairoRouterInitErrorReason, string> = {
@@ -27,4 +28,6 @@ const DEFAULT_MESSAGES: Record<KairoRouterInitErrorReason, string> = {
     [KairoRouterInitErrorReason.InvalidPhase]: "Invalid phase for the requested operation.",
     [KairoRouterInitErrorReason.RegistrationRejected]: "Addon registration was rejected.",
     [KairoRouterInitErrorReason.RegistrationRequestNotFound]: "Registration request not found.",
+    [KairoRouterInitErrorReason.KairoDependencyMissing]:
+        '[kairo-router] "kairo" must be declared in dependencies to use router.init().',
 };
