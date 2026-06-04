@@ -1,6 +1,7 @@
 import { KairoRuntime } from "../minecraft/KairoRuntime";
 
 import type { AddonProperties } from "@kairo-js/properties";
+import { KairoCommandRegistry } from "./command/KairoCommandRegistry";
 import { KairoRegistryBuilder } from "./init/KairoRegistryBuilder";
 import { SeedRandom } from "@kairo-js/utils";
 import type { KairoEventMap } from "../minecraft/KairoEventMap";
@@ -67,6 +68,8 @@ export class KairoRouter {
     private addonEventEmitter?: AddonEventEmitter;
     private addonEventDeliveryHandler?: AddonEventDeliveryHandler;
     private crossAddonHookHandler?: CrossAddonHookHandler;
+    private commandInvokeListener?: Disposable;
+    private commandRegistry?: KairoCommandRegistry;
 
     private readonly apiRegistry = new KairoApiRegistry();
     private readonly addonEventRegistry = new AddonEventRegistry();
@@ -89,8 +92,18 @@ export class KairoRouter {
             const getAddonName = () => this.kairoContext?.isRegistered()
                 ? this.kairoContext.kairoRegistry.name
                 : undefined;
-            this.startupEvent.emit(new KairoStartupBeforeEvent(ev, isActive, this.apiRegistry, this.addonEventRegistry, getAddonName));
+
+            const commandRegistry = new KairoCommandRegistry(
+                ev.customCommandRegistry,
+                isActive,
+                () => this.kairoContext?.addonProperties.id,
+                (id, msg) => this.runtime?.send(id, msg),
+            );
+            this.commandRegistry = commandRegistry;
+
+            this.startupEvent.emit(new KairoStartupBeforeEvent(ev, isActive, this.apiRegistry, this.addonEventRegistry, getAddonName, commandRegistry));
             this.apiRegistry.seal();
+            commandRegistry.seal();
         });
     }
 
@@ -224,6 +237,7 @@ export class KairoRouter {
                 this.initializer = undefined;
                 this.dispose();
             },
+            () => this.commandRegistry,
         );
 
         this.initializer = initializer;
@@ -293,6 +307,9 @@ export class KairoRouter {
         this.crossAddonHookHandler?.dispose();
         this.crossAddonHookHandler = undefined;
 
+        this.commandInvokeListener?.dispose();
+        this.commandInvokeListener = undefined;
+
         this.eventRegistry.clearActiveScopedListeners();
         this.kairoContextMutator?.setActivationState("inactive");
         this.scheduler?.setActive(false);
@@ -348,6 +365,12 @@ export class KairoRouter {
 
         this.apiCallSender = new ApiCallSender(runtime, () => context.kairoId, () => context.addonProperties.id);
         this.apiCallSender.setup();
+
+        if (this.commandRegistry) {
+            this.commandInvokeListener = this.commandRegistry.setupInvokeListener(
+                (handler) => runtime.receive(handler),
+            );
+        }
 
         this.addonEventEmitter = new AddonEventEmitter(
             runtime,

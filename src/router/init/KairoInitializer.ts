@@ -1,5 +1,6 @@
 import { type Random } from "@kairo-js/utils";
 import { KairoRuntime } from "../../minecraft/KairoRuntime";
+import type { KairoCommandRegistry } from "../command/KairoCommandRegistry";
 import type { AddonEventRegistry } from "../event/AddonEventRegistry";
 import type { KairoApiRegistry } from "../api/KairoApiRegistry";
 import { ApiManifestBuilder } from "../api/ApiManifestBuilder";
@@ -43,6 +44,7 @@ export class KairoInitializer implements Disposable {
         private readonly eventRegistry: AddonEventRegistry,
         private readonly onCompleted?: () => void,
         private readonly onDisposed?: () => void,
+        private readonly getCommandRegistry?: () => KairoCommandRegistry | undefined,
     ) {
         this.idProvider = new KairoIdProvider(this.random);
         this.registryBuilder = new KairoRegistryBuilder();
@@ -147,13 +149,14 @@ export class KairoInitializer implements Disposable {
     };
 
     private sendApiManifest(): void {
-        const manifest = new ApiManifestBuilder().build(this.apiRegistry, this.eventRegistry);
+        const manifest = new ApiManifestBuilder().build(this.apiRegistry, this.eventRegistry, this.getCommandRegistry?.());
 
         const message = {
             kairoId: this.context.kairoId,
             apis: manifest.apis,
             hooks: manifest.hooks,
             eventSubscriptions: manifest.eventSubscriptions ?? [],
+            commands: manifest.commands ?? [],
             timestamp: this.runtime.currentTick(),
         };
 

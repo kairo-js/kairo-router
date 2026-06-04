@@ -1,5 +1,5 @@
 import { SemVer, AddonProperties } from '@kairo-js/properties';
-import { BlockExplodeAfterEvent, ButtonPushAfterEvent, DataDrivenEntityTriggerAfterEvent, EffectAddAfterEvent, EntityDieAfterEvent, EntityHealAfterEvent, EntityHealthChangedAfterEvent, EntityHitBlockAfterEvent, EntityHitEntityAfterEvent, EntityHurtAfterEvent, EntityItemDropAfterEvent, EntityItemPickupAfterEvent, EntityLoadAfterEvent, EntityRemoveAfterEvent, EntitySpawnAfterEvent, ExplosionAfterEvent, GameRuleChangeAfterEvent, ItemCompleteUseAfterEvent, ItemReleaseUseAfterEvent, ItemStartUseAfterEvent, ItemStartUseOnAfterEvent, ItemStopUseAfterEvent, ItemStopUseOnAfterEvent, ItemUseAfterEvent, LeverActionAfterEvent, PistonActivateAfterEvent, PlayerBreakBlockAfterEvent, PlayerButtonInputAfterEvent, PlayerDimensionChangeAfterEvent, PlayerEmoteAfterEvent, PlayerGameModeChangeAfterEvent, PlayerHotbarSelectedSlotChangeAfterEvent, PlayerInputModeChangeAfterEvent, PlayerInputPermissionCategoryChangeAfterEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithEntityAfterEvent, PlayerInventoryItemChangeAfterEvent, PlayerJoinAfterEvent, PlayerLeaveAfterEvent, PlayerPlaceBlockAfterEvent, PlayerSpawnAfterEvent, PlayerSwingStartAfterEvent, PressurePlatePopAfterEvent, PressurePlatePushAfterEvent, ProjectileHitBlockAfterEvent, ProjectileHitEntityAfterEvent, ScriptEventCommandMessageAfterEvent, TargetBlockHitAfterEvent, TripWireTripAfterEvent, WeatherChangeAfterEvent, EffectAddBeforeEvent, EntityHealBeforeEvent, EntityItemPickupBeforeEvent, EntityRemoveBeforeEvent, ExplosionBeforeEvent, ItemUseBeforeEvent, PlayerBreakBlockBeforeEvent, PlayerGameModeChangeBeforeEvent, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, PlayerLeaveBeforeEvent, ShutdownEvent, WeatherChangeBeforeEvent, CustomCommandRegistry, CustomCommand, CustomCommandOrigin, CustomCommandResult, StartupEvent } from '@minecraft/server';
+import { BlockExplodeAfterEvent, ButtonPushAfterEvent, DataDrivenEntityTriggerAfterEvent, EffectAddAfterEvent, EntityDieAfterEvent, EntityHealAfterEvent, EntityHealthChangedAfterEvent, EntityHitBlockAfterEvent, EntityHitEntityAfterEvent, EntityHurtAfterEvent, EntityItemDropAfterEvent, EntityItemPickupAfterEvent, EntityLoadAfterEvent, EntityRemoveAfterEvent, EntitySpawnAfterEvent, ExplosionAfterEvent, GameRuleChangeAfterEvent, ItemCompleteUseAfterEvent, ItemReleaseUseAfterEvent, ItemStartUseAfterEvent, ItemStartUseOnAfterEvent, ItemStopUseAfterEvent, ItemStopUseOnAfterEvent, ItemUseAfterEvent, LeverActionAfterEvent, PistonActivateAfterEvent, PlayerBreakBlockAfterEvent, PlayerButtonInputAfterEvent, PlayerDimensionChangeAfterEvent, PlayerEmoteAfterEvent, PlayerGameModeChangeAfterEvent, PlayerHotbarSelectedSlotChangeAfterEvent, PlayerInputModeChangeAfterEvent, PlayerInputPermissionCategoryChangeAfterEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithEntityAfterEvent, PlayerInventoryItemChangeAfterEvent, PlayerJoinAfterEvent, PlayerLeaveAfterEvent, PlayerPlaceBlockAfterEvent, PlayerSpawnAfterEvent, PlayerSwingStartAfterEvent, PressurePlatePopAfterEvent, PressurePlatePushAfterEvent, ProjectileHitBlockAfterEvent, ProjectileHitEntityAfterEvent, ScriptEventCommandMessageAfterEvent, TargetBlockHitAfterEvent, TripWireTripAfterEvent, WeatherChangeAfterEvent, EffectAddBeforeEvent, EntityHealBeforeEvent, EntityItemPickupBeforeEvent, EntityRemoveBeforeEvent, ExplosionBeforeEvent, ItemUseBeforeEvent, PlayerBreakBlockBeforeEvent, PlayerGameModeChangeBeforeEvent, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, PlayerLeaveBeforeEvent, ShutdownEvent, WeatherChangeBeforeEvent, Player, CustomCommandResult, CustomCommandRegistry, CustomCommand, CustomCommandOrigin, StartupEvent } from '@minecraft/server';
 
 declare class AddonActivateAfterEvent {
     private constructor();
@@ -207,6 +207,35 @@ interface ApiRegistration {
     hook<TArgs, TReturn>(targetAddonId: string, apiName: string, options: HookOptions<TArgs, TReturn>): void;
 }
 
+interface CommandDeclarationEntry {
+    readonly name: string;
+    readonly mandatoryParameters: ReadonlyArray<{
+        readonly name: string;
+        readonly type: string;
+    }>;
+    readonly optionalParameters: ReadonlyArray<{
+        readonly name: string;
+        readonly type: string;
+    }>;
+}
+
+type KairoCommandHandler = (player: Player | undefined, ...args: any[]) => CustomCommandResult | undefined;
+declare class KairoCommandRegistry {
+    private readonly nativeRegistry;
+    private readonly isActive;
+    private readonly getAddonId;
+    private readonly send;
+    private sealed;
+    private readonly declarations;
+    constructor(nativeRegistry: CustomCommandRegistry, isActive: () => boolean, getAddonId: () => string | undefined, send: (id: string, message: string) => void);
+    register(def: CustomCommand, handler: KairoCommandHandler): void;
+    registerEnum(name: string, values: string[]): void;
+    setupInvokeListener(receive: (handler: (id: string, message: string) => void) => Disposable): Disposable;
+    seal(): void;
+    getDeclarations(): CommandDeclarationEntry[];
+    private assertNotSealed;
+}
+
 type EventHandler<TPayload = unknown> = (payload: TPayload) => void;
 
 interface AddonEventRegistration {
@@ -221,6 +250,7 @@ declare class KairoCustomCommandRegistry {
 
 declare class KairoStartupBeforeEvent {
     readonly customCommandRegistry: KairoCustomCommandRegistry;
+    readonly commands: KairoCommandRegistry;
     readonly api: ApiRegistration;
     readonly events: AddonEventRegistration;
     private constructor();
@@ -312,4 +342,4 @@ declare class KairoRouter {
 
 declare const router: KairoRouter;
 
-export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AddonEventRegistration, type AfterHookContext, AfterHookExecutionError, type ApiHandlerContext, ApiNotFoundError, type ApiRegistration, type BeforeHookContext, BeforeHookExecutionError, type CanceledResult, type DeepReadonly, type Disposable, HandlerExecutionError, type HookOptions, type HookRollbackContext, KairoContext, KairoCustomCommandRegistry, type KairoRegistry, KairoRouter, KairoStartupBeforeEvent, ProtocolError, type ProtocolStage, RequestTimeoutError, type RouterInitOptions, router };
+export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AddonEventRegistration, type AfterHookContext, AfterHookExecutionError, type ApiHandlerContext, ApiNotFoundError, type ApiRegistration, type BeforeHookContext, BeforeHookExecutionError, type CanceledResult, type DeepReadonly, type Disposable, HandlerExecutionError, type HookOptions, type HookRollbackContext, type KairoCommandHandler, KairoCommandRegistry, KairoContext, KairoCustomCommandRegistry, type KairoRegistry, KairoRouter, KairoStartupBeforeEvent, ProtocolError, type ProtocolStage, RequestTimeoutError, type RouterInitOptions, router };

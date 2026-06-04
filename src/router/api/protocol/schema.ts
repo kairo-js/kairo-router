@@ -66,6 +66,11 @@ export type ApiInvoke = Static<typeof ApiInvokeSchema>;
 export type ApiHandlerResponse = Static<typeof ApiHandlerResponseSchema>;
 export type ApiResult = Static<typeof ApiResultSchema>;
 
+const CommandParamEntrySchema = Type.Object({
+    name: Type.String(),
+    type: Type.String(),
+});
+
 export const ApiManifestSchema = Type.Object(
     {
         apis: Type.Array(Type.Object({ name: Type.String() })),
@@ -86,6 +91,15 @@ export const ApiManifestSchema = Type.Object(
                 Type.Object({
                     emitterAddonId: Type.String(),
                     eventName: Type.String(),
+                }),
+            ),
+        ),
+        commands: Type.Optional(
+            Type.Array(
+                Type.Object({
+                    name: Type.String(),
+                    mandatoryParameters: Type.Array(CommandParamEntrySchema),
+                    optionalParameters: Type.Array(CommandParamEntrySchema),
                 }),
             ),
         ),
