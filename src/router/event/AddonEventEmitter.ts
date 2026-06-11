@@ -1,5 +1,6 @@
 import type { KairoRuntime } from "../../minecraft/KairoRuntime";
 import type { EventEmitMessage } from "./schema";
+import { stringifyEventEmitMessage } from "./stringify";
 
 export class AddonEventEmitter {
     constructor(
@@ -15,7 +16,7 @@ export class AddonEventEmitter {
             timestamp: this.runtime.currentTick(),
         };
         try {
-            this.runtime.send("kairo:event-emit", JSON.stringify(msg));
+            this.runtime.send("kairo:event-emit", stringifyEventEmitMessage(msg));
         } catch {}
     }
 }

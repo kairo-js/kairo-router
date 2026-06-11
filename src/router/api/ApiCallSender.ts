@@ -12,6 +12,7 @@ import {
     RequestTimeoutError,
 } from "./errors";
 import { ApiCallSchema, ApiResultSchema, type ApiCall, type ApiResult } from "./protocol/schema";
+import { stringifyApiCall } from "./protocol/stringify";
 
 const DEFAULT_TIMEOUT_TICKS = 20;
 const SAFETY_MARGIN_TICKS = 5;
@@ -57,7 +58,7 @@ export class ApiCallSender implements Disposable {
             timestamp: this.runtime.currentTick(),
         };
         try {
-            this.runtime.send("kairo:api-call", JSON.stringify(call));
+            this.runtime.send("kairo:api-call", stringifyApiCall(call));
         } catch {
             // fire-and-forget: ignore errors
         }
@@ -99,7 +100,7 @@ export class ApiCallSender implements Disposable {
             });
 
             try {
-                this.runtime.send("kairo:api-call", JSON.stringify(call));
+                this.runtime.send("kairo:api-call", stringifyApiCall(call));
             } catch (e) {
                 this.pendingRequests.delete(correlationId);
                 this.runtime.scheduler.clearRun(safetyCleanupId);

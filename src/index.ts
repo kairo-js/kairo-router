@@ -10,9 +10,8 @@ export type { KairoRegistry } from "./router/types/KairoRegistry";
 
 export { AddonActivateAfterEvent } from "./router/events/classes/AddonActivateAfterEvent";
 export { AddonDeactivateBeforeEvent } from "./router/events/classes/AddonDeactivateBeforeEvent";
-export { KairoCustomCommandRegistry } from "./router/events/classes/KairoCustomCommandRegistry";
 export { KairoCommandRegistry } from "./router/command/KairoCommandRegistry";
-export type { KairoCommandHandler } from "./router/command/KairoCommandRegistry";
+export type { KairoCommandHandler, KairoCommandOrigin } from "./router/command/KairoCommandRegistry";
 export { KairoStartupBeforeEvent } from "./router/events/classes/KairoStartupBeforeEvent";
 
 export type {

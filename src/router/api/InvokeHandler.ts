@@ -3,6 +3,7 @@ import type { KairoRuntime } from "../../minecraft/KairoRuntime";
 import type { Disposable } from "../types/Disposable";
 import type { KairoApiRegistry } from "./KairoApiRegistry";
 import { ApiHandlerResponseSchema, ApiInvokeSchema, type ApiHandlerResponse, type ApiInvoke } from "./protocol/schema";
+import { stringifyApiHandlerResponse } from "./protocol/stringify";
 
 export class InvokeHandler implements Disposable {
     private listener?: Disposable;
@@ -107,7 +108,7 @@ export class InvokeHandler implements Disposable {
             timestamp: this.runtime.currentTick(),
         };
         try {
-            this.runtime.send("kairo:api-response", JSON.stringify(response));
+            this.runtime.send("kairo:api-response", stringifyApiHandlerResponse(response));
         } catch {
             // send failure is silently ignored
         }

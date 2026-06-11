@@ -1,5 +1,4 @@
-import fastJson from "fast-json-stringify";
-import { type RegistrationResponse, RegistrationResponseSchema } from "./schema";
+import type { RegistrationResponse } from "./schema";
 
-export const stringifyRegistrationResponse: (response: RegistrationResponse) => string =
-    fastJson(RegistrationResponseSchema);
+export const stringifyRegistrationResponse = (response: RegistrationResponse): string =>
+    JSON.stringify(response);

@@ -8,6 +8,7 @@ import {
     type HookInvokeMessage,
     type HookResponseMessage,
 } from "./schema";
+import { stringifyHookResponseMessage } from "./stringify";
 
 interface CancelSignal { result: unknown; hasResult: boolean; }
 
@@ -201,7 +202,7 @@ export class CrossAddonHookHandler implements Disposable {
             timestamp: this.runtime.currentTick(),
         };
         try {
-            this.runtime.send("kairo:hook-response", JSON.stringify(response));
+            this.runtime.send("kairo:hook-response", stringifyHookResponseMessage(response));
         } catch {}
     }
 }
