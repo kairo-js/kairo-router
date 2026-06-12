@@ -22,6 +22,7 @@ import { KairoStartupBeforeEvent } from "./events/classes/KairoStartupBeforeEven
 import { InternalEvent } from "./events/types/InternalEvent";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
+import { KairoInitEventId } from "./init/constants/KairoInitEventId";
 import { createKairoContext, KairoContext, type KairoContextMutator } from "./KairoContext";
 import { KairoScheduler } from "./KairoScheduler";
 import { ReadyState } from "./ReadyState";
@@ -365,6 +366,14 @@ export class KairoRouter {
 
         this.apiCallSender = new ApiCallSender(runtime, () => context.kairoId, () => context.addonProperties.id);
         this.apiCallSender.setup();
+
+        // 一時リスナー: PackOrderProbe の ping に 1 回だけ応答する
+        const orderPingListener = runtime.receive((id, _message) => {
+            if (id !== KairoInitEventId.OrderPing) return;
+            orderPingListener.dispose();
+            const pong = JSON.stringify({ kairoId: context.kairoId });
+            runtime.send(KairoInitEventId.OrderPong, pong);
+        });
 
         if (this.commandRegistry) {
             this.commandInvokeListener = this.commandRegistry.setupInvokeListener(

@@ -26,7 +26,11 @@ export class ApiManifestBuilder {
         });
 
         const eventSubscriptions = eventRegistry.getSubscriptions();
-        const commands = commandRegistry?.getDeclarations();
+        const commands = commandRegistry?.getDeclarations().map(cmd => ({
+            name: cmd.name,
+            mandatoryParameters: [...cmd.mandatoryParameters],
+            optionalParameters: [...cmd.optionalParameters],
+        }));
 
         return { apis, hooks, eventSubscriptions, commands };
     }
