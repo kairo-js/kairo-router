@@ -22,6 +22,7 @@ import { KairoStartupBeforeEvent } from "./events/classes/KairoStartupBeforeEven
 import { InternalEvent } from "./events/types/InternalEvent";
 import { KairoRouterInitError, KairoRouterInitErrorReason } from "./init/errors";
 import { KairoInitializer } from "./init/KairoInitializer";
+import { KairoInitEventId } from "./init/constants/KairoInitEventId";
 import { createKairoContext, KairoContext, type KairoContextMutator } from "./KairoContext";
 import { KairoScheduler } from "./KairoScheduler";
 import { ReadyState } from "./ReadyState";
@@ -55,6 +56,7 @@ export class KairoRouter {
     private activationTickIntervalId?: number;
     private readyState = new ReadyState();
     private routerListener?: Disposable;
+    private orderPingListener?: Disposable;
     private runtimeInjectedEventListener?: Disposable;
     private worldLoadListener?: Disposable;
     private initializer?: Disposable;
@@ -68,7 +70,6 @@ export class KairoRouter {
     private addonEventEmitter?: AddonEventEmitter;
     private addonEventDeliveryHandler?: AddonEventDeliveryHandler;
     private crossAddonHookHandler?: CrossAddonHookHandler;
-    private commandInvokeListener?: Disposable;
     private commandRegistry?: KairoCommandRegistry;
 
     private readonly apiRegistry = new KairoApiRegistry();
@@ -89,19 +90,14 @@ export class KairoRouter {
     constructor() {
         this.startupSubscription = KairoRuntime.onStartup((ev) => {
             const isActive = () => this.kairoContext?.isActive() ?? false;
-            const getAddonName = () => this.kairoContext?.isRegistered()
-                ? this.kairoContext.kairoRegistry.name
-                : undefined;
 
             const commandRegistry = new KairoCommandRegistry(
                 ev.customCommandRegistry,
                 isActive,
-                () => this.kairoContext?.addonProperties.id,
-                (id, msg) => this.runtime?.send(id, msg),
             );
             this.commandRegistry = commandRegistry;
 
-            this.startupEvent.emit(new KairoStartupBeforeEvent(ev, isActive, this.apiRegistry, this.addonEventRegistry, getAddonName, commandRegistry));
+            this.startupEvent.emit(new KairoStartupBeforeEvent(ev, isActive, this.apiRegistry, this.addonEventRegistry, commandRegistry));
             this.apiRegistry.seal();
             commandRegistry.seal();
         });
@@ -292,6 +288,9 @@ export class KairoRouter {
         this.routerListener?.dispose();
         this.routerListener = undefined;
 
+        this.orderPingListener?.dispose();
+        this.orderPingListener = undefined;
+
         this.worldLoadListener?.dispose();
         this.worldLoadListener = undefined;
 
@@ -306,9 +305,6 @@ export class KairoRouter {
         this.addonEventEmitter = undefined;
         this.crossAddonHookHandler?.dispose();
         this.crossAddonHookHandler = undefined;
-
-        this.commandInvokeListener?.dispose();
-        this.commandInvokeListener = undefined;
 
         this.eventRegistry.clearActiveScopedListeners();
         this.kairoContextMutator?.setActivationState("inactive");
@@ -357,6 +353,15 @@ export class KairoRouter {
         const runtime = this.runtime;
         const context = this.kairoContext;
 
+        if (!standalone) {
+            this.orderPingListener = runtime.receive((id, _message) => {
+                if (id !== KairoInitEventId.OrderPing) return;
+                this.orderPingListener?.dispose();
+                this.orderPingListener = undefined;
+                runtime.send(KairoInitEventId.OrderPong, JSON.stringify({ kairoId: context.kairoId }));
+            });
+        }
+
         if (this._registeredCallback) {
             const cb = this._registeredCallback;
             this._registeredCallback = undefined;
@@ -365,12 +370,6 @@ export class KairoRouter {
 
         this.apiCallSender = new ApiCallSender(runtime, () => context.kairoId, () => context.addonProperties.id);
         this.apiCallSender.setup();
-
-        if (this.commandRegistry) {
-            this.commandInvokeListener = this.commandRegistry.setupInvokeListener(
-                (handler) => runtime.receive(handler),
-            );
-        }
 
         this.addonEventEmitter = new AddonEventEmitter(
             runtime,

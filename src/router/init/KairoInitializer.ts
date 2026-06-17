@@ -149,14 +149,13 @@ export class KairoInitializer implements Disposable {
     };
 
     private sendApiManifest(): void {
-        const manifest = new ApiManifestBuilder().build(this.apiRegistry, this.eventRegistry, this.getCommandRegistry?.());
+        const manifest = new ApiManifestBuilder().build(this.apiRegistry, this.eventRegistry);
 
         const message = {
             kairoId: this.context.kairoId,
             apis: manifest.apis,
             hooks: manifest.hooks,
             eventSubscriptions: manifest.eventSubscriptions ?? [],
-            commands: manifest.commands ?? [],
             timestamp: this.runtime.currentTick(),
         };
 

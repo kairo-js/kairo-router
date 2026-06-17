@@ -207,6 +207,13 @@ interface ApiRegistration {
     hook<TArgs, TReturn>(targetAddonId: string, apiName: string, options: HookOptions<TArgs, TReturn>): void;
 }
 
+interface KairoCommandOrigin {
+    readonly sourceType: CustomCommandSource;
+    readonly sourceBlock: Block | undefined;
+    readonly sourceEntity: Entity | undefined;
+    readonly initiator: Entity | undefined;
+}
+type KairoCommandHandler = (origin: KairoCommandOrigin, ...args: any[]) => CustomCommandResult | undefined;
 interface CommandDeclarationEntry {
     readonly name: string;
     readonly mandatoryParameters: ReadonlyArray<{
@@ -218,25 +225,14 @@ interface CommandDeclarationEntry {
         readonly type: string;
     }>;
 }
-
-interface KairoCommandOrigin {
-    readonly sourceType: CustomCommandSource;
-    readonly sourceBlock: Block | undefined;
-    readonly sourceEntity: Entity | undefined;
-    readonly initiator: Entity | undefined;
-}
-type KairoCommandHandler = (origin: KairoCommandOrigin, ...args: any[]) => CustomCommandResult | undefined;
 declare class KairoCommandRegistry {
     private readonly nativeRegistry;
     private readonly isActive;
-    private readonly getAddonId;
-    private readonly send;
     private sealed;
     private readonly declarations;
-    constructor(nativeRegistry: CustomCommandRegistry, isActive: () => boolean, getAddonId: () => string | undefined, send: (id: string, message: string) => void);
-    register(def: CustomCommand, handler: KairoCommandHandler): void;
+    constructor(nativeRegistry: CustomCommandRegistry, isActive: () => boolean);
+    registerCommand(def: CustomCommand, handler: KairoCommandHandler): void;
     registerEnum(name: string, values: string[]): void;
-    setupInvokeListener(receive: (handler: (id: string, message: string) => void) => Disposable): Disposable;
     seal(): void;
     getDeclarations(): CommandDeclarationEntry[];
     private assertNotSealed;
@@ -249,7 +245,7 @@ interface AddonEventRegistration {
 }
 
 declare class KairoStartupBeforeEvent {
-    readonly commands: KairoCommandRegistry;
+    readonly customCommandRegistry: KairoCommandRegistry;
     readonly api: ApiRegistration;
     readonly events: AddonEventRegistration;
     private constructor();

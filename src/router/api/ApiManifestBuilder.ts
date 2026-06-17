@@ -1,4 +1,3 @@
-import type { KairoCommandRegistry } from "../command/KairoCommandRegistry";
 import type { AddonEventRegistry } from "../event/AddonEventRegistry";
 import type { KairoApiRegistry } from "./KairoApiRegistry";
 import type { ApiManifest } from "./protocol/schema";
@@ -7,7 +6,6 @@ export class ApiManifestBuilder {
     build(
         apiRegistry: KairoApiRegistry,
         eventRegistry: AddonEventRegistry,
-        commandRegistry?: KairoCommandRegistry,
     ): ApiManifest {
         const apis = apiRegistry.getApiNames().map((name) => ({ name }));
 
@@ -26,8 +24,7 @@ export class ApiManifestBuilder {
         });
 
         const eventSubscriptions = eventRegistry.getSubscriptions();
-        const commands = commandRegistry?.getDeclarations();
 
-        return { apis, hooks, eventSubscriptions, commands };
+        return { apis, hooks, eventSubscriptions };
     }
 }

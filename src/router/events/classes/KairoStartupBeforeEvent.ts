@@ -4,7 +4,7 @@ import { KairoCommandRegistry } from "../../command/KairoCommandRegistry";
 import { AddonEventRegistry, type AddonEventRegistration } from "../../event/AddonEventRegistry";
 
 export class KairoStartupBeforeEvent {
-    readonly commands: KairoCommandRegistry;
+    readonly customCommandRegistry: KairoCommandRegistry;
     readonly api: ApiRegistration;
     readonly events: AddonEventRegistration;
 
@@ -13,14 +13,11 @@ export class KairoStartupBeforeEvent {
         isActive: () => boolean,
         apiRegistry: KairoApiRegistry,
         eventRegistry: AddonEventRegistry,
-        getAddonName?: () => string | undefined,
         commandRegistry?: KairoCommandRegistry,
     ) {
-        this.commands = commandRegistry ?? new KairoCommandRegistry(
+        this.customCommandRegistry = commandRegistry ?? new KairoCommandRegistry(
             ev.customCommandRegistry,
             isActive,
-            () => undefined,
-            () => {},
         );
         this.api = apiRegistry;
         this.events = eventRegistry;
