@@ -24,7 +24,6 @@ export class ApiManifestBuilder {
         });
 
         const eventSubscriptions = eventRegistry.getSubscriptions();
-
         return { apis, hooks, eventSubscriptions };
     }
 }
