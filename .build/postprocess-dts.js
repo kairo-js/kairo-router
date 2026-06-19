@@ -33,5 +33,3 @@ patchClasses(source, ROOT_CLASSES);
 pruneUnused(source, ROOT_CLASSES);
 
 source.saveSync();
-
-console.log("postprocess-dts: done");

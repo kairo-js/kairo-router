@@ -190,15 +190,7 @@ export class KairoCommandRegistry {
                     const runWhenInactive = options?.runWhenInactive ?? false;
                     const delegatable = this.delegatable.get(def.name) ?? false;
                     const addonId = this.getAddonId?.();
-                    const kairoId = this.getKairoId?.();
-                    console.log(
-                        `[kairo-router:cmd] native callback name=${def.name} ` +
-                        `active=${active} runWhenInactive=${runWhenInactive} ` +
-                        `delegatable=${delegatable} addonId=${addonId ?? "<none>"} ` +
-                        `kairoId=${kairoId ?? "<none>"} args=${args.length}`,
-                    );
                     if (active || runWhenInactive) {
-                        console.log(`[kairo-router:cmd] executing local handler name=${def.name}`);
                         return handler(wrapOrigin(origin), ...args);
                     }
 
@@ -224,7 +216,6 @@ export class KairoCommandRegistry {
                         origin: serializeOrigin(origin),
                         args: [...args].map(serializeArg),
                     };
-                    console.log(`[kairo-router:cmd] relaying via ${COMMAND_INVOKE_EVENT} name=${def.name} addonId=${addonId}`);
                     this.send(COMMAND_INVOKE_EVENT, JSON.stringify(payload));
                     return { status: CustomCommandStatus.Success };
                 },
@@ -264,10 +255,6 @@ export class KairoCommandRegistry {
     setDelegatable(map: Map<string, boolean>, unavailableMessages?: Map<string, string>): void {
         this.delegatable = new Map(map);
         this.unavailableMessages = unavailableMessages ? new Map(unavailableMessages) : new Map();
-        console.log(
-            `[kairo-router:cmd] setDelegatable entries=` +
-            `${[...this.delegatable.entries()].map(([name, value]) => `${name}:${value}`).join(",")}`,
-        );
     }
 
     setupRoutedListener(
@@ -277,10 +264,6 @@ export class KairoCommandRegistry {
             if (id !== COMMAND_ROUTED_EVENT) return;
             const active = this.isActive();
             const myKairoId = this.getKairoId?.();
-            console.log(
-                `[kairo-router:cmd] routed event received active=${active} ` +
-                `kairoId=${myKairoId ?? "<none>"} bytes=${message.length}`,
-            );
             if (!active) return;
 
             const parsed = safeJsonParse(message, () => new Error("cmd-routed: parse failed"));
@@ -288,10 +271,6 @@ export class KairoCommandRegistry {
             const payload = parsed as CommandRoutedPayload;
 
             if (!myKairoId || payload.targetKairoId !== myKairoId) {
-                console.log(
-                    `[kairo-router:cmd] routed event ignored target=${payload.targetKairoId} ` +
-                    `self=${myKairoId ?? "<none>"}`,
-                );
                 return;
             }
 
@@ -305,7 +284,6 @@ export class KairoCommandRegistry {
             const args = payload.args.map(reconstructArg);
 
             try {
-                console.log(`[kairo-router:cmd] executing routed handler name=${payload.commandName}`);
                 entry.handler(origin, ...args);
             } catch (e) {
                 console.error(`[kairo-router] routed command execution failed: ${e}`);
