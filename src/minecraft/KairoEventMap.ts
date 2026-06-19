@@ -1,9 +1,13 @@
 import type {
+    BlockContainerClosedAfterEvent,
+    BlockContainerOpenedAfterEvent,
     BlockExplodeAfterEvent,
     ButtonPushAfterEvent,
     DataDrivenEntityTriggerAfterEvent,
     EffectAddAfterEvent,
     EffectAddBeforeEvent,
+    EntityContainerClosedAfterEvent,
+    EntityContainerOpenedAfterEvent,
     EntityDieAfterEvent,
     EntityHealthChangedAfterEvent,
     EntityHitBlockAfterEvent,
@@ -11,6 +15,7 @@ import type {
     EntityHealAfterEvent,
     EntityHealBeforeEvent,
     EntityHurtAfterEvent,
+    EntityHurtBeforeEvent,
     EntityItemDropAfterEvent,
     EntityItemPickupAfterEvent,
     EntityItemPickupBeforeEvent,
@@ -18,6 +23,7 @@ import type {
     EntityRemoveAfterEvent,
     EntityRemoveBeforeEvent,
     EntitySpawnAfterEvent,
+    EntityUpgradeAfterEvent,
     ExplosionAfterEvent,
     ExplosionBeforeEvent,
     GameRuleChangeAfterEvent,
@@ -70,10 +76,14 @@ import { AddonDeactivateBeforeEvent } from "../router/events/classes/AddonDeacti
 export interface KairoEventMap {
     readonly after: {
         readonly addonActivate:                          AddonActivateAfterEvent;
+        readonly blockContainerClosed:                   BlockContainerClosedAfterEvent;
+        readonly blockContainerOpened:                   BlockContainerOpenedAfterEvent;
         readonly blockExplode:                           BlockExplodeAfterEvent;
         readonly buttonPush:                             ButtonPushAfterEvent;
         readonly dataDrivenEntityTrigger:                DataDrivenEntityTriggerAfterEvent;
         readonly effectAdd:                              EffectAddAfterEvent;
+        readonly entityContainerClosed:                  EntityContainerClosedAfterEvent;
+        readonly entityContainerOpened:                  EntityContainerOpenedAfterEvent;
         readonly entityDie:                              EntityDieAfterEvent;
         readonly entityHeal:                             EntityHealAfterEvent;
         readonly entityHealthChanged:                    EntityHealthChangedAfterEvent;
@@ -85,6 +95,7 @@ export interface KairoEventMap {
         readonly entityLoad:                             EntityLoadAfterEvent;
         readonly entityRemove:                           EntityRemoveAfterEvent;
         readonly entitySpawn:                            EntitySpawnAfterEvent;
+        readonly entityUpgrade:                          EntityUpgradeAfterEvent;
         readonly explosion:                              ExplosionAfterEvent;
         readonly gameRuleChange:                         GameRuleChangeAfterEvent;
         readonly itemCompleteUse:                        ItemCompleteUseAfterEvent;
@@ -120,11 +131,13 @@ export interface KairoEventMap {
         readonly targetBlockHit:                         TargetBlockHitAfterEvent;
         readonly tripWireTrip:                           TripWireTripAfterEvent;
         readonly weatherChange:                          WeatherChangeAfterEvent;
+        // NOTE: worldLoad is intentionally excluded — kairo handles world loading internally.
     };
     readonly before: {
         readonly addonDeactivate:           AddonDeactivateBeforeEvent;
         readonly effectAdd:                 EffectAddBeforeEvent;
         readonly entityHeal:                EntityHealBeforeEvent;
+        readonly entityHurt:                EntityHurtBeforeEvent;
         readonly entityItemPickup:          EntityItemPickupBeforeEvent;
         readonly entityRemove:              EntityRemoveBeforeEvent;
         readonly explosion:                 ExplosionBeforeEvent;

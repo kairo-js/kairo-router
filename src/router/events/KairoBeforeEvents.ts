@@ -9,6 +9,7 @@ export class KairoBeforeEvents<E extends KairoEventMap> {
     readonly addonDeactivate;
     readonly effectAdd;
     readonly entityHeal;
+    readonly entityHurt;
     readonly entityItemPickup;
     readonly entityRemove;
     readonly explosion;
@@ -29,6 +30,7 @@ export class KairoBeforeEvents<E extends KairoEventMap> {
         this.addonDeactivate          = asSubscribable(this.registry.getBefore("addonDeactivate"));
         this.effectAdd                = asSubscribable(this.registry.getBefore("effectAdd"));
         this.entityHeal               = asSubscribable(this.registry.getBefore("entityHeal"));
+        this.entityHurt               = asSubscribable(this.registry.getBefore("entityHurt"));
         this.entityItemPickup         = asSubscribable(this.registry.getBefore("entityItemPickup"));
         this.entityRemove             = asSubscribable(this.registry.getBefore("entityRemove"));
         this.explosion                = asSubscribable(this.registry.getBefore("explosion"));

@@ -28,11 +28,11 @@
         "release": "pnpm run build && npm publish --tag beta"
     },
     "peerDependencies": {
-        "@minecraft/server": "^2.7.0",
+        "@minecraft/server": "^2.8.0",
         "@minecraft/server-ui": "^2.0.0"
     },
     "devDependencies": {
-        "@minecraft/server": "^2.7.0",
+        "@minecraft/server": "^2.8.0",
         "@minecraft/server-ui": "^2.0.0",
         "@types/seedrandom": "^3.0.8",
         "prettier": "^3.8.1",
