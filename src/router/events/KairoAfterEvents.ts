@@ -4,10 +4,14 @@ import type { KairoEventMap } from "../../minecraft/KairoEventMap";
 
 export class KairoAfterEvents<E extends KairoEventMap> {
     readonly addonActivate;
+    readonly blockContainerClosed;
+    readonly blockContainerOpened;
     readonly blockExplode;
     readonly buttonPush;
     readonly dataDrivenEntityTrigger;
     readonly effectAdd;
+    readonly entityContainerClosed;
+    readonly entityContainerOpened;
     readonly entityDie;
     readonly entityHeal;
     readonly entityHealthChanged;
@@ -19,6 +23,7 @@ export class KairoAfterEvents<E extends KairoEventMap> {
     readonly entityLoad;
     readonly entityRemove;
     readonly entitySpawn;
+    readonly entityUpgrade;
     readonly explosion;
     readonly gameRuleChange;
     readonly itemCompleteUse;
@@ -57,10 +62,14 @@ export class KairoAfterEvents<E extends KairoEventMap> {
 
     constructor(private readonly registry: EventRegistry<E>) {
         this.addonActivate                       = asSubscribable(this.registry.getAfter("addonActivate"));
+        this.blockContainerClosed                = asSubscribable(this.registry.getAfter("blockContainerClosed"));
+        this.blockContainerOpened                = asSubscribable(this.registry.getAfter("blockContainerOpened"));
         this.blockExplode                        = asSubscribable(this.registry.getAfter("blockExplode"));
         this.buttonPush                          = asSubscribable(this.registry.getAfter("buttonPush"));
         this.dataDrivenEntityTrigger             = asSubscribable(this.registry.getAfter("dataDrivenEntityTrigger"));
         this.effectAdd                           = asSubscribable(this.registry.getAfter("effectAdd"));
+        this.entityContainerClosed               = asSubscribable(this.registry.getAfter("entityContainerClosed"));
+        this.entityContainerOpened               = asSubscribable(this.registry.getAfter("entityContainerOpened"));
         this.entityDie                           = asSubscribable(this.registry.getAfter("entityDie"));
         this.entityHeal                          = asSubscribable(this.registry.getAfter("entityHeal"));
         this.entityHealthChanged                 = asSubscribable(this.registry.getAfter("entityHealthChanged"));
@@ -72,6 +81,7 @@ export class KairoAfterEvents<E extends KairoEventMap> {
         this.entityLoad                          = asSubscribable(this.registry.getAfter("entityLoad"));
         this.entityRemove                        = asSubscribable(this.registry.getAfter("entityRemove"));
         this.entitySpawn                         = asSubscribable(this.registry.getAfter("entitySpawn"));
+        this.entityUpgrade                       = asSubscribable(this.registry.getAfter("entityUpgrade"));
         this.explosion                           = asSubscribable(this.registry.getAfter("explosion"));
         this.gameRuleChange                      = asSubscribable(this.registry.getAfter("gameRuleChange"));
         this.itemCompleteUse                     = asSubscribable(this.registry.getAfter("itemCompleteUse"));

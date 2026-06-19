@@ -1,5 +1,5 @@
 import { SemVer, AddonProperties } from '@kairo-js/properties';
-import { BlockExplodeAfterEvent, ButtonPushAfterEvent, DataDrivenEntityTriggerAfterEvent, EffectAddAfterEvent, EntityDieAfterEvent, EntityHealAfterEvent, EntityHealthChangedAfterEvent, EntityHitBlockAfterEvent, EntityHitEntityAfterEvent, EntityHurtAfterEvent, EntityItemDropAfterEvent, EntityItemPickupAfterEvent, EntityLoadAfterEvent, EntityRemoveAfterEvent, EntitySpawnAfterEvent, ExplosionAfterEvent, GameRuleChangeAfterEvent, ItemCompleteUseAfterEvent, ItemReleaseUseAfterEvent, ItemStartUseAfterEvent, ItemStartUseOnAfterEvent, ItemStopUseAfterEvent, ItemStopUseOnAfterEvent, ItemUseAfterEvent, LeverActionAfterEvent, PistonActivateAfterEvent, PlayerBreakBlockAfterEvent, PlayerButtonInputAfterEvent, PlayerDimensionChangeAfterEvent, PlayerEmoteAfterEvent, PlayerGameModeChangeAfterEvent, PlayerHotbarSelectedSlotChangeAfterEvent, PlayerInputModeChangeAfterEvent, PlayerInputPermissionCategoryChangeAfterEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithEntityAfterEvent, PlayerInventoryItemChangeAfterEvent, PlayerJoinAfterEvent, PlayerLeaveAfterEvent, PlayerPlaceBlockAfterEvent, PlayerSpawnAfterEvent, PlayerSwingStartAfterEvent, PressurePlatePopAfterEvent, PressurePlatePushAfterEvent, ProjectileHitBlockAfterEvent, ProjectileHitEntityAfterEvent, ScriptEventCommandMessageAfterEvent, TargetBlockHitAfterEvent, TripWireTripAfterEvent, WeatherChangeAfterEvent, EffectAddBeforeEvent, EntityHealBeforeEvent, EntityItemPickupBeforeEvent, EntityRemoveBeforeEvent, ExplosionBeforeEvent, ItemUseBeforeEvent, PlayerBreakBlockBeforeEvent, PlayerGameModeChangeBeforeEvent, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, PlayerLeaveBeforeEvent, ShutdownEvent, WeatherChangeBeforeEvent, CustomCommandSource, Block, Entity, CustomCommandResult, CustomCommandRegistry, CustomCommand, BlockComponentRegistry, ItemComponentRegistry, StartupEvent } from '@minecraft/server';
+import { BlockContainerClosedAfterEvent, BlockContainerOpenedAfterEvent, BlockExplodeAfterEvent, ButtonPushAfterEvent, DataDrivenEntityTriggerAfterEvent, EffectAddAfterEvent, EntityContainerClosedAfterEvent, EntityContainerOpenedAfterEvent, EntityDieAfterEvent, EntityHealAfterEvent, EntityHealthChangedAfterEvent, EntityHitBlockAfterEvent, EntityHitEntityAfterEvent, EntityHurtAfterEvent, EntityItemDropAfterEvent, EntityItemPickupAfterEvent, EntityLoadAfterEvent, EntityRemoveAfterEvent, EntitySpawnAfterEvent, EntityUpgradeAfterEvent, ExplosionAfterEvent, GameRuleChangeAfterEvent, ItemCompleteUseAfterEvent, ItemReleaseUseAfterEvent, ItemStartUseAfterEvent, ItemStartUseOnAfterEvent, ItemStopUseAfterEvent, ItemStopUseOnAfterEvent, ItemUseAfterEvent, LeverActionAfterEvent, PistonActivateAfterEvent, PlayerBreakBlockAfterEvent, PlayerButtonInputAfterEvent, PlayerDimensionChangeAfterEvent, PlayerEmoteAfterEvent, PlayerGameModeChangeAfterEvent, PlayerHotbarSelectedSlotChangeAfterEvent, PlayerInputModeChangeAfterEvent, PlayerInputPermissionCategoryChangeAfterEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithEntityAfterEvent, PlayerInventoryItemChangeAfterEvent, PlayerJoinAfterEvent, PlayerLeaveAfterEvent, PlayerPlaceBlockAfterEvent, PlayerSpawnAfterEvent, PlayerSwingStartAfterEvent, PressurePlatePopAfterEvent, PressurePlatePushAfterEvent, ProjectileHitBlockAfterEvent, ProjectileHitEntityAfterEvent, ScriptEventCommandMessageAfterEvent, TargetBlockHitAfterEvent, TripWireTripAfterEvent, WeatherChangeAfterEvent, EffectAddBeforeEvent, EntityHealBeforeEvent, EntityHurtBeforeEvent, EntityItemPickupBeforeEvent, EntityRemoveBeforeEvent, ExplosionBeforeEvent, ItemUseBeforeEvent, PlayerBreakBlockBeforeEvent, PlayerGameModeChangeBeforeEvent, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, PlayerLeaveBeforeEvent, ShutdownEvent, WeatherChangeBeforeEvent, CustomCommandSource, Block, Entity, CustomCommandResult, CustomCommandRegistry, CustomCommand, BlockComponentRegistry, ItemComponentRegistry, StartupEvent } from '@minecraft/server';
 
 declare class AddonActivateAfterEvent {
     private constructor();
@@ -12,10 +12,14 @@ declare class AddonDeactivateBeforeEvent {
 interface KairoEventMap {
     readonly after: {
         readonly addonActivate: AddonActivateAfterEvent;
+        readonly blockContainerClosed: BlockContainerClosedAfterEvent;
+        readonly blockContainerOpened: BlockContainerOpenedAfterEvent;
         readonly blockExplode: BlockExplodeAfterEvent;
         readonly buttonPush: ButtonPushAfterEvent;
         readonly dataDrivenEntityTrigger: DataDrivenEntityTriggerAfterEvent;
         readonly effectAdd: EffectAddAfterEvent;
+        readonly entityContainerClosed: EntityContainerClosedAfterEvent;
+        readonly entityContainerOpened: EntityContainerOpenedAfterEvent;
         readonly entityDie: EntityDieAfterEvent;
         readonly entityHeal: EntityHealAfterEvent;
         readonly entityHealthChanged: EntityHealthChangedAfterEvent;
@@ -27,6 +31,7 @@ interface KairoEventMap {
         readonly entityLoad: EntityLoadAfterEvent;
         readonly entityRemove: EntityRemoveAfterEvent;
         readonly entitySpawn: EntitySpawnAfterEvent;
+        readonly entityUpgrade: EntityUpgradeAfterEvent;
         readonly explosion: ExplosionAfterEvent;
         readonly gameRuleChange: GameRuleChangeAfterEvent;
         readonly itemCompleteUse: ItemCompleteUseAfterEvent;
@@ -67,6 +72,7 @@ interface KairoEventMap {
         readonly addonDeactivate: AddonDeactivateBeforeEvent;
         readonly effectAdd: EffectAddBeforeEvent;
         readonly entityHeal: EntityHealBeforeEvent;
+        readonly entityHurt: EntityHurtBeforeEvent;
         readonly entityItemPickup: EntityItemPickupBeforeEvent;
         readonly entityRemove: EntityRemoveBeforeEvent;
         readonly explosion: ExplosionBeforeEvent;
@@ -119,10 +125,14 @@ interface Subscribable<T> {
 
 declare class KairoAfterEvents<E extends KairoEventMap> {
     readonly addonActivate: Subscribable<E["after"]["addonActivate"]>;
+    readonly blockContainerClosed: Subscribable<E["after"]["blockContainerClosed"]>;
+    readonly blockContainerOpened: Subscribable<E["after"]["blockContainerOpened"]>;
     readonly blockExplode: Subscribable<E["after"]["blockExplode"]>;
     readonly buttonPush: Subscribable<E["after"]["buttonPush"]>;
     readonly dataDrivenEntityTrigger: Subscribable<E["after"]["dataDrivenEntityTrigger"]>;
     readonly effectAdd: Subscribable<E["after"]["effectAdd"]>;
+    readonly entityContainerClosed: Subscribable<E["after"]["entityContainerClosed"]>;
+    readonly entityContainerOpened: Subscribable<E["after"]["entityContainerOpened"]>;
     readonly entityDie: Subscribable<E["after"]["entityDie"]>;
     readonly entityHeal: Subscribable<E["after"]["entityHeal"]>;
     readonly entityHealthChanged: Subscribable<E["after"]["entityHealthChanged"]>;
@@ -134,6 +144,7 @@ declare class KairoAfterEvents<E extends KairoEventMap> {
     readonly entityLoad: Subscribable<E["after"]["entityLoad"]>;
     readonly entityRemove: Subscribable<E["after"]["entityRemove"]>;
     readonly entitySpawn: Subscribable<E["after"]["entitySpawn"]>;
+    readonly entityUpgrade: Subscribable<E["after"]["entityUpgrade"]>;
     readonly explosion: Subscribable<E["after"]["explosion"]>;
     readonly gameRuleChange: Subscribable<E["after"]["gameRuleChange"]>;
     readonly itemCompleteUse: Subscribable<E["after"]["itemCompleteUse"]>;
@@ -272,6 +283,7 @@ declare class KairoBeforeEvents<E extends KairoEventMap> {
     readonly addonDeactivate: Subscribable<E["before"]["addonDeactivate"]>;
     readonly effectAdd: Subscribable<E["before"]["effectAdd"]>;
     readonly entityHeal: Subscribable<E["before"]["entityHeal"]>;
+    readonly entityHurt: Subscribable<E["before"]["entityHurt"]>;
     readonly entityItemPickup: Subscribable<E["before"]["entityItemPickup"]>;
     readonly entityRemove: Subscribable<E["before"]["entityRemove"]>;
     readonly explosion: Subscribable<E["before"]["explosion"]>;
