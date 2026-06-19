@@ -55,6 +55,14 @@ export class ActivationController {
     private apply(request: ActivationRequest): ActivationResult {
         const next = request.action === "activate" ? "active" : "inactive";
 
+        if ((next === "active") === this.context.isActive()) {
+            return {
+                kairoId: this.context.kairoId,
+                status: "success",
+                action: request.action,
+            };
+        }
+
         // beforeEvents
         if (next === "inactive") {
             this.eventRegistry.emit("before", "addonDeactivate", new AddonDeactivateBeforeEvent());

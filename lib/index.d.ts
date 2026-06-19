@@ -214,6 +214,9 @@ interface KairoCommandOrigin {
     readonly initiator: Entity | undefined;
 }
 type KairoCommandHandler = (origin: KairoCommandOrigin, ...args: any[]) => CustomCommandResult | undefined;
+interface KairoCommandRegistrationOptions {
+    readonly runWhenInactive?: boolean;
+}
 interface CommandDeclarationEntry {
     readonly name: string;
     readonly mandatoryParameters: ReadonlyArray<{
@@ -228,13 +231,20 @@ interface CommandDeclarationEntry {
 declare class KairoCommandRegistry {
     private readonly nativeRegistry;
     private readonly isActive;
+    private readonly send?;
+    private readonly getAddonId?;
+    private readonly getKairoId?;
     private sealed;
     private readonly declarations;
-    constructor(nativeRegistry: CustomCommandRegistry, isActive: () => boolean);
-    registerCommand(def: CustomCommand, handler: KairoCommandHandler): void;
+    private delegatable;
+    private unavailableMessages;
+    constructor(nativeRegistry: CustomCommandRegistry, isActive: () => boolean, send?: ((id: string, message: string) => void) | undefined, getAddonId?: (() => string | undefined) | undefined, getKairoId?: (() => string | undefined) | undefined);
+    registerCommand(def: CustomCommand, handler: KairoCommandHandler, options?: KairoCommandRegistrationOptions): void;
     registerEnum(name: string, values: string[]): void;
     seal(): void;
     getDeclarations(): CommandDeclarationEntry[];
+    setDelegatable(map: Map<string, boolean>, unavailableMessages?: Map<string, string>): void;
+    setupRoutedListener(receive: (handler: (id: string, message: string) => void) => Disposable): Disposable;
     private assertNotSealed;
 }
 
@@ -335,6 +345,9 @@ declare class KairoRouter {
     runTimeout(callback: () => void, tickDelay?: number): number;
 }
 
+declare const COMMAND_INVOKE_EVENT = "kairo:cmd-invoke";
+declare const COMMAND_ROUTED_EVENT = "kairo:cmd-routed";
+
 declare const router: KairoRouter;
 
-export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AddonEventRegistration, type AfterHookContext, AfterHookExecutionError, type ApiHandlerContext, ApiNotFoundError, type ApiRegistration, type BeforeHookContext, BeforeHookExecutionError, type CanceledResult, type DeepReadonly, type Disposable, HandlerExecutionError, type HookOptions, type HookRollbackContext, type KairoCommandHandler, type KairoCommandOrigin, KairoCommandRegistry, KairoContext, type KairoRegistry, KairoRouter, KairoStartupBeforeEvent, ProtocolError, type ProtocolStage, RequestTimeoutError, type RouterInitOptions, router };
+export { AddonActivateAfterEvent, AddonDeactivateBeforeEvent, type AddonEventRegistration, type AfterHookContext, AfterHookExecutionError, type ApiHandlerContext, ApiNotFoundError, type ApiRegistration, type BeforeHookContext, BeforeHookExecutionError, COMMAND_INVOKE_EVENT, COMMAND_ROUTED_EVENT, type CanceledResult, type CommandDeclarationEntry, type DeepReadonly, type Disposable, HandlerExecutionError, type HookOptions, type HookRollbackContext, type KairoCommandHandler, type KairoCommandOrigin, KairoCommandRegistry, KairoContext, type KairoRegistry, KairoRouter, KairoStartupBeforeEvent, ProtocolError, type ProtocolStage, RequestTimeoutError, type RouterInitOptions, router };

@@ -11,7 +11,8 @@ export type { KairoRegistry } from "./router/types/KairoRegistry";
 export { AddonActivateAfterEvent } from "./router/events/classes/AddonActivateAfterEvent";
 export { AddonDeactivateBeforeEvent } from "./router/events/classes/AddonDeactivateBeforeEvent";
 export { KairoCommandRegistry } from "./router/command/KairoCommandRegistry";
-export type { KairoCommandHandler, KairoCommandOrigin } from "./router/command/KairoCommandRegistry";
+export type { KairoCommandHandler, KairoCommandOrigin, CommandDeclarationEntry } from "./router/command/KairoCommandRegistry";
+export { COMMAND_INVOKE_EVENT, COMMAND_ROUTED_EVENT } from "./router/command/schema";
 export { KairoStartupBeforeEvent } from "./router/events/classes/KairoStartupBeforeEvent";
 
 export type {

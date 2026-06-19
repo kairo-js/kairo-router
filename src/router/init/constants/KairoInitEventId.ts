@@ -6,5 +6,8 @@ export enum KairoInitEventId {
     RegistrationResult = "kairo:registration_result",
     OrderPing = "kairo:order-ping",
     OrderPong = "kairo:order-pong",
+    CommandManifestRequest = "kairo:cmd-manifest-req",
+    CommandManifest = "kairo:cmd-manifest",
+    CommandDelegatableUpdate = "kairo:cmd-delegatable",
     ApiManifest = "kairo:api_manifest",
 }

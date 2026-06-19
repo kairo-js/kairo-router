@@ -71,6 +71,9 @@ export class KairoRouter {
     private addonEventDeliveryHandler?: AddonEventDeliveryHandler;
     private crossAddonHookHandler?: CrossAddonHookHandler;
     private commandRegistry?: KairoCommandRegistry;
+    private commandManifestListener?: Disposable;
+    private commandDelegatableListener?: Disposable;
+    private commandRoutedListener?: Disposable;
 
     private readonly apiRegistry = new KairoApiRegistry();
     private readonly addonEventRegistry = new AddonEventRegistry();
@@ -94,6 +97,9 @@ export class KairoRouter {
             const commandRegistry = new KairoCommandRegistry(
                 ev.customCommandRegistry,
                 isActive,
+                (id, msg) => this.runtime?.send(id, msg),
+                () => this.kairoContext?.addonProperties.id,
+                () => { try { return this.kairoContext?.kairoId; } catch { return undefined; } },
             );
             this.commandRegistry = commandRegistry;
 
@@ -306,6 +312,13 @@ export class KairoRouter {
         this.crossAddonHookHandler?.dispose();
         this.crossAddonHookHandler = undefined;
 
+        this.commandManifestListener?.dispose();
+        this.commandManifestListener = undefined;
+        this.commandDelegatableListener?.dispose();
+        this.commandDelegatableListener = undefined;
+        this.commandRoutedListener?.dispose();
+        this.commandRoutedListener = undefined;
+
         this.eventRegistry.clearActiveScopedListeners();
         this.kairoContextMutator?.setActivationState("inactive");
         this.scheduler?.setActive(false);
@@ -370,6 +383,37 @@ export class KairoRouter {
 
         this.apiCallSender = new ApiCallSender(runtime, () => context.kairoId, () => context.addonProperties.id);
         this.apiCallSender.setup();
+
+        this.commandManifestListener = runtime.receive((id, _msg) => {
+            if (id !== KairoInitEventId.CommandManifestRequest) return;
+            const declarations = this.commandRegistry?.getDeclarations() ?? [];
+            runtime.send(
+                KairoInitEventId.CommandManifest,
+                JSON.stringify({ kairoId: context.kairoId, commands: declarations }),
+            );
+        });
+
+        this.commandDelegatableListener = runtime.receive((id, msg) => {
+            if (id !== KairoInitEventId.CommandDelegatableUpdate) return;
+            try {
+                const parsed = JSON.parse(msg) as {
+                    targetKairoId: string;
+                    delegatable: Record<string, boolean>;
+                    unavailableMessages?: Record<string, string>;
+                };
+                if (parsed.targetKairoId !== context.kairoId) return;
+                this.commandRegistry?.setDelegatable(
+                    new Map(Object.entries(parsed.delegatable)),
+                    new Map(Object.entries(parsed.unavailableMessages ?? {})),
+                );
+            } catch {}
+        });
+
+        if (this.commandRegistry) {
+            this.commandRoutedListener = this.commandRegistry.setupRoutedListener(
+                (handler) => runtime.receive(handler),
+            );
+        }
 
         this.addonEventEmitter = new AddonEventEmitter(
             runtime,

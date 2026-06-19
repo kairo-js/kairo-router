@@ -22,14 +22,7 @@ export class ActivationRequestValidator {
 
     private validateState(request: ActivationRequest, isActive: boolean): void {
         if (request.action === "activate") {
-            if (isActive) {
-                throw new ActivationRequestError(ActivationRequestErrorReason.AlreadyActivated);
-            }
             return;
-        }
-
-        if (!isActive) {
-            throw new ActivationRequestError(ActivationRequestErrorReason.AlreadyDeactivated);
         }
     }
 }
