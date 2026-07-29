@@ -1,6 +1,7 @@
 import { KairoRuntime } from "../minecraft/KairoRuntime";
 
 import type { AddonProperties } from "@kairo-js/properties";
+import type { Vector3 } from "@minecraft/server";
 import { KairoCommandRegistry } from "./command/KairoCommandRegistry";
 import { KairoRegistryBuilder } from "./init/KairoRegistryBuilder";
 import { SeedRandom } from "@kairo-js/utils";
@@ -40,10 +41,23 @@ export interface RouterInitOptions {
     standalone?: boolean;
 }
 
+export type DynamicPropertyValue = boolean | number | string | Vector3;
+export type DynamicPropertyTarget = {
+    getDynamicProperty(identifier: string): DynamicPropertyValue | undefined;
+    setDynamicProperty(identifier: string, value?: DynamicPropertyValue): void;
+};
+
 function shouldAttemptStandalone(properties: AddonProperties, option: boolean | undefined): boolean {
     if (option !== true) return false;
     const requiredDeps = Object.keys(properties.dependencies ?? {});
     return requiredDeps.every(dep => INFRA_DEPS.has(dep));
+}
+
+function isDynamicPropertyTarget(value: unknown): value is DynamicPropertyTarget {
+    return typeof value === "object"
+        && value !== null
+        && typeof (value as Partial<DynamicPropertyTarget>).getDynamicProperty === "function"
+        && typeof (value as Partial<DynamicPropertyTarget>).setDynamicProperty === "function";
 }
 
 // kjs-router-ch 0001
@@ -169,15 +183,35 @@ export class KairoRouter {
         this.addonEventEmitter!.emit(eventName, payload);
     }
 
-    async save(key: string, value: unknown): Promise<void> {
+    async save(key: string, value: unknown): Promise<void>;
+    async save(target: DynamicPropertyTarget, key: string, value: unknown): Promise<void>;
+    async save(targetOrKey: DynamicPropertyTarget | string, keyOrValue: string | unknown, value?: unknown): Promise<void> {
+        if (isDynamicPropertyTarget(targetOrKey)) {
+            this.assertRunnable();
+            this.saveDynamicProperty(targetOrKey, String(keyOrValue), value);
+            return;
+        }
+        const key = targetOrKey;
+        const storedValue = keyOrValue;
         this.assertDatabaseDependency();
         this.assertRunnable();
         if (this.standaloneMode) return;
-        const result = await this.apiCallSender!.request<void>("kairo-database", "save", { key, value });
+        const result = await this.apiCallSender!.request<void>("kairo-database", "save", { key, value: storedValue });
         this.assertDatabaseAvailable(result);
     }
 
-    async load<T = unknown>(key: string, options?: { addonId?: string }): Promise<T | undefined> {
+    async load<T = unknown>(key: string, options?: { addonId?: string }): Promise<T | undefined>;
+    async load<T = unknown>(target: DynamicPropertyTarget, key: string): Promise<T | undefined>;
+    async load<T = unknown>(
+        targetOrKey: DynamicPropertyTarget | string,
+        keyOrOptions?: string | { addonId?: string },
+    ): Promise<T | undefined> {
+        if (isDynamicPropertyTarget(targetOrKey)) {
+            this.assertRunnable();
+            return this.loadDynamicProperty<T>(targetOrKey, String(keyOrOptions));
+        }
+        const key = targetOrKey;
+        const options = keyOrOptions as { addonId?: string } | undefined;
         this.assertDatabaseDependency();
         this.assertRunnable();
         if (this.standaloneMode) return undefined;
@@ -186,21 +220,59 @@ export class KairoRouter {
         return result as T | undefined;
     }
 
-    async delete(key: string): Promise<void> {
+    async delete(key: string): Promise<void>;
+    async delete(target: DynamicPropertyTarget, key: string): Promise<void>;
+    async delete(targetOrKey: DynamicPropertyTarget | string, key?: string): Promise<void> {
+        if (isDynamicPropertyTarget(targetOrKey)) {
+            this.assertRunnable();
+            targetOrKey.setDynamicProperty(String(key), undefined);
+            return;
+        }
         this.assertDatabaseDependency();
         this.assertRunnable();
         if (this.standaloneMode) return;
-        const result = await this.apiCallSender!.request<void>("kairo-database", "delete", { key });
+        const result = await this.apiCallSender!.request<void>("kairo-database", "delete", { key: targetOrKey });
         this.assertDatabaseAvailable(result);
     }
 
-    async has(key: string, options?: { addonId?: string }): Promise<boolean> {
+    async has(key: string, options?: { addonId?: string }): Promise<boolean>;
+    async has(target: DynamicPropertyTarget, key: string): Promise<boolean>;
+    async has(targetOrKey: DynamicPropertyTarget | string, keyOrOptions?: string | { addonId?: string }): Promise<boolean> {
+        if (isDynamicPropertyTarget(targetOrKey)) {
+            this.assertRunnable();
+            return targetOrKey.getDynamicProperty(String(keyOrOptions)) !== undefined;
+        }
+        const key = targetOrKey;
+        const options = keyOrOptions as { addonId?: string } | undefined;
         this.assertDatabaseDependency();
         this.assertRunnable();
         if (this.standaloneMode) return false;
         const result = await this.apiCallSender!.request<boolean>("kairo-database", "has", { key, addonId: options?.addonId });
         this.assertDatabaseAvailable(result);
         return result as boolean;
+    }
+
+    private saveDynamicProperty(target: DynamicPropertyTarget, key: string, value: unknown): void {
+        if (value === undefined) {
+            target.setDynamicProperty(key, undefined);
+            return;
+        }
+        const serialized = JSON.stringify(value);
+        if (serialized === undefined) {
+            throw new TypeError("router.save dynamic property value is not JSON serializable.");
+        }
+        target.setDynamicProperty(key, serialized);
+    }
+
+    private loadDynamicProperty<T>(target: DynamicPropertyTarget, key: string): T | undefined {
+        const value = target.getDynamicProperty(key);
+        if (value === undefined) return undefined;
+        if (typeof value !== "string") return value as T;
+        try {
+            return JSON.parse(value) as T;
+        } catch {
+            return value as T;
+        }
     }
 
     init(properties: AddonProperties, options?: RouterInitOptions): void {

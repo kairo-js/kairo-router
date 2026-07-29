@@ -5,7 +5,7 @@ export const router = new KairoRouter();
 
 export { KairoContext } from "./router/KairoContext";
 export { KairoRouter } from "./router/KairoRouter";
-export type { RouterInitOptions } from "./router/KairoRouter";
+export type { DynamicPropertyTarget, DynamicPropertyValue, RouterInitOptions } from "./router/KairoRouter";
 export type { KairoRegistry } from "./router/types/KairoRegistry";
 
 export { AddonActivateAfterEvent } from "./router/events/classes/AddonActivateAfterEvent";
